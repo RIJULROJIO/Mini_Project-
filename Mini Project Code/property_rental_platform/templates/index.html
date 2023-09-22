@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <style>
+        /* Reset some default styles */
+        body, h1, h2, p, ul, li {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* CSS for Header */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('background-image.jpg'); /* Add your background image URL here */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-align: left;
+
+        }
+
+        header nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        header nav li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        header nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            background-color: #869455; /* Button background color */
+            padding: 10px 20px; /* Adjust padding for buttons */
+            border-radius: 5px; /* Add rounded corners */
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        header nav a:hover {
+            background-color: #0056b3; /* Change color on hover */
+        }
+
+        /* CSS for Main Content */
+        main {
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Add a semi-transparent white background */
+            border-radius: 10px;
+            margin: 20px;
+        }
+
+        /* CSS for Footer */
+        footer {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PROPERTY RENTALS</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="signup.html">Sign up</a></li>
+                <li><a href="login.html">Log in</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <h2>Welcome to Property Rentals</h2>
+        <p>Find your dream rental property today.</p>
+    </main>
+    
+    <footer>
+        <p>&copy; 2023 Property Rentals</p>
+    </footer>
+</body>
+</html>

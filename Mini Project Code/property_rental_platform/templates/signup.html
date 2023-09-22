@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up Page</title>
+    <style>
+        /* Reset some default styles */
+        body, h1, h2, p, ul, li {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* CSS for Header */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('background-image.jpg'); /* Add your background image URL here */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        /* CSS for Main Content */
+        main {
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            margin: 20px;
+            min-height: 80vh; /* Ensure main content takes up at least 80% of the viewport height */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* CSS for Sign Up Form */
+        .signup-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .signup-form h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Reordered form fields and adjusted styling */
+        .form-group {
+            margin-bottom: 15px; /* Reduced margin to shorten the fields */
+        }
+
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group input[type="email"] {
+            width: 50%;
+            padding: 8px; /* Adjusted padding to make fields shorter */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .role-selector {
+            margin-bottom: 20px;
+        }
+
+        .role-selector label {
+            font-weight: bold;
+        }
+
+        .role-selector input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* CSS for Buttons */
+        .btn {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* CSS for Footer */
+        footer {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PROPERTY RENTALS</h1>
+    </header>
+    
+    <main>
+        <div class="signup-form">
+            <h2>Sign Up</h2>
+            <form action="#" method="post">
+                <div class="role-selector">
+                    <label for="tenant">I am a Tenant:</label>
+                    <input type="radio" id="tenant" name="role" value="tenant" checked>
+                    <label for="owner">I am a Property Owner:</label>
+                    <input type="radio" id="owner" name="role" value="owner">
+                </div>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+               
+                <div>
+                    <button class="btn" type="submit">Sign Up</button>
+                </div>
+            </form>
+        </div>
+        <footer>
+            <p>&copy; 2023 Property Rentals</p>
+        </footer>
+    </main>
+</body>
+</html>
