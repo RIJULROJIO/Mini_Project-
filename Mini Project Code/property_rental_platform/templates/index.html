@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,7 +13,7 @@
         /* CSS for Header */
         body {
             font-family: Arial, sans-serif;
-            background-image: url('background-image.jpg'); /* Add your background image URL here */
+            background-image: url(''); /* Add your background image URL here */
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -29,7 +30,11 @@
             font-size: 36px;
             margin-bottom: 10px;
             text-align: left;
+        }
 
+        a {
+            text-decoration: none; /* Remove underline */
+            color: #c9ecd5; /* Change link color to orange; you can use any color you like */
         }
 
         header nav ul {
@@ -59,9 +64,81 @@
         /* CSS for Main Content */
         main {
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9); /* Add a semi-transparent white background */
+            background-color: rgba(191, 242, 206, 0.9); /* Add a semi-transparent white background */
             border-radius: 10px;
             margin: 20px;
+        }
+
+        /* CSS for Search Form */
+        .search-form {
+            padding: 20px;
+            background-color: #f4f4f4; /* Background color for the search form */
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .search-form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .search-form input[type="text"],
+        .search-form select,
+        .search-form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* CSS for Property Listings */
+        .property-listings {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .property {
+            flex: 1 1 calc(33.33% - 20px);
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+
+        .property:hover {
+            transform: scale(1.05); /* Increase size on hover */
+        }
+
+        .property img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* CSS for Site Description Section */
+        .site-description {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            animation: fadeInUp 1s ease; /* Add fade-in animation */
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* CSS for Footer */
@@ -70,15 +147,17 @@
             color: #fff;
             text-align: center;
             padding: 10px;
-            position: absolute;
+            position: fixed;
             bottom: 0;
             width: 100%;
         }
     </style>
 </head>
 <body>
+    
     <header>
-        <h1>PROPERTY RENTALS</h1>
+        <h1><a href="#">PROPERTY RENTALS</a></h1>
+        
         <nav>
             <ul>
                 <li><a href="#">Home</a></li>
@@ -92,6 +171,47 @@
     <main>
         <h2>Welcome to Property Rentals</h2>
         <p>Find your dream rental property today.</p>
+        
+        <!-- Search Form -->
+        <div class="search-form">
+            <h3>Search for Properties</h3>
+            <form>
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" placeholder="Enter location">
+
+                <label for="property-type">Property Type:</label>
+                <select id="property-type" name="property-type">
+                    <option value="apartment">Apartment</option>
+                    <option value="house">House</option>
+                    <option value="condo">Condo</option>
+                </select>
+
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <!-- End of Search Form -->
+        
+        <!-- Property Listings Section -->
+        <section class="property-listings">
+            <h3>Property Listings </h3>
+            <div class="property">
+                <img src="property1.jpg" alt="Property 1">
+                <p>Property details go here.</p>
+            </div>
+            <div class="property">
+                <img src="property2.jpg" alt="Property 2">
+                <p>Property details go here.</p>
+            </div>
+            <!-- Add more property listings as needed -->
+        </section>
+        <!-- End of Property Listings Section -->
+        
+         <!-- Site Description Section -->
+         <section class="site-description">
+            <h3>About Property Rentals</h3>
+            <p></p>
+        </section>
+        <!-- End of Site Description Section -->
     </main>
     
     <footer>
