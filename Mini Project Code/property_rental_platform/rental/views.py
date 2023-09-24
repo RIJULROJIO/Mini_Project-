@@ -1,6 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .forms import SignupForm
-from django.shortcuts import redirect
+from .models import UserProfile
+from django.contrib.auth import authenticate, login
+from django.contrib.sessions.models import Session
+
+
 
 
 
@@ -24,9 +28,50 @@ def signup(request):
     else:
         form = SignupForm()
     return render(request, 'signup.html', {'form': form})
-
-
 def login(request):
-    return render(request,'login.html')
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = UserProfile.objects.filter(username=username, password=password).first()
+        if user is not None:
+            print(f'User Role: {user.role}')
+
+            request.session['user_id'] = user.id
+            request.session['user_role'] = user.role
+
+            # Redirect based on user role (if needed)
+            if user.role == 'tenant':
+                return redirect('tenantpage.html')
+            elif user.role == 'owner':
+                return redirect('ownerpage.html')
+            # Add more role-based redirects as needed
+
+            return redirect('index')  # Redirect to the index page after successful login
+        else:
+            # Handle invalid login credentials
+            messages.error(request, 'Invalid username or password.')
+
+    return render(request, 'login.html')
+
+
+
+
+
+
+
+def tenantpage(request):
+    # Retrieve user role from the session
+    user_role = request.session.get('user_role')
+
+    # Check if the user is logged in as a tenant
+    if user_role == 'tenant':
+        # Render the tenant page
+        return render(request, 'tenantpage.html')
+    else:
+        # Redirect to the login page or show an error message
+        return redirect('login')
+
+def ownerpage(request):
+    return render(request,'ownerpage.html')
 
 

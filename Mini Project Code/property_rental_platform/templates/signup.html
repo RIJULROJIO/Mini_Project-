@@ -16,12 +16,14 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
+            background-color: antiquewhite;
+
             margin: 0;
         }
 
         header {
-            background-color: rgba(0, 0, 0, 0.7);
-            color: #fff;
+            background-color: rgba(112, 155, 103, 0.7);
+            color: #577835;
             text-align: left;
             padding: 20px;
         }
@@ -32,12 +34,12 @@
         }
         a {
             text-decoration: none; /* Remove underline */
-            color: #c9ecd5; /* Change link color to orange; you can use any color you like */
+            color: #affa0e; /* Change link color to orange; you can use any color you like */
         }
         /* CSS for Main Content */
         main {
             padding: 20px;
-            background-color: rgba(184, 227, 186, 0.9);
+            background-color: rgba(250, 196, 226, 0.9);
             border-radius: 10px;
             margin: 20px;
             min-height: 80vh;
@@ -48,7 +50,7 @@
 
         /* CSS for Sign Up Form */
         .signup-form {
-            background-color: #fff;
+            background-color: #fcd28a;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -93,7 +95,7 @@
 
         /* CSS for Buttons */
         .btn {
-            background-color: #007BFF;
+            background-color: #f09fee;
             color: #fff;
             border: none;
             padding: 10px 20px;
@@ -103,12 +105,12 @@
         }
 
         .btn:hover {
-            background-color: #0056b3;
+            background-color: #a9dcab;
         }
 
         /* CSS for Footer */
         footer {
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(136, 98, 98, 0.7);
             color: #fff;
             text-align: center;
             padding: 10px;
@@ -159,7 +161,7 @@
                 {% csrf_token %} 
                 <div class="role-selector">
                     <label for="tenant">I am a Tenant:</label>
-                    <input type="radio" id="tenant" name="role" value="tenant" checked>
+                    <input type="radio" id="tenant" name="role" value="tenant" >
                     <label for="owner">I am a Property Owner:</label>
                     <input type="radio" id="owner" name="role" value="owner">
                 </div>
