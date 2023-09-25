@@ -1,6 +1,9 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
+    
     <title>Sign Up Page</title>
     <style>
         /* Reset some default styles */
@@ -34,7 +37,7 @@
         }
         a {
             text-decoration: none; /* Remove underline */
-            color: #affa0e; /* Change link color to orange; you can use any color you like */
+            color: #eff0ee; /* Change link color to orange; you can use any color you like */
         }
         /* CSS for Main Content */
         main {
@@ -50,6 +53,8 @@
 
         /* CSS for Sign Up Form */
         .signup-form {
+            background-image: url('{% static "images/prop.jpg" %}'); /* Add your background image URL here */
+
             background-color: #fcd28a;
             padding: 20px;
             border-radius: 5px;
@@ -167,16 +172,16 @@
                 </div>
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required >
+                    <input type="text" id="username" name="username" required placeholder="username">
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required >
+                    <input type="password" id="password" name="password" required placeholder="password" >
                 </div>
                
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required placeholder="email">
                 </div>
                 <div>
                     <button class="btn" type="submit">Sign Up</button>

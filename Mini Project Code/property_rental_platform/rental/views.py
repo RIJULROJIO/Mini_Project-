@@ -1,8 +1,12 @@
 from django.shortcuts import render,redirect
 from .forms import SignupForm
 from .models import UserProfile
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
 from django.contrib.sessions.models import Session
+
+
+from django.contrib.auth import authenticate, login
+from django.contrib import messages  # Import the messages module
 
 
 
@@ -10,9 +14,6 @@ from django.contrib.sessions.models import Session
 
 def index(request):
     return render(request, 'index.html')
-from django.contrib import messages  # Import the messages module
-from .forms import SignupForm
-from django.shortcuts import render, redirect
 
 def signup(request):
     if request.method == 'POST':
@@ -38,6 +39,8 @@ def login(request):
 
             request.session['user_id'] = user.id
             request.session['user_role'] = user.role
+            request.session['username'] = user.username  # Store the username in the session
+
 
             # Redirect based on user role (if needed)
             if user.role == 'tenant':
@@ -46,12 +49,16 @@ def login(request):
                 return redirect('ownerpage.html')
             # Add more role-based redirects as needed
 
-            return redirect('index')  # Redirect to the index page after successful login
+            return redirect('index.html')  # Redirect to the index page after successful login
         else:
             # Handle invalid login credentials
             messages.error(request, 'Invalid username or password.')
 
     return render(request, 'login.html')
+def logout_view(request):
+    request.session.flush()  # Clear the current session
+    logout(request)
+    return redirect('index.html')
 
 
 
@@ -73,5 +80,8 @@ def tenantpage(request):
 
 def ownerpage(request):
     return render(request,'ownerpage.html')
+
+
+
 
 

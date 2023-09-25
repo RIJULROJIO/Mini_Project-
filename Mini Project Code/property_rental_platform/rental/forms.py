@@ -1,11 +1,16 @@
 from django import forms
 from .models import UserProfile
+from django.contrib.auth.password_validation import validate_password
+
+import re
+
 
 class SignupForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
         fields = ['role', 'username', 'email', 'password'] 
+        
 
     def clean(self):
         cleaned_data = super().clean()
@@ -19,7 +24,18 @@ class SignupForm(forms.ModelForm):
 
         if UserProfile.objects.filter(email=email).exists():
             raise forms.ValidationError("Email already registered. Please use another email.")
-
-       
+        
 
         return cleaned_data
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        validate_password(password)  # Django's built-in password validation
+        return password
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+       
+
+        if ' ' in username:
+            raise forms.ValidationError("Username cannot contain spaces.")
+        return username
+    
