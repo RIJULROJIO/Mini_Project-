@@ -160,39 +160,117 @@
     </ul>
 {% endif %}
 
-        <div class="signup-form">
-            <h2>Sign Up</h2>
-            <form action="#" method="post">
-                {% csrf_token %} 
-                <div class="role-selector">
-                    <label for="tenant">I am a Tenant:</label>
-                    <input type="radio" id="tenant" name="role" value="tenant" >
-                    <label for="owner">I am a Property Owner:</label>
-                    <input type="radio" id="owner" name="role" value="owner">
-                </div>
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required placeholder="username">
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required placeholder="password" >
-                </div>
-               
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required placeholder="email">
-                </div>
-                <div>
-                    <button class="btn" type="submit">Sign Up</button>
-                </div>
-                
-            </form>
-            
+<div class="signup-form">
+    <h2>Sign Up</h2>
+    <form action="#" method="post" id="signup-form">
+        {% csrf_token %} 
+        <div class="role-selector">
+            <div class="role-selector">
+                <label for="tenant">I am a Tenant:</label>
+                <input type="radio" id="tenant" name="role" value="tenant" >
+                <label for="owner">I am a Property Owner:</label>
+                <input type="radio" id="owner" name="role" value="owner">
+            </div>
         </div>
-        <footer>
-            <p>&copy; 2023 Property Rentals</p>
-        </footer>
-    </main>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required placeholder="username">
+            <small id="username-error" class="error"></small>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required placeholder="password">
+            <small id="password-error" class="error"></small>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required placeholder="email">
+            <small id="email-error" class="error"></small>
+        </div>
+        <div>
+            <button class="btn" type="submit">Sign Up</button>
+        </div>
+    </form>
+</div>
+</main>
+
+<script>
+const form = document.getElementById("signup-form");
+
+form.addEventListener("submit", function(event) {
+    let valid = true;
+
+    // Reset error messages
+    const errorElements = document.querySelectorAll(".error");
+    errorElements.forEach(errorElement => {
+        errorElement.textContent = "";
+    });
+
+    // Validate Username
+    const username = document.getElementById("username").value;
+    const usernameError = document.getElementById("username-error");
+    const usernamePattern = /^[a-zA-Z0-9]+$/;
+    if (!usernamePattern.test(username)) {
+        usernameError.textContent = "Username must not contain spaces or special characters.";
+        valid = false;
+    }
+
+    // Validate Password
+    const password = document.getElementById("password").value;
+    const passwordError = document.getElementById("password-error");
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordPattern.test(password)) {
+        passwordError.textContent = "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long.";
+        valid = false;
+    }
+
+    // Validate Email
+    const email = document.getElementById("email").value;
+    const emailError = document.getElementById("email-error");
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        emailError.textContent = "Please enter a valid email address.";
+        valid = false;
+    }
+
+    if (!valid) {
+        event.preventDefault(); // Prevent form submission
+    }
+});
+
+// Real-time validation as the user types
+document.getElementById("username").addEventListener("input", function() {
+    const username = this.value;
+    const usernameError = document.getElementById("username-error");
+    const usernamePattern = /^[a-zA-Z0-9]+$/;
+    if (!usernamePattern.test(username)) {
+        usernameError.textContent = "Username must not contain spaces or special characters.";
+    } else {
+        usernameError.textContent = "";
+    }
+});
+
+document.getElementById("password").addEventListener("input", function() {
+    const password = this.value;
+    const passwordError = document.getElementById("password-error");
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordPattern.test(password)) {
+        passwordError.textContent = "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long.";
+    } else {
+        passwordError.textContent = "";
+    }
+});
+
+document.getElementById("email").addEventListener("input", function() {
+    const email = this.value;
+    const emailError = document.getElementById("email-error");
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        emailError.textContent = "Please enter a valid email address.";
+    } else {
+        emailError.textContent = "";
+    }
+});
+</script>
 </body>
 </html>

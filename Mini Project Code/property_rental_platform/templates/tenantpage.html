@@ -16,12 +16,12 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-color: antiquewhite;
-
+            background-color: #f0f0f0;
+            color: #333;
         }
 
         header {
-            background-color: rgba(211, 117, 117, 0.7);
+            background-color: #009688; /* Header background color */
             color: #fff;
             text-align: center;
             padding: 20px;
@@ -34,8 +34,8 @@
         }
 
         a {
-            text-decoration: none; /* Remove underline */
-            color: #d8d7d6; /* Change link color to orange; you can use any color you like */
+            text-decoration: none;
+            color: #d8d7d6;
         }
 
         header nav ul {
@@ -52,41 +52,38 @@
             text-decoration: none;
             color: #fff;
             font-weight: bold;
-            background-color: #869455; /* Button background color */
-            padding: 10px 20px; /* Adjust padding for buttons */
-            border-radius: 5px; /* Add rounded corners */
-            transition: background-color 0.3s; /* Smooth transition for hover effect */
+            background-color: #00796B; /* Button background color */
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
         header nav a:hover {
-            background-color: #0056b3; /* Change color on hover */
+            background-color: #005550;
         }
 
         /* CSS for Main Content */
         main {
             padding: 20px;
-            background-color: rgba(191, 242, 206, 0.9); /* Add a semi-transparent white background */
+            background-color: #fff;
             border-radius: 10px;
             margin: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
         }
 
         /* CSS for User Info */
         .user-info {
-            text-align: right;
+            text-align: center;
             padding: 20px;
-            background-color: #f4f4f4; /* Background color for user info */
+            background-color: #f4f4f4;
             border-radius: 10px;
             margin: 20px 0;
-        }
-
-        .user-info img {
-            max-width: 50px;
-            border-radius: 50%;
         }
 
         .user-name {
             font-size: 24px;
             margin: 10px 0;
+            color: #333;
         }
 
         .user-description {
@@ -96,7 +93,7 @@
 
         /* CSS for Footer */
         footer {
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: #333;
             color: #fff;
             text-align: center;
             padding: 10px;
@@ -104,18 +101,72 @@
             bottom: 0;
             width: 100%;
         }
+        /* CSS for Get Started Button */
+.get-started-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #00796B; /* Button background color */
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.get-started-button:hover {
+    background-color: #005550; /* Change color on hover */
+}
+#registration-form {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto; /* Center the form horizontally */
+            max-width: 400px; /* Set a maximum width for the form */
+        }
+
+        #registration-form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #registration-form input[type="text"],
+        #registration-form input[type="date"],
+        #registration-form input[type="tel"],
+        #registration-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #registration-form button {
+            background-color: #00796B;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #registration-form button:hover {
+            background-color: #005550;
+        }
+
+
     </style>
 </head>
 <body>
     
     <header>
-        <h1><a href="#"> Tenant</a></h1>
+        <h1><a href="#"></a></h1>
         
         <nav>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="edit-profile.html">Edit Profile</a></li>
-                <li><a href="index.html">Log out</a></li>
+                <li style="float: right; margin-left: 10px;"><a href="login.html">Log out</a></li>
             </ul>
         </nav>
     </header>
@@ -123,14 +174,55 @@
     <main>
         <!-- User Info Section -->
         <div class="user-info">
+
             <div class="user-name">Welcome, {{ request.session.username }}</div>
             <div class="user-description">Tenant</div>
+            <a href="#" class="get-started-button" id="show-form-button">Get Started</a>
+
         </div>
+        
         <!-- End of User Info Section -->
+        <div class="form-container" id="registration-form">
+            <form>
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" required>
+
+                <label for="dateofbirth">Date of Birth:</label>
+                <input type="date" id="dateofbirth" name="dateofbirth"  max="2004-12-31" required>
+                
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <label for="phoneno">Phone Number:</label>
+                <input type="tel" id="phoneno" name="phoneno" required>
+
+                <label for="currentaddress">Current Address:</label>
+                <input type="text" id="currentaddress" name="currentaddress" required>
+
+              <!-- Inside your form in the HTML -->
+<label for="photoid">Photo ID (PDF only):</label>
+<input type="file" id="photoid" name="photoid" accept=".pdf" required>
+
+
+                <button type="submit">Submit</button>
+            </form>        </div>
     </main>
     
     <footer>
         <p>&copy; 2023 User Profile</p>
     </footer>
+    <script>
+        // JavaScript to show the registration form on button click
+        const showFormButton = document.getElementById('show-form-button');
+        const registrationForm = document.getElementById('registration-form');
+
+        showFormButton.addEventListener('click', function() {
+            registrationForm.style.display = 'block';
+        });
+    </script>
 </body>
 </html>

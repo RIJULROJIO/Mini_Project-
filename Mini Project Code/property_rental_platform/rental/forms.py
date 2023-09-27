@@ -27,15 +27,5 @@ class SignupForm(forms.ModelForm):
         
 
         return cleaned_data
-    def clean_password(self):
-        password = self.cleaned_data.get('password')
-        validate_password(password)  # Django's built-in password validation
-        return password
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-       
-
-        if ' ' in username:
-            raise forms.ValidationError("Username cannot contain spaces.")
-        return username
+    
     

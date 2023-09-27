@@ -17,7 +17,6 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-color: antiquewhite;
-
         }
 
         header {
@@ -34,8 +33,8 @@
         }
 
         a {
-            text-decoration: none; /* Remove underline */
-            color: #e5e8e6; /* Change link color to orange; you can use any color you like */
+            text-decoration: none;
+            color: #e5e8e6;
         }
 
         header nav ul {
@@ -52,29 +51,29 @@
             text-decoration: none;
             color: #fff;
             font-weight: bold;
-            background-color: #869455; /* Button background color */
-            padding: 10px 20px; /* Adjust padding for buttons */
-            border-radius: 5px; /* Add rounded corners */
-            transition: background-color 0.3s; /* Smooth transition for hover effect */
+            background-color: #869455;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
         header nav a:hover {
-            background-color: #0056b3; /* Change color on hover */
+            background-color: #0056b3;
         }
 
         /* CSS for Main Content */
         main {
             padding: 20px;
-            background-color: rgba(191, 242, 206, 0.9); /* Add a semi-transparent white background */
+            background-color: rgba(191, 242, 206, 0.9);
             border-radius: 10px;
             margin: 20px;
         }
 
         /* CSS for User Info */
         .user-info {
-            text-align: right;
+            text-align: center;
             padding: 20px;
-            background-color: #f4f4f4; /* Background color for user info */
+            background-color: #f4f4f4;
             border-radius: 10px;
             margin: 20px 0;
         }
@@ -87,6 +86,7 @@
         .user-name {
             font-size: 24px;
             margin: 10px 0;
+            color: #333;
         }
 
         .user-description {
@@ -109,13 +109,11 @@
 <body>
     
     <header>
-        <h1><a href="#"> Property Owner</a></h1>
+        <h1><a href="#"></a></h1>
         
         <nav>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="edit-profile.html">Edit Profile</a></li>
-                <li><a href="index.html">Log out</a></li>
+                <li style="float: right; margin-left: 10px;"><a href="index.html">Log out</a></li>
             </ul>
         </nav>
     </header>

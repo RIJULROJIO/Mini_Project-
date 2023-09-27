@@ -18,25 +18,26 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-color: antiquewhite;
+            background-color: #f0f0f0; /* Light gray background */
         }
 
         header {
-            background-color: rgba(210, 190, 149, 0.7);
-            color: #03294d;
+            background-color: #2c3e50; /* Dark blue header background */
+            color: #ffffff; /* White text color */
             text-align: center;
             padding: 20px;
         }
 
         header h1 {
-            font-size: 36px;
+            font-size: 37px; /* Larger font size */
             margin-bottom: 10px;
             text-align: left;
+            font-family: 'Lato' /* Attractive font for the title */
         }
 
         a {
-            text-decoration: none; /* Remove underline */
-            color: #fafafa; /* Change link color to orange; you can use any color you like */
+            text-decoration: none;
+            color: #dbdada; /* Red link color */
         }
 
         header nav ul {
@@ -46,61 +47,80 @@
 
         header nav li {
             display: inline;
-            margin-right: 10px;
+            margin-right: 20px; /* Increased margin between navigation items */
         }
 
         header nav a {
-            
             text-decoration: none;
-            color: #fff;
+            color: #ffffff;
             font-weight: bold;
-            background-color: #80cce8; /* Button background color */
-            padding: 10px 20px; /* Adjust padding for buttons */
-            border-radius: 5px; /* Add rounded corners */
-            transition: background-color 0.3s; /* Smooth transition for hover effect */
+            background-color: #3498db; /* Blue button background color */
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
         header nav a:hover {
-            background-color: #09ec82; /* Change color on hover */
+            background-color: #e67e22; /* Orange color on hover */
         }
 
         /* CSS for Main Content */
         main {
             padding: 20px;
-            background-color: rgba(185, 187, 186, 0.9); /* Add a semi-transparent white background */
+            background-color: #f0f0f0;
             border-radius: 10px;
             margin: 20px;
-            background-image: url('{% static "images/prop.jpg" %}'); /* Add your background image URL here */
-
+            background-image: url('{% static "images/prop2.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            color: #333; /* Dark text color */
         }
 
         /* CSS for Search Form */
         .search-form {
             padding: 20px;
-            background-color: #dbb7b7; /* Background color for the search form */
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
             border-radius: 10px;
             margin: 20px 0;
+        }
+
+        .search-form h3 {
+            font-size: 24px; /* Larger font size for the form title */
+            color: #333;
+            margin-bottom: 20px;
         }
 
         .search-form label {
             display: block;
             margin-bottom: 10px;
+            font-weight: bold;
         }
 
         .search-form input[type="text"],
         .search-form select,
         .search-form button {
-            width: 50%;
+            width: 100%;
             padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #f10cd7;
+            margin-bottom: 15px; /* Increased margin */
+            border: 1px solid #ccc;
             border-radius: 5px;
+        }
+
+        .search-form button {
+            background-color: #e74c3c; /* Red search button background color */
+            color: #fff; /* White text color */
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .search-form button:hover {
+            background-color: #c0392b; /* Darker red on hover */
         }
 
         /* CSS for Property Listings */
         .property-listings {
             padding: 20px;
-            background-color: #eda8a8;
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
             margin: 20px 0;
             display: flex;
@@ -110,14 +130,16 @@
 
         .property {
             flex: 1 1 calc(33.33% - 20px);
-            border: 1px solid #ecb8ed;
+            border: 1px solid #ccc;
             padding: 10px;
             border-radius: 5px;
             transition: transform 0.3s;
+            background-color: #fff;
         }
 
         .property:hover {
-            transform: scale(1.05); /* Increase size on hover */
+            transform: scale(1.05);
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow on hover */
         }
 
         .property img {
@@ -128,27 +150,16 @@
         /* CSS for Site Description Section */
         .site-description {
             padding: 20px;
-            background-color: #b19999;
+            background-color: #fff;
             border-radius: 10px;
             margin: 20px 0;
             text-align: center;
-            animation: fadeInUp 1s ease; /* Add fade-in animation */
+            animation: fadeInUp 1s ease;
         }
 
-        @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* CSS for Footer */
+        /* Footer Styles */
         footer {
-            background-color: rgba(236, 180, 182, 0.7);
+            background-color: #333; /* Dark background color */
             color: #fff;
             text-align: center;
             padding: 10px;
@@ -166,7 +177,7 @@
         <nav>
             <ul>
                 <li style="float: right; margin-left: 10px;"><a href="#">Home</a></li>
-                <li style="float: right; margin-left: 10px;"><a href="#">About</a></li>
+                <li style="float: right; margin-left: 10px;"><a href="adminhome.html">Admin</a></li>
                 <li style="float: right; margin-left: 10px;"><a href="signup.html">Sign up</a></li>
                 <li style="float: right; margin-left: 10px;"><a href="login.html">Log in</a></li>
             </ul>
