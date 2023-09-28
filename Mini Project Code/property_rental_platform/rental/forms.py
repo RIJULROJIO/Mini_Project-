@@ -2,7 +2,6 @@ from django import forms
 from .models import UserProfile
 from django.contrib.auth.password_validation import validate_password
 
-import re
 
 
 class SignupForm(forms.ModelForm):

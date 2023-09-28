@@ -106,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Enable session support
 SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Use database-backed sessions
 SESSION_COOKIE_NAME = "rental_session"  # Change "myapp" to your app name
-SESSION_COOKIE_AGE = 10
+SESSION_COOKIE_AGE = 20
 
 
 

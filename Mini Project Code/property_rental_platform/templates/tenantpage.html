@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,7 +14,7 @@
         /* CSS for Header */
         body {
             font-family: Arial, sans-serif;
-            background-image: url(''); /* Add your background image URL here */
+            background-image: url('{% static "images/p4.png" %}');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -65,7 +67,8 @@
         /* CSS for Main Content */
         main {
             padding: 20px;
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+            
             border-radius: 10px;
             margin: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
@@ -118,44 +121,62 @@
     background-color: #005550; /* Change color on hover */
 }
 #registration-form {
-            display: none;
-            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px auto; /* Center the form horizontally */
-            max-width: 400px; /* Set a maximum width for the form */
-        }
+    display: none;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px auto; /* Center the form horizontally */
+    max-width: 400px; /* Set a maximum width for the form */
+    
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
+}
 
-        #registration-form label {
-            display: block;
-            margin-bottom: 10px;
-        }
+#registration-form label {
+    display: block;
+    margin-bottom: 10px;
+    color: #00796B; /* Label text color */
+}
 
-        #registration-form input[type="text"],
-        #registration-form input[type="date"],
-        #registration-form input[type="tel"],
-        #registration-form select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+#registration-form input[type="text"],
+#registration-form input[type="date"],
+#registration-form input[type="tel"],
+#registration-form select,
+#registration-form input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f4f4f4; /* Input background color */
+}
 
-        #registration-form button {
-            background-color: #00796B;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+#registration-form input[type="text"]:focus,
+#registration-form input[type="date"]:focus,
+#registration-form input[type="tel"]:focus,
+#registration-form select:focus,
+#registration-form input[type="file"]:focus {
+    outline: none;
+    border-color: #00796B; /* Input border color on focus */
+}
 
-        #registration-form button:hover {
-            background-color: #005550;
-        }
+#registration-form button {
+    background-color: #00796B;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
+#registration-form button:hover {
+    background-color: #005550; /* Change color on hover */
+}
+#validation-messages {
+    color: red;
+    margin-top: 10px;
+}
 
     </style>
 </head>
@@ -166,7 +187,7 @@
         
         <nav>
             <ul>
-                <li style="float: right; margin-left: 10px;"><a href="login.html">Log out</a></li>
+<li style="float: right; margin-left: 10px;"><a href="{% url 'logout_view' %}">Log out</a></li>
             </ul>
         </nav>
     </header>
@@ -184,12 +205,25 @@
         <!-- End of User Info Section -->
         <div class="form-container" id="registration-form">
             <form>
-                <label for="fullname">Full Name:</label>
-                <input type="text" id="fullname" name="fullname" required>
+                <div id="validation-messages"></div>
 
-                <label for="dateofbirth">Date of Birth:</label>
-                <input type="date" id="dateofbirth" name="dateofbirth"  max="2004-12-31" required>
+                <!-- ID Field -->
                 
+
+
+                <!-- Full Name Field -->
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" required placeholder="fullname">
+                <div id="validation-messages"></div>
+
+
+                <!-- Date of Birth Field -->
+                <label for="dateofbirth">Date of Birth (must be 18 years or older):</label>
+                <input type="date" id="dateofbirth" name="dateofbirth" max="2004-12-31" required>
+                
+                <div id="validation-messages"></div>
+
+                <!-- Gender Field -->
                 <label for="gender">Gender:</label>
                 <select id="gender" name="gender" required>
                     <option value="male">Male</option>
@@ -197,15 +231,21 @@
                     <option value="other">Other</option>
                 </select>
 
-                <label for="phoneno">Phone Number:</label>
-                <input type="tel" id="phoneno" name="phoneno" required>
+                <!-- Phone Number Field -->
+                <label for="phoneno">Phone Number (numeric characters only):</label>
+                <input type="tel" id="phoneno" name="phoneno" pattern="[0-9]+" required placeholder="mobno">
+                <div id="validation-messages"></div>
 
+                <!-- Current Address Field -->
                 <label for="currentaddress">Current Address:</label>
-                <input type="text" id="currentaddress" name="currentaddress" required>
+                <input type="text" id="currentaddress" name="currentaddress" required placeholder="Address">
+                <div id="validation-messages"></div>
 
-              <!-- Inside your form in the HTML -->
-<label for="photoid">Photo ID (PDF only):</label>
-<input type="file" id="photoid" name="photoid" accept=".pdf" required>
+                <!-- Photo ID Field (PDF only) -->
+                <label for="photoid">Photo ID (PDF only):</label>
+                <input type="file" id="photoid" name="photoid" accept=".pdf" required>
+                
+
 
 
                 <button type="submit">Submit</button>
@@ -219,10 +259,76 @@
         // JavaScript to show the registration form on button click
         const showFormButton = document.getElementById('show-form-button');
         const registrationForm = document.getElementById('registration-form');
+        const validationMessages = document.getElementById('validation-messages');
+
 
         showFormButton.addEventListener('click', function() {
             registrationForm.style.display = 'block';
         });
+         // Event listeners for real-time validation
+        const fullnameInput = document.getElementById('fullname');
+        const dateofbirthInput = document.getElementById('dateofbirth');
+        const phonenoInput = document.getElementById('phoneno');
+        const currentaddressInput = document.getElementById('currentaddress');
+        const photoidInput = document.getElementById('photoid');
+
+        fullnameInput.addEventListener('input', validateFullname);
+        dateofbirthInput.addEventListener('input', validateDateOfBirth);
+        phonenoInput.addEventListener('input', validatePhoneNo);
+        currentaddressInput.addEventListener('input', validateCurrentAddress);
+
+        
+
+        function validateFullname() {
+            // Example validation: Full Name must not be empty
+            const fullnameValue = fullnameInput.value;
+            if (fullnameValue.trim() === '') {
+                displayValidationMessage('Full Name is required.');
+            } else {
+                clearValidationMessage();
+            }
+        }
+
+        function validateDateOfBirth() {
+            // Example validation: Date of Birth must be 18 years or older
+            const dateOfBirthValue = dateofbirthInput.value;
+            const birthDate = new Date(dateOfBirthValue);
+            const eighteenYearsAgo = new Date();
+            eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+            if (birthDate > eighteenYearsAgo) {
+                displayValidationMessage('You must be 18 years or older.');
+            } else {
+                clearValidationMessage();
+            }
+        }
+
+        function validatePhoneNo() {
+            // Example validation: Phone Number must contain only numeric characters
+            const phoneNoValue = phonenoInput.value;
+            if (!/^\d+$/.test(phoneNoValue)) {
+                displayValidationMessage('Phone Number must contain only numeric characters.');
+            } else {
+                clearValidationMessage();
+            }
+        }
+
+        function validateCurrentAddress() {
+            // Example validation: Current Address must not be empty
+            const currentAddressValue = currentaddressInput.value;
+            if (currentAddressValue.trim() === '') {
+                displayValidationMessage('Current Address is required.');
+            } else {
+                clearValidationMessage();
+            }
+        }
+
+        function displayValidationMessage(message) {
+            validationMessages.textContent = message;
+        }
+
+        function clearValidationMessage() {
+            validationMessages.textContent = '';
+        }
     </script>
 </body>
 </html>

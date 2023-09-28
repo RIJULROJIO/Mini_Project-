@@ -6,8 +6,8 @@
     
     <title>Sign Up Page</title>
     <style>
-        /* Reset some default styles */
-        body, h1, h2, p, ul, li {
+          /* Reset some default styles */
+          body, h1, h2, p, ul, li {
             margin: 0;
             padding: 0;
         }
@@ -20,7 +20,6 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-color: antiquewhite;
-
             margin: 0;
         }
 
@@ -35,14 +34,16 @@
             font-size: 36px;
             margin-bottom: 10px;
         }
+
         a {
-            text-decoration: none; /* Remove underline */
-            color: #eff0ee; /* Change link color to orange; you can use any color you like */
+            text-decoration: none;
+            color: #eff0ee;
         }
+
         /* CSS for Main Content */
         main {
             padding: 20px;
-            background-color: rgba(250, 196, 226, 0.9);
+            background-color: rgba(185, 182, 183, 0.9);
             border-radius: 10px;
             margin: 20px;
             min-height: 80vh;
@@ -51,24 +52,33 @@
             justify-content: space-between;
         }
 
-        /* CSS for Sign Up Form */
-        .signup-form {
-            background-image: url('{% static "images/prop.jpg" %}'); /* Add your background image URL here */
-
+        /* CSS for Sign Up Form Container */
+        .signup-container {
             background-color: #fcd28a;
-            padding: 20px;
+            padding: 10px;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
+        /* CSS for Sign Up Form */
+        .signup-form {
+            background-image: url('{% static "images/prop.jpg" %}');
+            background-repeat: no-repeat;
+            background-size:70%;
+            background-color: transparent; /* Removed background color */
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: none; /* Removed box shadow */
+        }
+
         .signup-form h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: 20px;
+            margin-bottom: 5px;
         }
 
         /* Reordered form fields and adjusted styling */
         .form-group {
-            margin-bottom: 15px; /* Reduced margin to shorten the fields */
+            margin-bottom: 10px; /* Reduced margin */
         }
 
         .form-group label {
@@ -77,17 +87,26 @@
             margin-bottom: 5px;
         }
 
+        .messages .success {
+            background-color: #4CAF50;
+        }
+
+        .messages .error {
+            background-color: #f44336;
+            color: white;
+        }
+
         .form-group input[type="text"],
         .form-group input[type="password"],
         .form-group input[type="email"] {
-            width: 100%; /* Use full width on mobile */
-            padding: 8px;
+            width: 60%;
+            padding: 5px; /* Reduced padding */
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
         .role-selector {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .role-selector label {
@@ -124,7 +143,7 @@
 
         /* Media Queries for Responsive Design */
         @media screen and (max-width: 768px) {
-            .signup-form {
+            .signup-container {
                 padding: 10px;
             }
 
@@ -136,12 +155,18 @@
             .form-group input[type="password"],
             .form-group input[type="email"] {
                 width: 100%;
-                padding: 8px;
+                padding: 5px; /* Reduced padding */
             }
 
             .btn {
-                padding: 8px 16px;
+                padding: 8px 16px; /* Adjusted padding */
             }
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -183,6 +208,12 @@
             <small id="password-error" class="error"></small>
         </div>
         <div class="form-group">
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required placeholder="confirm password">
+            <small id="confirm-password-error" class="error"></small>
+        </div>
+        
+        <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required placeholder="email">
             <small id="email-error" class="error"></small>
@@ -223,6 +254,14 @@ form.addEventListener("submit", function(event) {
         passwordError.textContent = "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long.";
         valid = false;
     }
+    const confirmPasswordInput = document.getElementById("confirm_password").value;
+    const confirmPasswordError = document.getElementById("confirm-password-error");
+    if (password !== confirmPasswordInput) {
+        confirmPasswordError.textContent = "Passwords do not match.";
+        valid = false;
+    }
+   
+    
 
     // Validate Email
     const email = document.getElementById("email").value;
@@ -258,6 +297,20 @@ document.getElementById("password").addEventListener("input", function() {
         passwordError.textContent = "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long.";
     } else {
         passwordError.textContent = "";
+    }
+});
+
+
+// Add real-time validation for confirm password
+document.getElementById("confirm_password").addEventListener("input", function() {
+    const password = document.getElementById("password").value;
+    const confirmPasswordInput = this.value;
+    const confirmPasswordError = document.getElementById("confirm-password-error");
+
+    if (password !== confirmPasswordInput) {
+        confirmPasswordError.textContent = "Passwords do not match.";
+    } else {
+        confirmPasswordError.textContent = "";
     }
 });
 
