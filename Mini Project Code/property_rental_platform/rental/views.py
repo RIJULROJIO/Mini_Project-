@@ -56,6 +56,8 @@ def login_view(request):
     return render(request, 'login.html')
 
 def tenantpage(request):
+    
+
 
     return render(request,'tenantpage.html')
 
