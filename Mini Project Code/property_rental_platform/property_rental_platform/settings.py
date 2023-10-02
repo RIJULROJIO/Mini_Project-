@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',  # Add this middleware
 
+
 ]
 
 ROOT_URLCONF = 'property_rental_platform.urls'
@@ -102,11 +103,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 # settings.py
-
 # Enable session support
-SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Use database-backed sessions
-SESSION_COOKIE_NAME = "rental_session"  # Change "myapp" to your app name
-SESSION_COOKIE_AGE = 20
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
 

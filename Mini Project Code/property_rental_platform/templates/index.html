@@ -143,7 +143,7 @@
         }
 
         .property img {
-            max-width: 100%;
+            max-width: 80%;
             height: auto;
         }
 
@@ -167,6 +167,7 @@
             bottom: 0;
             width: 100%;
         }
+        
     </style>
 </head>
 <body >
@@ -209,14 +210,22 @@
         
         <!-- Property Listings Section -->
         <section class="property-listings">
-            <h3>Property Listings </h3>
+            <h3> </h3>
             <div class="property">
-                <img src="property1.jpg" alt="Property 1">
-                <p>Property details go here.</p>
+                <img src="{% static 'images/p4.png' %}" alt="Property 1">
+                <p></p>
             </div>
             <div class="property">
-                <img src="property2.jpg" alt="Property 2">
-                <p>Property details go here.</p>
+                <img src="{% static 'images/p6.jpg' %}" alt="Property 1">
+                <p></p>
+            </div>
+            <div class="property">
+                <img src="{% static 'images/p5.jpg' %}" alt="Property 1">
+                <p></p>
+            </div>
+            <div class="property">
+                <img src="{% static 'images/propgif.gif' %}" alt="Property 1">
+                <p></p>
             </div>
             <!-- Add more property listings as needed -->
         </section>
@@ -225,13 +234,18 @@
          <!-- Site Description Section -->
          <section class="site-description">
             <h3>About Property Rentals</h3>
-            <p></p>
+
+            <p style="font-size: 18px; font-weight: bold; text-align: center;">At Property Rentals, we understand that the perfect property goes beyond just a home. That's why we offer a diverse range of rental properties across various categories to cater to your unique needs. Whether you're seeking a cozy apartment, a commercial space, or a vacation retreat, our platform has you covered.</p>
         </section>
         <!-- End of Site Description Section -->
+        <section class="site-description">
+
+        </section>
     </main>
     
     <footer>
         <p>&copy; 2023 Property Rentals</p>
     </footer>
+    
 </body>
 </html>

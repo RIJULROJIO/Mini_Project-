@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,15 +14,16 @@
         /* CSS for Header */
         body {
             font-family: Arial, sans-serif;
-            background-image: url(''); /* Add your background image URL here */
+            background-image: url('{% static "images/p4.png" %}');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-color: antiquewhite;
+            background-color: #f0f0f0;
+            color: #333;
         }
 
         header {
-            background-color: rgba(197, 121, 121, 0.7);
+            background-color: #009688; /* Header background color */
             color: #fff;
             text-align: center;
             padding: 20px;
@@ -34,7 +37,7 @@
 
         a {
             text-decoration: none;
-            color: #e5e8e6;
+            color: #d8d7d6;
         }
 
         header nav ul {
@@ -51,22 +54,24 @@
             text-decoration: none;
             color: #fff;
             font-weight: bold;
-            background-color: #869455;
+            background-color: #00796B; /* Button background color */
             padding: 10px 20px;
             border-radius: 5px;
             transition: background-color 0.3s;
         }
 
         header nav a:hover {
-            background-color: #0056b3;
+            background-color: #005550;
         }
 
         /* CSS for Main Content */
         main {
             padding: 20px;
-            background-color: rgba(191, 242, 206, 0.9);
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+            
             border-radius: 10px;
             margin: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
         }
 
         /* CSS for User Info */
@@ -76,11 +81,6 @@
             background-color: #f4f4f4;
             border-radius: 10px;
             margin: 20px 0;
-        }
-
-        .user-info img {
-            max-width: 50px;
-            border-radius: 50%;
         }
 
         .user-name {
@@ -96,7 +96,7 @@
 
         /* CSS for Footer */
         footer {
-            background-color: rgba(244, 205, 74, 0.7);
+            background-color: #333;
             color: #fff;
             text-align: center;
             padding: 10px;
@@ -104,6 +104,80 @@
             bottom: 0;
             width: 100%;
         }
+        /* CSS for Get Started Button */
+.get-started-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #00796B; /* Button background color */
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.get-started-button:hover {
+    background-color: #005550; /* Change color on hover */
+}
+#registration-form {
+    display: none;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px auto; /* Center the form horizontally */
+    max-width: 400px; /* Set a maximum width for the form */
+    
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
+}
+
+#registration-form label {
+    display: block;
+    margin-bottom: 10px;
+    color: #00796B; /* Label text color */
+}
+
+#registration-form input[type="text"],
+#registration-form input[type="date"],
+#registration-form input[type="tel"],
+#registration-form select,
+#registration-form input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f4f4f4; /* Input background color */
+}
+
+#registration-form input[type="text"]:focus,
+#registration-form input[type="date"]:focus,
+#registration-form input[type="tel"]:focus,
+#registration-form select:focus,
+#registration-form input[type="file"]:focus {
+    outline: none;
+    border-color: #00796B; /* Input border color on focus */
+}
+
+#registration-form button {
+    background-color: #00796B;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#registration-form button:hover {
+    background-color: #005550; /* Change color on hover */
+}
+#validation-messages {
+    color: red;
+    margin-top: 10px;
+}
+
     </style>
 </head>
 <body>
@@ -113,7 +187,7 @@
         
         <nav>
             <ul>
-                <li style="float: right; margin-left: 10px;"><a href="index.html">Log out</a></li>
+<li style="float: right; margin-left: 10px;"><a href="{% url 'logout_view' %}">Log out</a></li>
             </ul>
         </nav>
     </header>
@@ -121,14 +195,140 @@
     <main>
         <!-- User Info Section -->
         <div class="user-info">
+
             <div class="user-name">Welcome, {{ request.session.username }}</div>
             <div class="user-description">Property Owner</div>
+            <a href="#" class="get-started-button" id="show-form-button">Edit Profile</a>
+
         </div>
+        
         <!-- End of User Info Section -->
+        <div class="form-container" id="registration-form">
+            <form>
+                <div id="validation-messages"></div>
+
+                <!-- ID Field -->
+                
+
+
+                <!-- Full Name Field -->
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" required placeholder="fullname">
+                <div id="validation-messages"></div>
+
+
+                <!-- Date of Birth Field -->
+                <label for="dateofbirth">Date of Birth (must be 18 years or older):</label>
+                <input type="date" id="dateofbirth" name="dateofbirth" max="2004-12-31" required>
+                
+                <div id="validation-messages"></div>
+
+                <!-- Gender Field -->
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <!-- Phone Number Field -->
+                <label for="phoneno">Phone Number (numeric characters only):</label>
+                <input type="tel" id="phoneno" name="phoneno" pattern="[0-9]+" required placeholder="mobno">
+                <div id="validation-messages"></div>
+
+                <!-- Current Address Field -->
+                <label for="currentaddress">Current Address:</label>
+                <input type="text" id="currentaddress" name="currentaddress" required placeholder="Address">
+                <div id="validation-messages"></div>
+
+                <!-- Photo ID Field (PDF only) -->
+                <label for="photoid">Photo ID (PDF only):</label>
+                <input type="file" id="photoid" name="photoid" accept=".pdf" required>
+                
+
+
+
+                <button type="submit">Submit</button>
+            </form>        </div>
     </main>
     
     <footer>
         <p>&copy; 2023 User Profile</p>
     </footer>
+    <script>
+        // JavaScript to show the registration form on button click
+        const showFormButton = document.getElementById('show-form-button');
+        const registrationForm = document.getElementById('registration-form');
+        const validationMessages = document.getElementById('validation-messages');
+
+
+        showFormButton.addEventListener('click', function() {
+            registrationForm.style.display = 'block';
+        });
+         // Event listeners for real-time validation
+        const fullnameInput = document.getElementById('fullname');
+        const dateofbirthInput = document.getElementById('dateofbirth');
+        const phonenoInput = document.getElementById('phoneno');
+        const currentaddressInput = document.getElementById('currentaddress');
+        const photoidInput = document.getElementById('photoid');
+
+        fullnameInput.addEventListener('input', validateFullname);
+        dateofbirthInput.addEventListener('input', validateDateOfBirth);
+        phonenoInput.addEventListener('input', validatePhoneNo);
+        currentaddressInput.addEventListener('input', validateCurrentAddress);
+
+        
+
+        function validateFullname() {
+            // Example validation: Full Name must not be empty
+            const fullnameValue = fullnameInput.value;
+            if (fullnameValue.trim() === '') {
+                displayValidationMessage('Full Name is required.');
+            } else {
+                clearValidationMessage();
+            }
+        }
+
+        function validateDateOfBirth() {
+            // Example validation: Date of Birth must be 18 years or older
+            const dateOfBirthValue = dateofbirthInput.value;
+            const birthDate = new Date(dateOfBirthValue);
+            const eighteenYearsAgo = new Date();
+            eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+            if (birthDate > eighteenYearsAgo) {
+                displayValidationMessage('You must be 18 years or older.');
+            } else {
+                clearValidationMessage();
+            }
+        }
+
+        function validatePhoneNo() {
+            // Example validation: Phone Number must contain only numeric characters
+            const phoneNoValue = phonenoInput.value;
+            if (!/^\d+$/.test(phoneNoValue)) {
+                displayValidationMessage('Phone Number must contain only numeric characters.');
+            } else {
+                clearValidationMessage();
+            }
+        }
+
+        function validateCurrentAddress() {
+            // Example validation: Current Address must not be empty
+            const currentAddressValue = currentaddressInput.value;
+            if (currentAddressValue.trim() === '') {
+                displayValidationMessage('Current Address is required.');
+            } else {
+                clearValidationMessage();
+            }
+        }
+
+        function displayValidationMessage(message) {
+            validationMessages.textContent = message;
+        }
+
+        function clearValidationMessage() {
+            validationMessages.textContent = '';
+        }
+    </script>
 </body>
 </html>

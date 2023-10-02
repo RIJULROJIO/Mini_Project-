@@ -3,8 +3,7 @@ from .forms import SignupForm
 from .models import UserProfile
 from django.contrib.auth import logout
 from django.contrib.sessions.models import Session
-#from django.views.decorators.cache  import never_cache
-
+from django.http import HttpResponse
 
 from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Import the messages module
@@ -30,7 +29,7 @@ def signup(request):
     else:
         form = SignupForm()
     return render(request, 'signup.html', {'form': form})
-def login(request):
+def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -49,35 +48,24 @@ def login(request):
                 return redirect('ownerpage')
             # Add more role-based redirects as needed
 
-            return redirect('index')  # Redirect to the index page after successful login
+            #return redirect('index')  # Redirect to the index page after successful login
         else:
             # Handle invalid login credentials
             messages.error(request, 'Invalid username or password.')
 
     return render(request, 'login.html')
 
-def logout_view(request):
-    if 'user_id' in request.session:
-        del request.session['user_id']
-    if 'user_role' in request.session:
-        del request.session['user_role']
-    if 'username' in request.session:
-        del request.session['username']
-    
-    logout(request)
-    return redirect('index')
-
 def tenantpage(request):
-    # Retrieve user role from the session
-    user_role = request.session.get('user_role')
 
-    # Check if the user is logged in as a tenant
-    if user_role == 'tenant':
-        # Render the tenant page
-        return render(request, 'tenantpage.html')
-    else:
-        # Redirect to the login page or show an error message
-        return redirect('login')
+    return render(request,'tenantpage.html')
+
+def logout_view(request):
+
+  logout(request)
+  
+
+  return redirect('index')
+
 
 def ownerpage(request):
     return render(request,'ownerpage.html')
