@@ -1,11 +1,8 @@
 from django.shortcuts import render,redirect
-from .forms import SignupForm
+from .forms import SignupForm,UserProfileFilterForm
 from .models import UserProfile
 from django.contrib.auth import logout
 from django.contrib.sessions.models import Session
-from django.http import HttpResponse
-
-from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Import the messages module
 
 
@@ -29,6 +26,7 @@ def signup(request):
     else:
         form = SignupForm()
     return render(request, 'signup.html', {'form': form})
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -53,15 +51,22 @@ def login_view(request):
             # Handle invalid login credentials
             messages.error(request, 'Invalid username or password.')
 
-    return render(request, 'login.html')
+    response= render(request, 'login.html')
+    response['Cache-Control']='no-store,must-revalidate'
+    return response
 
 def tenantpage(request):
-    
-
-
-    return render(request,'tenantpage.html')
+  
+    user_role=request.session.get('user_role')
+    if user_role=='tenant':
+     response= render(request, 'tenantpage.html')
+     response['Cache-Control']='no-store,must-revalidate'
+     return response
+    else:
+        return redirect('login')
 
 def logout_view(request):
+
 
   logout(request)
   
@@ -70,9 +75,32 @@ def logout_view(request):
 
 
 def ownerpage(request):
-    return render(request,'ownerpage.html')
+    user_role=request.session.get('user_role')
+    if user_role=='owner':
+     response= render(request, 'ownerpage.html')
+     response['Cache-Control']='no-store,must-revalidate'
+     return response
+    else:
+        return redirect('login')
 def adminhome(request):
     return render(request,'adminhome.html')
+
+def user_profile_list(request):
+    profiles = UserProfile.objects.all()
+    form = UserProfileFilterForm(request.GET)
+
+    if form.is_valid():
+        username = form.cleaned_data['username']
+        role = form.cleaned_data['role']
+
+        if username:
+            profiles = profiles.filter(username__icontains=username)
+        if role:
+            profiles = profiles.filter(role=role)
+
+    return render(request, 'adminregusers.html', {'profiles': profiles, 'form': form})
+
+
 
 
 

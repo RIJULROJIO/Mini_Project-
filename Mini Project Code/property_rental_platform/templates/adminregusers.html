@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Accounts</title>
+    <style>
+        /* Top-level CSS for table formatting */
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        form {
+            margin: 20px 0;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        /* Add more styles as needed */
+    </style>
+</head>
+<body>
+    <h1>User Accounts</h1>
+    <form method="GET">
+        {{ form.username.label_tag }} {{ form.username }}
+        {{ form.role.label_tag }} {{ form.role }}
+        <button type="submit">Filter</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for profile in profiles %}
+                <tr>
+                    <td>{{ profile.username }}</td>
+                    <td>{{ profile.get_role_display }}</td>
+                    <td>{{ profile.email }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

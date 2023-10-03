@@ -105,7 +105,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # settings.py
 # Enable session support
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
 
@@ -134,3 +133,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SESSION_ENGINE="django.contrib.sessions.backends.db"
+SESSION_COOKIE_NAME="sessionid"
+LOGIN_URL='login'

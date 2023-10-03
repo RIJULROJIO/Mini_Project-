@@ -27,4 +27,9 @@ class SignupForm(forms.ModelForm):
 
         return cleaned_data
     
+class UserProfileFilterForm(forms.Form):
+    username = forms.CharField(required=False, label='Filter by Username')
+    role = forms.ChoiceField(required=False, choices=(('', 'Select Role'), ('tenant', 'Tenant'), ('owner', 'Property Owner')), label='Filter by Role')
+
+    
     

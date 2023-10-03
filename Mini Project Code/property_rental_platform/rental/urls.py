@@ -19,6 +19,7 @@ urlpatterns = [
     path('ownerpage.html', views.ownerpage, name='ownerpage'),
     path('logout/',views.logout_view, name='logout_view'),
     path('adminhome.html',views.adminhome, name='adminhome'),
+    path('adminregusers.html',views.user_profile_list,name='adminregusers')
     
 
 

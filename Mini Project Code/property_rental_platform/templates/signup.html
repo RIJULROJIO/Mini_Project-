@@ -1,13 +1,13 @@
 {% load static %}
 
+<!-- user_profile_list.html -->
 <!DOCTYPE html>
 <html>
 <head>
-    
     <title>Sign Up Page</title>
     <style>
-          /* Reset some default styles */
-          body, h1, h2, p, ul, li {
+        /* Reset some default styles */
+        body, h1, h2, p, ul, li {
             margin: 0;
             padding: 0;
         }
@@ -52,23 +52,36 @@
             justify-content: space-between;
         }
 
-        /* CSS for Sign Up Form Container */
-        .signup-container {
-            background-color: #fcd28a;
-            padding: 10px;
-            border-radius: 5px;
+        /* CSS for Card Container */
+        .card-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            margin: 20px;
         }
 
         /* CSS for Sign Up Form */
         .signup-form {
-            background-image: url('{% static "images/keyp.jpg" %}');
-            background-repeat: no-repeat;
-            background-size:70%;
-            background-color: transparent; /* Removed background color */
+            position: relative; /* Make the container a positioning context */
             padding: 5px;
             border-radius: 5px;
-            box-shadow: none; /* Removed box shadow */
+            box-shadow: none;
+        }
+
+        .signup-form::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('{% static "images/keyp.jpg" %}');
+            background-repeat: no-repeat;
+            background-size: 70%;
+            background-color: transparent;
+            backdrop-filter: blur(2px);
+            z-index: -1;
         }
 
         .signup-form h2 {
@@ -78,7 +91,7 @@
 
         /* Reordered form fields and adjusted styling */
         .form-group {
-            margin-bottom: 10px; /* Reduced margin */
+            margin-bottom: 10px;
         }
 
         .form-group label {
@@ -100,7 +113,7 @@
         .form-group input[type="password"],
         .form-group input[type="email"] {
             width: 60%;
-            padding: 5px; /* Reduced padding */
+            padding: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
@@ -143,7 +156,7 @@
 
         /* Media Queries for Responsive Design */
         @media screen and (max-width: 768px) {
-            .signup-container {
+            .card-container {
                 padding: 10px;
             }
 
@@ -155,11 +168,11 @@
             .form-group input[type="password"],
             .form-group input[type="email"] {
                 width: 100%;
-                padding: 5px; /* Reduced padding */
+                padding: 5px;
             }
 
             .btn {
-                padding: 8px 16px; /* Adjusted padding */
+                padding: 8px 16px;
             }
         }
 
@@ -167,63 +180,67 @@
             color: red;
             font-size: 14px;
             margin-top: 5px;
+            display: block;
         }
     </style>
 </head>
 <body>
     <header>
         <h1><a href="index.html">PROPERTY RENTALS</a></h1>
-        
     </header>
-    
+
     <main>
         {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
+        <ul class="messages">
+            {% for message in messages %}
             <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
+            {% endfor %}
+        </ul>
+        {% endif %}
 
-<div class="signup-form">
-    <h2>Sign Up</h2>
-    <form action="#" method="post" id="signup-form">
-        {% csrf_token %} 
-        <div class="role-selector">
-            <div class="role-selector">
-                <label for="tenant">I am a Tenant:</label>
-                <input type="radio" id="tenant" name="role" value="tenant" >
-                <label for="owner">I am a Property Owner:</label>
-                <input type="radio" id="owner" name="role" value="owner">
+        <div class="card-container">
+            <div class="signup-form">
+                <h2>Sign Up</h2>
+                <form action="#" method="post" id="signup-form">
+                    {% csrf_token %}
+                    <div class="role-selector">
+                        <div class="role-selector">
+                            <label for="tenant">I am a Tenant:</label>
+                            <input type="radio" id="tenant" name="role" value="tenant">
+                            <label for="owner">I am a Property Owner:</label>
+                            <input type="radio" id="owner" name="role" value="owner">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required placeholder="username">
+                        <small id="username-error" class="error"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required placeholder="password">
+                        <small id="password-error" class="error"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password:</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required
+                            placeholder="confirm password">
+                        <small id="confirm-password-error" class="error"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required placeholder="email">
+                        <small id="email-error" class="error"></small>
+                    </div>
+                    <div>
+                        <button class="btn" type="submit">Sign Up</button>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required placeholder="username">
-            <small id="username-error" class="error"></small>
-        </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required placeholder="password">
-            <small id="password-error" class="error"></small>
-        </div>
-        <div class="form-group">
-            <label for="confirm_password">Confirm Password:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required placeholder="confirm password">
-            <small id="confirm-password-error" class="error"></small>
-        </div>
-        
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required placeholder="email">
-            <small id="email-error" class="error"></small>
-        </div>
-        <div>
-            <button class="btn" type="submit">Sign Up</button>
-        </div>
-    </form>
-</div>
-</main>
+    </main>
+
 
 <script>
 const form = document.getElementById("signup-form");
