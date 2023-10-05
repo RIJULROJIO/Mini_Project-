@@ -268,7 +268,12 @@ form.addEventListener("submit", function(event) {
     const passwordError = document.getElementById("password-error");
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordPattern.test(password)) {
-        passwordError.textContent = "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long.";
+        passwordError.textContent = "Password must meet the following criteria:\n" +
+  "- At least 8 characters long\n" +
+  "- Contains at least one lowercase letter\n" +
+  "- Contains at least one uppercase letter\n" +
+  "- Contains at least one number\n" +
+  "- Contains at least one special character";
         valid = false;
     }
     const confirmPasswordInput = document.getElementById("confirm_password").value;

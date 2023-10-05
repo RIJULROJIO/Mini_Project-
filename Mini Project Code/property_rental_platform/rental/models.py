@@ -1,19 +1,13 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
-# Create your models here.
-
-class UserProfile(models.Model):
-    ROLE_CHOICES = [
-        ('tenant', 'Tenant'),
-        ('owner', 'Property Owner'),
-    ]
-
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='tenant')
-    username = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-
-    email = models.EmailField(unique=True)
+class CustomUser(AbstractUser):
+    # Add custom fields here if needed
+    role = models.CharField(max_length=15)  # For custom user roles, if needed
 
     def __str__(self):
-        return self.username
+        return self.username  # You can use any field for representation
+
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'

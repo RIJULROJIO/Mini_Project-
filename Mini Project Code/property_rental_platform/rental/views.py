@@ -1,108 +1,78 @@
-from django.shortcuts import render,redirect
-from .forms import SignupForm,UserProfileFilterForm
-from .models import UserProfile
-from django.contrib.auth import logout
-from django.contrib.sessions.models import Session
-from django.contrib import messages  # Import the messages module
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from .models import CustomUser  # Import your custom user model
+from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 
+from django.urls import reverse_lazy
 
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'user/password_reset_form.html'  # Your template for the password reset form
+    email_template_name = 'user/password_reset_email.html'  # Your email template for the password reset email
+    success_url = reverse_lazy('password_reset_done')  # URL to redirect after successful form submission
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'user/password_reset_confirm.html'  # Your template for password reset confirmation form
+    success_url = reverse_lazy('password_reset_complete')  # URL to redirect after successful password reset
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'user/password_reset_done.html'  # Your template for password reset done page
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'user/password_reset_complete.html'  # Your template for password reset complete page
 
-
-#@never_cache
 def index(request):
     return render(request, 'index.html')
 
 def signup(request):
-    if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Account created successfully!')  # Success message
-            return redirect('signup')  # Redirect to the index page
-        else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{field}: {error}')  # Validation error messages
-    else:
-        form = SignupForm()
-    return render(request, 'signup.html', {'form': form})
+    if request.method == "POST":
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirmPassword = request.POST.get('confirm_password')
 
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = UserProfile.objects.filter(username=username, password=password).first()
-        
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists")
+        elif CustomUser.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+        elif password != confirmPassword:
+            messages.error(request, "Passwords do not match")
+        else:
+            # Create a CustomUser with the 'TENANT' role (or the desired default role)
+            user = CustomUser(username=username, email=email, role='TENANT')
+            user.set_password(password)
+            user.save()
+            messages.success(request, "Registered successfully")
+            return redirect("login")
+    return render(request, 'signup.html')
+
+def login(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
         if user is not None:
-            # Store user data in the session
-            request.session['user_id'] = user.id
-            request.session['user_role'] = user.role
-            request.session['username'] = user.username
-
-            # Redirect based on user role (if needed)
-            if user.role == 'tenant':
-                return redirect('tenantpage')
-            elif user.role == 'owner':
-                return redirect('ownerpage')
-            # Add more role-based redirects as needed
-
-            #return redirect('index')  # Redirect to the index page after successful login
+            auth_login(request, user)
+            request.session['username'] = username
+            messages.success(request, "Login successful!")
+            # Redirect users based on their roles (customize as needed)
+            return redirect("tenantpage")
         else:
-            # Handle invalid login credentials
-            messages.error(request, 'Invalid username or password.')
+            messages.error(request, "Invalid login credentials")
 
-    response= render(request, 'login.html')
-    response['Cache-Control']='no-store,must-revalidate'
+    response = render(request, 'login.html')
+    response['Cache-Control'] = 'no-store, must-revalidate'
     return response
 
-def tenantpage(request):
-  
-    user_role=request.session.get('user_role')
-    if user_role=='tenant':
-     response= render(request, 'tenantpage.html')
-     response['Cache-Control']='no-store,must-revalidate'
+@login_required(login_url='login')
+def logout(request):
+    auth_logout(request)  # Use the logout function to log the user out
+    return redirect('index')
+
+def tenant(request):
+    if 'username' in request.session:
+     response = render(request, 'tenantpage.html')
+     response['Cache-Control'] = 'no-store, must-revalidate'
      return response
     else:
-        return redirect('login')
-
-def logout_view(request):
-
-
-  logout(request)
-  
-
-  return redirect('index')
-
-
-def ownerpage(request):
-    user_role=request.session.get('user_role')
-    if user_role=='owner':
-     response= render(request, 'ownerpage.html')
-     response['Cache-Control']='no-store,must-revalidate'
-     return response
-    else:
-        return redirect('login')
-def adminhome(request):
-    return render(request,'adminhome.html')
-
-def user_profile_list(request):
-    profiles = UserProfile.objects.all()
-    form = UserProfileFilterForm(request.GET)
-
-    if form.is_valid():
-        username = form.cleaned_data['username']
-        role = form.cleaned_data['role']
-
-        if username:
-            profiles = profiles.filter(username__icontains=username)
-        if role:
-            profiles = profiles.filter(role=role)
-
-    return render(request, 'adminregusers.html', {'profiles': profiles, 'form': form})
-
-
-
-
-
-
-
+        return redirect('index')
