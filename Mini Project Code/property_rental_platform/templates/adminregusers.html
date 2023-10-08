@@ -5,13 +5,13 @@
     <style>
         /* Top-level CSS for table formatting */
         body {
-            font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             margin: 0;
             padding: 0;
         }
-                /* CSS for Sidebar */
-                .sidebar {
+
+        /* CSS for Sidebar */
+        .sidebar {
             width: 250px;
             background-color: #333;
             color: #fff;
@@ -45,42 +45,24 @@
             padding: 20px;
         }
 
-        /* CSS for Cards (Sample Content) */
-        
-
-        /* CSS for Footer */
-        .footer {
-            background-color: #555;
-            color: #ffffff;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
         h1 {
             text-align: center;
             margin: 20px 0;
             color: #333;
         }
 
+        /* CSS for the filter form */
         form {
-            text-align: center;
-            margin: 20px 0;
+            text-align: left;
+            margin-bottom: 20px;
         }
 
-        form input[type="text"], form select {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        form label {
             margin-right: 10px;
-            width: 200px;
-            font-size: 16px;
-            outline: none;
         }
 
-        form button {
+        /* CSS for the filter button */
+        .filter-button {
             padding: 10px 20px;
             background-color: #333;
             color: #fff;
@@ -90,40 +72,79 @@
             cursor: pointer;
         }
 
-        table {
-            width: 80%;
-            margin: 0 auto;
+        /* CSS for the user table */
+        .user-table {
+            width: 100%;
             border-collapse: collapse;
             background-color: #fff;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
         }
 
-        th, td {
+        .user-table th,
+        .user-table td {
             border: 1px solid #ccc;
             padding: 10px;
             text-align: left;
         }
 
-        th {
+        .user-table th {
             background-color: #333;
             color: #fff;
         }
 
-        tr:nth-child(even) {
+        .user-table tbody tr:nth-child(even) {
             background-color: #f2f2f2;
         }
 
-        tr:hover {
+        .user-table tbody tr:hover {
             background-color: #ddd;
         }
+        .large-message-box {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 9999;
+}
 
-        /* Add more styles as needed */
+/* CSS for Message Box Content */
+.message-content {
+    font-size: 18px;
+    text-align: center;
+}
+
+/* CSS for Close Button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #333;
+}
+
     </style>
 </head>
 <body>
+    {% if messages %}
+    <div class="large-message-box">
+        <span class="close-button" onclick="closeMessageBox()">&times;</span>
+        <div class="message-content">
+            {% for message in messages %}
+                {{ message|safe }}<br>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
     <div class="sidebar">
-        <a href="#">Dashboard</a>
-        <a href="adminregusers.html">User Accounts</a>
+        <a href="{% url  'adminhome' %}">Dashboard</a>
+        <a href="{% url 'adminregusers' %}">User Accounts</a> <!-- Add the URL to your user accounts page -->
         <a href="#">Properties</a>
         <a href="#">Orders</a>
     </div>
@@ -132,31 +153,67 @@
         <div class="header">
             <h1>Welcome to the Admin Dashboard</h1>
         </div>
-    <h1>User Accounts</h1>
-    <form method="GET">
-        {{ form.username.label_tag }}
-        {{ form.username }}
-        {{ form.role.label_tag }}
-        {{ form.role }}
-        <button type="submit">Filter</button>
-    </form>
-    <table>
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for profile in profiles %}
+        <h1>User Accounts</h1>
+        <form method="GET" action="{% url 'adminregusers' %}">
+            <label for="role">Role:</label>
+            <select name="role">
+                <option value="">All</option>
+                <option value="tenant">Tenant</option>
+                <option value="owner">Owner</option>
+                <!-- Add more role options as needed -->
+            </select>
+            <button type="submit" class="filter-button">Filter</button>
+        </form>
+        
+        <table class="user-table">
+            <thead>
                 <tr>
-                    <td>{{ profile.username }}</td>
-                    <td>{{ profile.get_role_display }}</td>
-                    <td>{{ profile.email }}</td>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Active</th>
+                    <th>Actions</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                    <tr>
+                        <td>{{ profile.username }}</td>
+                        <td>{{ profile.email }}</td>
+                        <td>{{ profile.is_active }}</td>
+                        <td>
+                            {% if profile.is_active %}
+                                <form method="post" action="{% url 'deactivate_user' profile.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit">Deactivate</button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'activate_user' profile.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit">Activate</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+    <script>
+        // Function to show the large message box
+        function showMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "block";
+        }
+    
+        // Function to close the large message box
+        function closeMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "none";
+        }
+    
+        // Call the showMessageBox function when the page loads
+        window.addEventListener("load", showMessageBox);
+    </script>
 </body>
 </html>

@@ -22,7 +22,7 @@
         }
 
         header {
-            background-color: #2c3e50; /* Dark blue header background */
+            background-color: #64a4a4; /* Dark blue header background */
             color: #ffffff; /* White text color */
             text-align: center;
             padding: 20px;
@@ -54,14 +54,14 @@
             text-decoration: none;
             color: #ffffff;
             font-weight: bold;
-            background-color: #3498db; /* Blue button background color */
+            background-color: #81465b; /* Blue button background color */
             padding: 10px 20px;
             border-radius: 5px;
             transition: background-color 0.3s;
         }
 
         header nav a:hover {
-            background-color: #e67e22; /* Orange color on hover */
+            background-color: #fbc58f; /* Orange color on hover */
         }
 
         /* CSS for Main Content */
@@ -156,6 +156,7 @@
             text-align: center;
             animation: fadeInUp 1s ease;
         }
+        
 
         /* Footer Styles */
         footer {
@@ -163,7 +164,7 @@
             color: #fff;
             text-align: center;
             padding: 10px;
-            position: fixed;
+            position: bottom;
             bottom: 0;
             width: 100%;
         }
@@ -172,80 +173,94 @@
 </head>
 <body >
     
-    <header>
-        <h1><a href="#">PROPERTY RENTALS</a></h1>
-        
-        <nav>
-            <ul>
-                <li style="float: right; margin-left: 10px;"><a href="#">Home</a></li>
-                <li style="float: right; margin-left: 10px;"><a href="adminhome.html">Admin</a></li>
-                <li style="float: right; margin-left: 10px;"><a href="{% url 'signup' %}">Sign up</a></li>
-                <li style="float: right; margin-left: 10px;"><a href="{% url 'login' %}">Log in</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Updated Header -->
+
+<header>
+    <div class="logo">
+    <h1 img src="{% static 'images/logo.png' %}"> PROPERTY RENTALS </h1>
+   
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{%url 'adminhome' %}">Admin </a></li>
+            <li><a href="{% url 'signup' %}">Sign up</a></li>
+            <li><a href="{% url 'login' %}">Log in</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- Updated Main Content -->
+<main>
+    <h2>Welcome to Property Rentals</h2>
+    <p>Find your dream rental property today.</p>
     
-    <main>
-        <h2>Welcome to Property Rentals</h2>
-        <p>Find your dream rental property today.</p>
-        
-        <!-- Search Form -->
-        <div class="search-form">
-            <h3>Search for Properties</h3>
-            <form>
-                <label for="location">Location:</label>
-                <input type="text" id="location" name="location" placeholder="Enter location">
+    <!-- Updated Search Form -->
+    <div class="search-form">
+        <h3>Search for Properties</h3>
+        <form>
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" placeholder="e.g., New York City">
+            <label for="property-type">Property Type:</label>
+            <select id="property-type" name="property-type">
+                <option value="apartment">Apartment</option>
+                <option value="house">House</option>
+                <option value="condo">Condo</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
-                <label for="property-type">Property Type:</label>
-                <select id="property-type" name="property-type">
-                    <option value="apartment">Apartment</option>
-                    <option value="house">House</option>
-                    <option value="condo">Condo</option>
-                </select>
-
-                <button type="submit">Search</button>
-            </form>
+    <!-- Updated Property Listings Section -->
+    <section class="property-listings">
+        <h3></h3>
+        <div class="property">
+            <img src="{% static 'images/p4.png' %}" alt="Property 1">
+            <p></p>
         </div>
-        <!-- End of Search Form -->
-        
-        <!-- Property Listings Section -->
-        <section class="property-listings">
-            <h3> </h3>
-            <div class="property">
-                <img src="{% static 'images/p4.png' %}" alt="Property 1">
-                <p></p>
-            </div>
-            <div class="property">
-                <img src="{% static 'images/p6.jpg' %}" alt="Property 1">
-                <p></p>
-            </div>
-            <div class="property">
-                <img src="{% static 'images/p5.jpg' %}" alt="Property 1">
-                <p></p>
-            </div>
-            <div class="property">
-                <img src="{% static 'images/propgif.gif' %}" alt="Property 1">
-                <p></p>
-            </div>
-            <!-- Add more property listings as needed -->
-        </section>
-        <!-- End of Property Listings Section -->
-        
-         <!-- Site Description Section -->
-         <section class="site-description">
-            <h3>About Property Rentals</h3>
+        <div class="property">
+            <img src="{% static 'images/p6.jpg' %}" alt="Property 2">
+            <p></p>
+        </div>
+        <div class="property">
+            <img src="{% static 'images/p5.jpg' %}" alt="Property 3">
+            <p></p>
+        </div>
+        <div class="property">
+            <img src="{% static 'images/p7.jpg' %}" alt="Property 3">
+            <p></p>
+        </div>
+        <!-- Add more property listings as needed -->
+    </section>
 
-            <p style="font-size: 18px; font-weight: bold; text-align: center;">At Property Rentals, we understand that the perfect property goes beyond just a home. That's why we offer a diverse range of rental properties across various categories to cater to your unique needs. Whether you're seeking a cozy apartment, a commercial space, or a vacation retreat, our platform has you covered.</p>
-        </section>
-        <!-- End of Site Description Section -->
-        <section class="site-description">
+    <!-- Updated Site Description Section -->
+    <section class="site-description">
+    </section>
+</main>
 
-        </section>
-    </main>
-    
-    <footer>
+<!-- Updated Footer -->
+<!-- Updated Footer -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-section about">
+            <h4>About Us</h4>
+            <p>We are your premier source for rental properties. Our mission is to help you find the perfect place to call home.</p>
+        </div>
+        <div class="footer-section contact">
+            <h4>Contact Us</h4>
+            <p>Email: info@propertyrentals.com</p>
+            <p>Phone: +1-123-456-7890</p>
+        </div>
+        <div class="footer-section links">
+           
+        </div>
+        <div class="footer-section social">
+            
+        </div>
+    </div>
+    <div class="footer-bottom">
         <p>&copy; 2023 Property Rentals</p>
-    </footer>
-    
+    </div>
+</footer>
+
 </body>
 </html>

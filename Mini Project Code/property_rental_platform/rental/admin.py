@@ -20,5 +20,8 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-# Register the custom admin class for CustomUser
+    def get_queryset(self, request):
+        # Exclude superusers from the admin table
+        return CustomUser.objects.exclude(is_superuser=True)
+   
 admin.site.register(CustomUser, CustomUserAdmin)

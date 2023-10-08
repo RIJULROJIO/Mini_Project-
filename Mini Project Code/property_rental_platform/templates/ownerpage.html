@@ -187,7 +187,7 @@
         
         <nav>
             <ul>
-<li style="float: right; margin-left: 10px;"><a href="{% url 'logout_view' %}">Log out</a></li>
+<li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}">Log out</a></li>
             </ul>
         </nav>
     </header>
@@ -196,7 +196,7 @@
         <!-- User Info Section -->
         <div class="user-info">
 
-            <div class="user-name">Welcome, {{ request.session.username }}</div>
+            <div class="user-name">Hello!, {{ request.session.username }}</div>
             <div class="user-description">Property Owner</div>
             <a href="#" class="get-started-button" id="show-form-button">Edit Profile</a>
 

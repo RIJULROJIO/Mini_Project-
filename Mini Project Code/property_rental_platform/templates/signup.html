@@ -15,7 +15,7 @@
         /* CSS for Header */
         body {
             font-family: Arial, sans-serif;
-            background-image: url('background-image.jpg');
+            background-image: url('{% static "images/.jpg" %}');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -24,8 +24,8 @@
         }
 
         header {
-            background-color: rgba(112, 155, 103, 0.7);
-            color: #577835;
+            background-color:#9d7bb4;
+            color: #e1e3de;
             text-align: left;
             padding: 20px;
         }
@@ -43,7 +43,7 @@
         /* CSS for Main Content */
         main {
             padding: 20px;
-            background-color: rgba(185, 182, 183, 0.9);
+            background-color: rgba(211, 211, 211, 0.747);
             border-radius: 10px;
             margin: 20px;
             min-height: 80vh;
@@ -76,7 +76,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('{% static "images/keyp.jpg" %}');
             background-repeat: no-repeat;
             background-size: 70%;
             background-color: transparent;
@@ -91,7 +90,7 @@
 
         /* Reordered form fields and adjusted styling */
         .form-group {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
@@ -100,9 +99,7 @@
             margin-bottom: 5px;
         }
 
-        .messages .success {
-            background-color: #4CAF50;
-        }
+        
 
         .messages .error {
             background-color: #f44336;
@@ -112,14 +109,14 @@
         .form-group input[type="text"],
         .form-group input[type="password"],
         .form-group input[type="email"] {
-            width: 60%;
-            padding: 5px;
+            width: 100%;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
         .role-selector {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .role-selector label {
@@ -147,7 +144,7 @@
 
         /* CSS for Footer */
         footer {
-            background-color: rgba(136, 98, 98, 0.7);
+            background-color: rgba(21, 10, 10, 0.7);
             color: #fff;
             text-align: center;
             padding: 10px;
@@ -168,7 +165,7 @@
             .form-group input[type="password"],
             .form-group input[type="email"] {
                 width: 100%;
-                padding: 5px;
+                padding: 10px;
             }
 
             .btn {
@@ -182,20 +179,52 @@
             margin-top: 5px;
             display: block;
         }
+        .large-message-box {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 9999;
+}
+
+/* CSS for Message Box Content */
+.message-content {
+    font-size: 18px;
+    text-align: center;
+}
+
+/* CSS for Close Button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #333;
+}
+
     </style>
 </head>
 <body>
     <header>
-        <h1><a href="index.html">PROPERTY RENTALS</a></h1>
+        <h1><a href="{% url 'index' %}">PROPERTY RENTALS</a></h1>
     </header>
 
     <main>
         {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
+        <div class="large-message-box">
+            <span class="close-button" onclick="closeMessageBox()">&times;</span>
+            <div class="message-content">
+                {% for message in messages %}
+                    {{ message|safe }}<br>
+                {% endfor %}
+            </div>
+        </div>
         {% endif %}
 
         <div class="card-container">
@@ -204,148 +233,167 @@
                 <form action="#" method="post" id="signup-form">
                     {% csrf_token %}
                     <div class="role-selector">
-                        <div class="role-selector">
-                            <label for="tenant">I am a Tenant:</label>
-                            <input type="radio" id="tenant" name="role" value="tenant">
-                            <label for="owner">I am a Property Owner:</label>
-                            <input type="radio" id="owner" name="role" value="owner">
-                        </div>
+                        <label for="tenant">I am a Tenant:</label>
+                        <input type="radio" id="tenant" name="role" value="tenant">
+                        <label for="owner">I am a Property Owner:</label>
+                        <input type="radio" id="owner" name="role" value="owner">
                     </div>
                     <div class="form-group">
                         <label for="username">Username:</label>
-                        <input type="text" id="username" name="username" required placeholder="username">
+                        <input type="text" id="username" name="username" required placeholder="Username">
                         <small id="username-error" class="error"></small>
                     </div>
                     <div class="form-group">
                         <label for="password">Password:</label>
-                        <input type="password" id="password" name="password" required placeholder="password">
+                        <input type="password" id="password" name="password" required placeholder="Password">
                         <small id="password-error" class="error"></small>
                     </div>
                     <div class="form-group">
                         <label for="confirm_password">Confirm Password:</label>
-                        <input type="password" id="confirm_password" name="confirm_password" required
-                            placeholder="confirm password">
+                        <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm Password">
                         <small id="confirm-password-error" class="error"></small>
                     </div>
 
                     <div class="form-group">
                         <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" required placeholder="email">
+                        <input type="email" id="email" name="email" required placeholder="Email">
                         <small id="email-error" class="error"></small>
                     </div>
                     <div>
                         <button class="btn" type="submit">Sign Up</button>
+                        <h4>Already have an account? <a href="{% url 'login' %}" style="text-decoration: none; color: darkgoldenrod;">Login</a></h4>
+
                     </div>
                 </form>
             </div>
         </div>
     </main>
 
+    <footer>
+        <p>&copy; 2023 Property Rentals</p>
+    </footer>
 
-<script>
-const form = document.getElementById("signup-form");
 
-form.addEventListener("submit", function(event) {
-    let valid = true;
-
-    // Reset error messages
-    const errorElements = document.querySelectorAll(".error");
-    errorElements.forEach(errorElement => {
-        errorElement.textContent = "";
+    <script>
+        const form = document.getElementById("signup-form");
+        
+        form.addEventListener("submit", function(event) {
+            let valid = true;
+        
+            // Reset error messages
+            const errorElements = document.querySelectorAll(".error");
+            errorElements.forEach(errorElement => {
+                errorElement.textContent = "";
+            });
+        
+            // Validate Username
+            const username = document.getElementById("username").value;
+            const usernameError = document.getElementById("username-error");
+            const usernamePattern = /^[a-zA-Z][a-zA-Z0-9]*$/;
+        if (!usernamePattern.test(username) || username.length < 3) {
+            usernameError.textContent = "Username must start with a letter, contain only letters and digits, and be at least 3 characters long.";
+                valid = false;
+            }
+        
+            // Validate Password
+            const password = document.getElementById("password").value;
+            const passwordError = document.getElementById("password-error");
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordPattern.test(password)) {
+                passwordError.textContent = "Password must meet the following criteria:\n" +
+                    "- At least 8 characters long\n" +
+                    "- Contains at least one lowercase letter\n" +
+                    "- Contains at least one uppercase letter\n" +
+                    "- Contains at least one number\n" +
+                    "- Contains at least one special character";
+                valid = false;
+            }
+            
+            const confirmPasswordInput = document.getElementById("confirm_password").value;
+            const confirmPasswordError = document.getElementById("confirm-password-error");
+            if (password !== confirmPasswordInput) {
+                confirmPasswordError.textContent = "Passwords do not match.";
+                valid = false;
+            }
+        
+            // Validate Email
+            const email = document.getElementById("email").value;
+            const emailError = document.getElementById("email-error");
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                emailError.textContent = "Please enter a valid email address in the format example@gmail.com.";
+                valid = false;
+            }
+        
+            if (!valid) {
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+        
+        // Real-time validation as the user types
+        document.getElementById("username").addEventListener("input", function() {
+        const username = this.value;
+        const usernameError = document.getElementById("username-error");
+        const usernamePattern = /^[a-zA-Z][a-zA-Z0-9]*$/; // Username starts with a letter and contains only letters and digits
+        if (!usernamePattern.test(username) || username.length < 3) { // Username should be at least 3 characters long
+            usernameError.textContent = "Username must start with a letter, contain only letters and digits, and be at least 3 characters long.";
+        } else {
+            usernameError.textContent = "";
+        }
     });
-
-    // Validate Username
-    const username = document.getElementById("username").value;
-    const usernameError = document.getElementById("username-error");
-    const usernamePattern = /^[a-zA-Z0-9]+$/;
-    if (!usernamePattern.test(username)) {
-        usernameError.textContent = "Username must not contain spaces or special characters.";
-        valid = false;
-    }
-
-    // Validate Password
-    const password = document.getElementById("password").value;
-    const passwordError = document.getElementById("password-error");
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordPattern.test(password)) {
-        passwordError.textContent = "Password must meet the following criteria:\n" +
-  "- At least 8 characters long\n" +
-  "- Contains at least one lowercase letter\n" +
-  "- Contains at least one uppercase letter\n" +
-  "- Contains at least one number\n" +
-  "- Contains at least one special character";
-        valid = false;
-    }
-    const confirmPasswordInput = document.getElementById("confirm_password").value;
-    const confirmPasswordError = document.getElementById("confirm-password-error");
-    if (password !== confirmPasswordInput) {
-        confirmPasswordError.textContent = "Passwords do not match.";
-        valid = false;
-    }
-   
+        
+        document.getElementById("password").addEventListener("input", function() {
+            const password = this.value;
+            const passwordError = document.getElementById("password-error");
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordPattern.test(password)) {
+                passwordError.textContent = "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long.";
+            } else {
+                passwordError.textContent = "";
+            }
+        
+            // Recheck password match whenever the password field changes
+            checkPasswordMatch();
+        });
+        
+        // Add real-time validation for confirm password
+        document.getElementById("confirm_password").addEventListener("input", function() {
+            const password = document.getElementById("password").value;
+            const confirmPasswordInput = this.value;
+            const confirmPasswordError = document.getElementById("confirm-password-error");
+        
+            if (password !== confirmPasswordInput) {
+                confirmPasswordError.textContent = "Passwords do not match.";
+            } else {
+                confirmPasswordError.textContent = "";
+            }
+        });
+        
+        document.getElementById("email").addEventListener("input", function() {
+            const email = this.value;
+            const emailError = document.getElementById("email-error");
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                emailError.textContent = "Please enter a valid email address in the format example@gmail.com.";
+            } else {
+                emailError.textContent = "";
+            }
+        });
+        // Function to show the large message box
+        function showMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "block";
+        }
     
-
-    // Validate Email
-    const email = document.getElementById("email").value;
-    const emailError = document.getElementById("email-error");
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        emailError.textContent = "Please enter a valid email address.";
-        valid = false;
-    }
-
-    if (!valid) {
-        event.preventDefault(); // Prevent form submission
-    }
-});
-
-// Real-time validation as the user types
-document.getElementById("username").addEventListener("input", function() {
-    const username = this.value;
-    const usernameError = document.getElementById("username-error");
-    const usernamePattern = /^[a-zA-Z0-9]+$/;
-    if (!usernamePattern.test(username)) {
-        usernameError.textContent = "Username must not contain spaces or special characters.";
-    } else {
-        usernameError.textContent = "";
-    }
-});
-
-document.getElementById("password").addEventListener("input", function() {
-    const password = this.value;
-    const passwordError = document.getElementById("password-error");
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordPattern.test(password)) {
-        passwordError.textContent = "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long.";
-    } else {
-        passwordError.textContent = "";
-    }
-});
-
-
-// Add real-time validation for confirm password
-document.getElementById("confirm_password").addEventListener("input", function() {
-    const password = document.getElementById("password").value;
-    const confirmPasswordInput = this.value;
-    const confirmPasswordError = document.getElementById("confirm-password-error");
-
-    if (password !== confirmPasswordInput) {
-        confirmPasswordError.textContent = "Passwords do not match.";
-    } else {
-        confirmPasswordError.textContent = "";
-    }
-});
-
-document.getElementById("email").addEventListener("input", function() {
-    const email = this.value;
-    const emailError = document.getElementById("email-error");
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        emailError.textContent = "Please enter a valid email address.";
-    } else {
-        emailError.textContent = "";
-    }
-});
-</script>
+        // Function to close the large message box
+        function closeMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "none";
+        }
+    
+        // Call the showMessageBox function when the page loads
+        window.addEventListener("load", showMessageBox);
+    </script>
+        
 </body>
 </html>
