@@ -101,18 +101,19 @@
             background-color: #ddd;
         }
         .large-message-box {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    z-index: 9999;
-}
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 9999;
+        }
+        
 
 /* CSS for Message Box Content */
 .message-content {
@@ -121,13 +122,7 @@
 }
 
 /* CSS for Close Button */
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    color: #333;
-}
+
 
     </style>
 </head>
@@ -204,14 +199,13 @@
         function showMessageBox() {
             const messageBox = document.querySelector(".large-message-box");
             messageBox.style.display = "block";
+
+            // Automatically hide the message box after 5 seconds (5000 milliseconds)
+            setTimeout(() => {
+                messageBox.style.display = "none";
+            }, 2000); // Adjust the time (in milliseconds) as needed
         }
-    
-        // Function to close the large message box
-        function closeMessageBox() {
-            const messageBox = document.querySelector(".large-message-box");
-            messageBox.style.display = "none";
-        }
-    
+
         // Call the showMessageBox function when the page loads
         window.addEventListener("load", showMessageBox);
     </script>

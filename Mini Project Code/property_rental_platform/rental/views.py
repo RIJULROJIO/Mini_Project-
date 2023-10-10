@@ -1,5 +1,18 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
+from .utils import *
+from django.views.generic import View
+#for activating user account
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
+from django.utils.encoding import force_bytes,force_str
+from django.template.loader import render_to_string
+# Create your views here.
+# #email
+from django.conf import settings
+from django.core.mail import EmailMessage
+#threading
+import threading
 from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
@@ -7,8 +20,10 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from .models import CustomUser  # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
-
+from .utils import TokenGenerator,generate_token
 from django.urls import reverse_lazy
+
+
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'password_reset_form.html'  # Your template for the password reset form
@@ -21,6 +36,14 @@ class CustomPasswordResetDoneView(PasswordResetDoneView):
     template_name = 'password_reset_done.html'  # Your template for password reset done page
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'password_reset_complete.html'  # Your template for password reset complete page
+    
+class EmailThread(threading.Thread):
+    def __init__(self, email_message):
+        self.email_message = email_message
+        super().__init__()  #Call the parent class's __init_ method
+
+    def run(self):
+        self.email_message.send()
 
 def index(request):
     return render(request, 'index.html')
@@ -42,8 +65,24 @@ def signup(request):
         else:
             user = CustomUser(username=username, email=email, role=role)
             user.set_password(password)
+            user.is_active=False  #make the user inactive
             user.save()
-            messages.success(request, "Registered successfully")
+            current_site=get_current_site(request)  
+            email_subject="Activate your account"
+            message=render_to_string('activate.html',{
+                   'user':user,
+                   'domain':current_site.domain,
+                   'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+                   'token':generate_token.make_token(user)
+
+
+            })
+
+            email_message=EmailMessage(email_subject,message,settings.EMAIL_HOST_USER,[email],)
+            EmailThread(email_message).start()
+            messages.info(request,"Active your account by clicking the link send to your email")
+
+            messages.success(request, "Waiting for Account Activation")
             return redirect("login")
     return render(request, 'signup.html')
 
@@ -114,6 +153,19 @@ def adminreg(request):
         profiles = CustomUser.objects.filter(~Q(is_superuser=True))  # Exclude superusers
     
     return render(request, 'adminregusers.html', {'profiles': profiles})
+class ActivateAccountView(View):
+    def get(self,request,uidb64,token):
+        try:
+            uid=force_str(urlsafe_base64_decode(uidb64))
+            user=CustomUser.objects.get(pk=uid)
+        except Exception as identifier:
+            user=None
+        if user is not None and generate_token.check_token(user,token):
+            user.is_active=True
+            user.save()
+            messages.info(request,"Account activated sucessfully")
+            return redirect('login')
+        return render(request,"activatefail.html")
 def deactivate_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
     if user.is_active:
