@@ -1,0 +1,307 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Property Owner Dashboard</title>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Basic styling for the body and background */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header styles */
+header {
+    background-color: #009688;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Header styles for h1 element */
+header h1 {
+    font-size: 36px;
+}
+
+/* Navigation styles */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+nav li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #009688;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* Section styles */
+section {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+}
+
+section h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+section h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Footer styles */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Styles for the large message box */
+.large-message-box {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 9999;
+}
+    /* Existing styles... */
+
+    /* Top-level CSS for the form */
+    #add-property-form {
+        margin: 20px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    #add-property-form h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #009688;
+    }
+
+    #add-property-form label {
+        margin-top: 10px;
+        display: block;
+        font-weight: bold;
+    }
+
+    #add-property-form input[type="text"],
+    #add-property-form input[type="number"],
+    #add-property-form select,
+    #add-property-form button {
+        margin-top: 5px;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    #add-property-form button[type="submit"] {
+        background-color: #009688;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    header nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            background-color: #00796B; /* Button background color */
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+    /* Additional styles... */
+
+
+
+.large-message-box .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.card {
+            position: relative;
+            width: 80%;
+            margin: 20px auto;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Updated CSS styles for the form inside the card */
+        #add-property-form {
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        /* ... (Your existing CSS styles) ... */
+    </style>
+        <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
+</head>
+
+<body>
+    {% if messages %}
+    <div class="large-message-box">
+        <span class="close-button" onclick="closeMessageBox()">&times;</span>
+        <div class="message-content">
+            {% for message in messages %}
+                {{ message|safe }}<br>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <header>
+        
+        <h1>Property Owner Dashboard</h1>
+        <div class="user-name">Welcome!, {{ request.session.username }}</div>
+        <div class="profile-picture">
+            <!-- Add the code to display the user's profile picture here -->
+            <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;">
+        </div>
+        <nav>
+            <ul>
+                <li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}" style="color: black;">Log out</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{% url 'manageprop' %}">Manage Properties</a></li>
+            <li><a href="javascript:void(0);" onclick="toggleAddPropertyForm()">Add Properties</a></li>
+            <li><a href="#screening">Tenant Screening</a></li>
+            <li><a href="#rent">Rent Collection</a></li>
+        </ul>
+    </nav>
+
+    <section id="property">
+        <h2></h2>
+        <!-- ... -->
+    </section>
+
+    <section id="add-property-form" class="card" style="display: none;"> <!-- Applied the card class to the section -->
+        <h2>Add Property</h2>
+        <form action="#" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <label for="property_type">Property Type:</label>
+            <select name="property_type" id="property_type" required>
+                <option value="">--Please select--</option>
+                <option value="apartment">Apartment</option>
+                <option value="house">House</option>
+                <option value="off">Officespace</option>
+                
+                <!-- Add more options as needed -->
+            </select>
+            <br>
+            <label for="address">Address:</label>
+            <input type="text" name="address" id="address" required>
+            <br>
+            <label for="bedrooms">Number of Bedrooms:</label>
+            <input type="number" name="bedrooms" id="bedrooms" required>
+            <br>
+            <label for="bathrooms">Number of Bathrooms:</label>
+            <input type="number" name="bathrooms" id="bathrooms" required>
+            <br>
+            <label for="square_footage">Square Footage:</label>
+            <input type="number" name="square_footage" id="square_footage" required>
+            <br>
+            <label for="monthly_rent">Monthly Rent:</label>
+            <input type="number" name="monthly_rent" id="monthly_rent" required>
+            <br>
+            <label for="security_deposit">Security Deposit:</label>
+            <input type="number" name="security_deposit" id="security_deposit" required>
+            <br>
+            <label for="lease_duration">Lease Duration:</label>
+            <select name="lease_duration" id="lease_duration" required>
+                <option value="1 year">1 year</option>
+                <option value="Month-to-month">Month-to-month</option>
+            </select>
+            <br>
+            <label for="availability_date">Availability Date:</label>
+            <input type="date" name="availability_date" id="availability_date" required>
+            <br>
+            <label for="furnished">Furnished:</label>
+            <input type="radio" name="furnished" value="yes" id="furnished_yes"> Yes
+            <input type="radio" name="furnished" value="no" id="furnished_no"> No
+            
+
+            <!-- Add more fields as needed -->
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+
+    <!-- More sections... -->
+
+    <footer>
+        <p>&copy; 2023 Property Owner Dashboard</p>
+    </footer>
+
+    <script>
+        // Function to show the add property form
+        function toggleAddPropertyForm() {
+            const form = document.getElementById("add-property-form");
+            if (form.style.display === "none") {
+                form.style.display = "block";
+            } else {
+                form.style.display = "none";
+            }
+        }
+
+        // Function to show the large message box
+        // Function to show the large message box
+function showMessageBox() {
+    const messageBox = document.querySelector(".large-message-box");
+    messageBox.style.display = "block";
+}
+
+
+        // Function to close the large message box
+        function closeMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "none";
+        }
+
+        // Call the showMessageBox function when the page loads
+        window.addEventListener("load", showMessageBox);
+    </script>
+</body>
+
+</html>

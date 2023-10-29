@@ -22,6 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Include app-specific URLs
     path('', include('rental.urls')),
+    path('social-auth/', include('social_django.urls', namespace='social')),
+
     
 ]
 

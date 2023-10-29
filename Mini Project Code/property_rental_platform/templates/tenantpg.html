@@ -1,0 +1,284 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tenant Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #009688;
+            color: #fff;
+            text-align: center;
+            padding: 5px; /* Smaller padding */
+        }
+
+        header h1 {
+            font-size: 20px; /* Smaller font size */
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #009688;
+        }
+
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .section h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .property-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .property-list li {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #fff;
+        }
+
+        .property-list li img {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 5px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .search-form {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .search-form label {
+            font-weight: bold;
+        }
+
+        .search-form input[type="text"],
+        .search-form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        header nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            background-color: #00796B; /* Button background color */
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .search-button {
+            background-color: #009688;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        /* Styles for the large message box */
+        .large-message-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .search-button:hover {
+            background-color: #00796B;
+        }
+
+        /* Additional CSS styles... */
+
+        .filter-title {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .filter-checkbox {
+            margin-top: 10px;
+        }
+
+        .large-message-box .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+
+    <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="">
+</head>
+
+<body>
+    {% if messages %}
+        <div class="large-message-box">
+            <span class="close-button" onclick="closeMessageBox()">&times;</span>
+            <div class="message-content">
+                {% for message in messages %}
+                    {{ message|safe }}<br>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    <header>
+        <h1>Tenant Dashboard</h1>
+        <div class="profile-picture">
+            <!-- Add the code to display the user's profile picture here -->
+        </div>
+        <nav>
+            <ul>
+                <li style="float: right; margin-left: 10px;">
+                    <a href="{% url 'logout' %}" style="color: black;">Log out</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="dashboard">
+        <div class="profile-picture">
+            <!-- Add the code to display the user's profile picture here -->
+            <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;">
+        </div>
+        <h2>Welcome, {{ request.session.username }}</h2>
+
+        <!-- Property search and filter form -->
+        <div class="search-form">
+            <h3>Search for Properties</h3>
+            <form id="property-search-form" action="#" method="get">
+                <label for="property-type">Property Type:</label>
+                <select name="property-type" id="property-type">
+                    <option value="">Any</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="house">House</option>
+                    <option value="office">Office</option>
+                </select>
+
+                <label for="max-rent">Maximum Rent:</label>
+                <input type="number" name="max-rent" id="max-rent" placeholder="Enter max rent">
+
+                <!-- Additional filters -->
+                <div class="filter-title">Additional Filters:</div>
+                <div class="filter-checkbox">
+                    <label for="furnished">Furnished</label>
+                    <input type="checkbox" name="furnished" id="furnished">
+                </div>
+                <div class="filter-checkbox">
+                    <label for="pets-allowed">Pets Allowed</label>
+                    <input type="checkbox" name="pets-allowed" id="pets-allowed">
+                </div>
+
+                <button class="search-button" type="submit">Search</button>
+            </form>
+        </div>
+
+        <!-- Property listing based on search results -->
+        <div class="section">
+            <h3>Available Properties</h3>
+            <ul class="property-list">
+                {% for property in properties %}
+                    <li>
+                        <img src="{{ property.image.url }}" alt="{{ property.property_name }}">
+                        <h4>{{ property.property_name }}</h4>
+                        <p>Address: {{ property.property_address }}</p>
+                        <p>Monthly Rent: ${{ property.monthly_rent }}</p>
+                    </li>
+                {% endfor %}
+                <!-- Display a message if no results are found -->
+                {% if properties.count == 0 %}
+                    <p>No properties found matching your search criteria.</p>
+                {% endif %}
+            </ul>
+        </div>
+        
+
+        <!-- Upcoming rent payments -->
+        <div class="section">
+            <h3>Upcoming Rent Payments</h3>
+            <p>Rent Payment: $1,200 (Due on 15th of the month)</p>
+            <p>Security Deposit: $2,000 (Due on 1st of the month)</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Property Owner Dashboard</p>
+    </footer>
+
+    <script>
+        function showMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "block";
+        }
+
+        // Function to close the large message box
+        function closeMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "none";
+        }
+
+        // Call the showMessageBox function when the page loads
+        window.addEventListener("load", showMessageBox);
+
+        // JavaScript for handling property search and filtering
+        const propertySearchForm = document.getElementById('property-search-form');
+
+        propertySearchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            // Extract form data and perform an AJAX request to the server to search for properties based on form data
+            // Update the property listing with search results
+        });
+    </script>
+</body>
+
+</html>

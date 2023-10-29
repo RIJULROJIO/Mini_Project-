@@ -231,15 +231,18 @@
 
         <div class="card-container">
             <div class="signup-form">
-                <h2>Sign Up</h2>
+                <h2>Sign Up</h2><br>
                 <form action="#" method="post" id="signup-form">
                     {% csrf_token %}
                     <div class="role-selector">
-                        <label for="tenant">I am a Tenant:</label>
-                        <input type="radio" id="tenant" name="role" value="tenant">
-                        <label for="owner">I am a Property Owner:</label>
-                        <input type="radio" id="owner" name="role" value="owner">
+                        <label for="role">Select your role:</label>
+                        <select id="role" name="role">
+                            <option value="tenant">I am a Tenant</option>
+                            <option value="owner">I am a Property Owner</option>
+                        </select>
                     </div>
+                    
+                    
                     <div class="form-group">
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" required placeholder="Username">

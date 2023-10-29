@@ -184,6 +184,7 @@
 </head>
 <body>
     <header>
+        
         <h1><a href="{% url 'index' %}">PROPERTY RENTALS</a></h1>
     </header>
 
@@ -222,6 +223,15 @@
                 <div class="forgot-password">
                     <a href="{% url 'password_reset' %}">Forgot Password?</a>
                  </div>
+                 <div class="forgot-password">
+
+                    <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-signin-button">
+                        SignIn with Google
+                    
+                    
+
+                    
+                </div>
             </div>
         </div>
     </main>

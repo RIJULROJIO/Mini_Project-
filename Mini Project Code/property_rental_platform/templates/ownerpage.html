@@ -192,10 +192,13 @@
         }
 
     </style>
+        <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
 </head>
 <body>
     
     <header>
+        
         <h1><a href="#"></a></h1>
         
         <nav>
@@ -227,51 +230,58 @@
         
         <!-- End of User Info Section -->
         <div class="form-container" id="registration-form">
-            <form>
+            <form action="#" method="post"   enctype="multipart/form-data">
+                {% csrf_token %}                
                 <div id="validation-messages"></div>
 
                 <!-- ID Field -->
                 
 
 
-                <!-- Full Name Field -->
-                <label for="fullname">Full Name:</label>
-                <input type="text" id="fullname" name="fullname" required placeholder="fullname">
-                <div id="validation-messages"></div>
+                  <!-- Full Name Field -->
+                  <label for="fullname">Full Name:</label>
+                  <input type="text" id="fullname" name="fullname" value="{{ user_profile.full_name }}" required placeholder="Full Name">
+                  <div id="validation-messages"></div>
+  
+                  <!-- Date of Birth Field -->
+                  <label for="dateofbirth">Date of Birth (must be 18 years or older):</label>
+                  <input type="date" id="dateofbirth" name="dateofbirth" value="{{ user_profile.date_of_birth|date:'Y-m-d' }}" max="2004-12-31" required>
+                  <div id="validation-messages"></div>
+  
+                  <!-- Gender Field -->
+                  <label for="gender">Gender:</label>
+                  <select id="gender" name="gender" required>
+                      <option value="male" {% if user_profile.gender == 'male' %}selected{% endif %}>Male</option>
+                      <option value="female" {% if user_profile.gender == 'female' %}selected{% endif %}>Female</option>
+                      <option value="other" {% if user_profile.gender == 'other' %}selected{% endif %}>Other</option>
+                  </select>
+  
+                  <!-- Phone Number Field -->
+                  <label for="phoneno">Phone Number (numeric characters only):</label>
+                  <input type="tel" id="phoneno" name="phoneno" value="{{ user_profile.phone_number }}" pattern="[0-9]+" required placeholder="Phone Number">
+                  <div id="validation-messages"></div>
+  
+                  <!-- Current Address Field -->
+                  <label for="currentaddress">Current Address:</label>
+                  <input type="text" id="currentaddress" name="currentaddress" value="{{ user_profile.current_address }}" required placeholder="Current Address">
+                  <div id="validation-messages"></div>
+  
+               <!-- Display previously uploaded Photo name -->
+    <label for="photoid">Current Photo ID :</label>
+    <input type="text" id="photoidFileName" value="{{ user_profile.photo_id.name }}" readonly>
+
+    <!-- File Input to update the PHOTO if needed -->
+    <input type="file" id="photoid" name="photoid"  value="{{ user_profile.photo_id.name }}" readonly accept="image/*">
 
 
-                <!-- Date of Birth Field -->
-                <label for="dateofbirth">Date of Birth (must be 18 years or older):</label>
-                <input type="date" id="dateofbirth" name="dateofbirth" max="2004-12-31" required>
+                  
+                  
+                  
                 
-                <div id="validation-messages"></div>
-
-                <!-- Gender Field -->
-                <label for="gender">Gender:</label>
-                <select id="gender" name="gender" required>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                </select>
-
-                <!-- Phone Number Field -->
-                <label for="phoneno">Phone Number (numeric characters only):</label>
-                <input type="tel" id="phoneno" name="phoneno" pattern="[0-9]+" required placeholder="mobno">
-                <div id="validation-messages"></div>
-
-                <!-- Current Address Field -->
-                <label for="currentaddress">Current Address:</label>
-                <input type="text" id="currentaddress" name="currentaddress" required placeholder="Address">
-                <div id="validation-messages"></div>
-
-                <!-- Photo ID Field (PDF only) -->
-                <label for="photoid">Photo ID (PDF only):</label>
-                <input type="file" id="photoid" name="photoid" accept=".pdf" required>
-                
 
 
 
-                <button type="submit">Submit</button>
+                <button type="submit">Update</button>
             </form>        </div>
     </main>
     

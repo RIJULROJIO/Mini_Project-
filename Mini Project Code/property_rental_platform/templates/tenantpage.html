@@ -169,36 +169,6 @@
     cursor: pointer;
     transition: background-color 0.3s;
 }
-/* CSS for Large Message Box */
-.large-message-box {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    z-index: 9999;
-}
-
-/* CSS for Message Box Content */
-.message-content {
-    font-size: 18px;
-    text-align: center;
-}
-
-/* CSS for Close Button */
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    color: #333;
-}
-
 
 #registration-form button:hover {
     background-color: #005550; /* Change color on hover */
@@ -239,73 +209,77 @@
     
     <main>
         {% if messages %}
-<div class="large-message-box">
-    <span class="close-button" onclick="closeMessageBox()">&times;</span>
-    <div class="message-content">
-        {% for message in messages %}
-            {{ message|safe }}<br>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-
+        <div class="large-message-box">
+            <span class="close-button" onclick="closeMessageBox()">&times;</span>
+            <div class="message-content">
+                {% for message in messages %}
+                    {{ message|safe }}<br>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
         <!-- User Info Section -->
         <div class="user-info">
 
             <div class="user-name">Hello!, {{ request.session.username }}</div>
             <div class="user-description">Tenant</div>
-            
             <a href="#" class="get-started-button" id="show-form-button">Edit Profile</a>
 
         </div>
         
         <!-- End of User Info Section -->
         <div class="form-container" id="registration-form">
-            <form>
+            <form action="#" method="post"   enctype="multipart/form-data">
+                {% csrf_token %}                
                 <div id="validation-messages"></div>
 
                 <!-- ID Field -->
                 
 
 
-                <!-- Full Name Field -->
-                <label for="fullname">Full Name:</label>
-                <input type="text" id="fullname" name="fullname" required placeholder="fullname">
-                <div id="validation-messages"></div>
+                  <!-- Full Name Field -->
+                  <label for="fullname">Full Name:</label>
+                  <input type="text" id="fullname" name="fullname" value="{{ user_profile.full_name }}" required placeholder="Full Name">
+                  <div id="validation-messages"></div>
+  
+                  <!-- Date of Birth Field -->
+                  <label for="dateofbirth">Date of Birth (must be 18 years or older):</label>
+                  <input type="date" id="dateofbirth" name="dateofbirth" value="{{ user_profile.date_of_birth|date:'Y-m-d' }}" max="2004-12-31" required>
+                  <div id="validation-messages"></div>
+  
+                  <!-- Gender Field -->
+                  <label for="gender">Gender:</label>
+                  <select id="gender" name="gender" required>
+                      <option value="male" {% if user_profile.gender == 'male' %}selected{% endif %}>Male</option>
+                      <option value="female" {% if user_profile.gender == 'female' %}selected{% endif %}>Female</option>
+                      <option value="other" {% if user_profile.gender == 'other' %}selected{% endif %}>Other</option>
+                  </select>
+  
+                  <!-- Phone Number Field -->
+                  <label for="phoneno">Phone Number (numeric characters only):</label>
+                  <input type="tel" id="phoneno" name="phoneno" value="{{ user_profile.phone_number }}" pattern="[0-9]+" required placeholder="Phone Number">
+                  <div id="validation-messages"></div>
+  
+                  <!-- Current Address Field -->
+                  <label for="currentaddress">Current Address:</label>
+                  <input type="text" id="currentaddress" name="currentaddress" value="{{ user_profile.current_address }}" required placeholder="Current Address">
+                  <div id="validation-messages"></div>
+  
+    <!-- Display previously uploaded Photo name -->
+    <label for="photoid">Current Photo ID :</label>
+    <input type="text" id="photoidFileName" value="{{ user_profile.photo_id.name }}" readonly>
 
+    <!-- File Input to update the PHOTO if needed -->
+    <input type="file" id="photoid" name="photoid"  value="{{ user_profile.photo_id.name }}" readonly accept="image/*">
 
-                <!-- Date of Birth Field -->
-                <label for="dateofbirth">Date of Birth (must be 18 years or older):</label>
-                <input type="date" id="dateofbirth" name="dateofbirth" max="2004-12-31" required>
+                  
+                  
+                  
                 
-                <div id="validation-messages"></div>
-
-                <!-- Gender Field -->
-                <label for="gender">Gender:</label>
-                <select id="gender" name="gender" required>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                </select>
-
-                <!-- Phone Number Field -->
-                <label for="phoneno">Phone Number (numeric characters only):</label>
-                <input type="tel" id="phoneno" name="phoneno" pattern="[0-9]+" required placeholder="mobno">
-                <div id="validation-messages"></div>
-
-                <!-- Current Address Field -->
-                <label for="currentaddress">Current Address:</label>
-                <input type="text" id="currentaddress" name="currentaddress" required placeholder="Address">
-                <div id="validation-messages"></div>
-
-                <!-- Photo ID Field (PDF only) -->
-                <label for="photoid">Photo ID (PDF only):</label>
-                <input type="file" id="photoid" name="photoid" accept=".pdf" required>
-                
 
 
 
-                <button type="submit">Submit</button>
+                <button type="submit">Update</button>
             </form>        </div>
     </main>
     
@@ -313,22 +287,6 @@
         <p>&copy; 2023 User Profile</p>
     </footer>
     <script>
-    // Function to show the large message box
-    function showMessageBox() {
-        const messageBox = document.querySelector(".large-message-box");
-        messageBox.style.display = "block";
-    }
-
-    // Function to close the large message box
-    function closeMessageBox() {
-        const messageBox = document.querySelector(".large-message-box");
-        messageBox.style.display = "none";
-    }
-
-    // Call the showMessageBox function when the page loads
-    window.addEventListener("load", showMessageBox);
-
-
         // JavaScript to show the registration form on button click
         const showFormButton = document.getElementById('show-form-button');
         const registrationForm = document.getElementById('registration-form');
@@ -415,7 +373,6 @@
 
         // Call the showMessageBox function when the page loads
         window.addEventListener("load", showMessageBox);
-        
     </script>
 </body>
 </html>

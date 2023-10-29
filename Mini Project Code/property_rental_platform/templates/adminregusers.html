@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -120,11 +122,45 @@
     font-size: 18px;
     text-align: center;
 }
+    /* Add these styles to your existing CSS */
+    /* Style for the "Activate" button */
+    .activate-button {
+        background-color: #4CAF50; /* Green color */
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .activate-button:hover {
+        background-color: #45a049; /* Darker green color on hover */
+    }
+
+    /* Style for the "Deactivate" button */
+    .deactivate-button {
+        background-color: #f44336; /* Red color */
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .deactivate-button:hover {
+        background-color: #d32f2f; /* Darker red color on hover */
+    }
+    
+
 
 /* CSS for Close Button */
 
 
     </style>
+        <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
 </head>
 <body>
     {% if messages %}
@@ -146,9 +182,11 @@
     <div class="content">
         <!-- Header -->
         <div class="header">
+            
             <h1>Welcome to the Admin Dashboard</h1>
         </div>
         <h1>User Accounts</h1>
+        
         <form method="GET" action="{% url 'adminregusers' %}">
             <label for="role">Role:</label>
             <select name="role">
@@ -179,14 +217,16 @@
                             {% if profile.is_active %}
                                 <form method="post" action="{% url 'deactivate_user' profile.id %}">
                                     {% csrf_token %}
-                                    <button type="submit">Deactivate</button>
+                                    <button type="submit" class="deactivate-button">Deactivate</button>
                                 </form>
                             {% else %}
                                 <form method="post" action="{% url 'activate_user' profile.id %}">
                                     {% csrf_token %}
-                                    <button type="submit">Activate</button>
+                                    <button type="submit" class="activate-button">Activate</button>
                                 </form>
                             {% endif %}
+                        </td>
+                        
                         </td>
                     </tr>
                 {% endfor %}
