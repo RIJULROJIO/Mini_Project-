@@ -170,6 +170,11 @@ footer {
             padding: 20px;
             background-color: #f4f4f4;
         }
+
+        .user-name,
+        .profile-picture {
+            float: right;
+        }
         /* ... (Your existing CSS styles) ... */
     </style>
         <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
@@ -188,6 +193,11 @@ footer {
     </div>
     {% endif %}
     <header>
+        <nav>
+            <ul>
+                <li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}" style="color: black;">Log out</a></li>
+            </ul>
+        </nav>
         
         <h1>Property Owner Dashboard</h1>
         <div class="user-name">Welcome!, {{ request.session.username }}</div>
@@ -195,11 +205,7 @@ footer {
             <!-- Add the code to display the user's profile picture here -->
             <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;">
         </div>
-        <nav>
-            <ul>
-                <li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}" style="color: black;">Log out</a></li>
-            </ul>
-        </nav>
+        
     </header>
 
     <nav>
@@ -235,10 +241,10 @@ footer {
             <input type="text" name="address" id="address" required>
             <br>
             <label for="bedrooms">Number of Bedrooms:</label>
-            <input type="number" name="bedrooms" id="bedrooms" required>
+            <input type="number" name="bedrooms" id="bedrooms" >
             <br>
             <label for="bathrooms">Number of Bathrooms:</label>
-            <input type="number" name="bathrooms" id="bathrooms" required>
+            <input type="number" name="bathrooms" id="bathrooms" >
             <br>
             <label for="square_footage">Square Footage:</label>
             <input type="number" name="square_footage" id="square_footage" required>

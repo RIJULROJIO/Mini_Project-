@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -55,6 +56,7 @@
 
         .card-title {
             font-size: 20px;
+            color: #009688; /* Color for the card title */
         }
 
         .card-text {
@@ -86,32 +88,83 @@
             background-color: #00796B;
         }
     </style>
+    <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
 </head>
 
 <body>
-    <h1>Property Management</h1>
+    <h1>Manage Your Properties</h1>
+    <div class="profile-picture">
+        <!-- Add the code to display the user's profile picture here -->
+        <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;">
+    </div>
     <div class="container">
+        <div class="user-name">Property Owner:{{ request.session.username }}</div>
+
         <!-- Property Listing Section -->
         <section>
             <h2>Your Properties</h2>
             <div class="row">
+                {% for property in properties %}
                 <div class="col-md-4">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <h5 class="card-title">Property 1</h5>
-                            <p class="card-text">Address: 123 Main St</p>
-                            <p class="card-text">Monthly Rent: $1,200</p>
+                                <p class="card-title">{{ property.property_type }}</p>
+                                <p class="card-text"><strong>Address:</strong> {{ property.address }}</p>
+                                <p class="card-text"><strong>Monthly Rent:</strong> ${{ property.monthly_rent }}</p>
+                                <p class="card-text"><strong>Square Footage:</strong> {{ property.square_footage }} sq. ft.</p>
+                                <p class="card-text"><strong>Security Amount:</strong> ${{ property.security_deposit }}</p>
+                                <p class="card-text"><strong>Availability Date:</strong> {{ property.availability_date }}</p>
+                                <p class="card-text"><strong>Furnished:</strong> {{ property.furnished }}</p>
+                            
+                                <!-- Property Images Carousel/Slider -->
+                                <div id="propertyImageCarousel{{ property.id }}" class="carousel slide" data-ride="carousel">
+                                    <ol class="carousel-indicators">
+                                        {% for image in property.propertyimage_set.all %}
+                                        <li data-target="#propertyImageCarousel{{ property.id }}" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+                                        {% endfor %}
+                                    </ol>
+                                    <div class="carousel-inner">
+                                        {% for image in property.propertyimage_set.all %}
+                                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                            <img src="{{ image.image.url }}" alt="{{ property.property_type }} Image">
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <a class="carousel-control-prev" href="#propertyImageCarousel{{ property.id }}" role="button" data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#propertyImageCarousel{{ property.id }}" role="button" data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>
+                            
+                                <p class="card-text"><a href="{% url 'propimgup' property.id %}">Upload Property Images</a></p>
+                                <p class="card-text"><a href="#">Upload Property Documents</a></p>
+                            <!-- Inside the loop for properties -->
+<p class="card-text"><strong>Approval Status:</strong> {{ property.approval_status }}</p>
+<!-- ... (other property details) ... -->
+
+                                <p class="card-text"><strong>Rental Requests:</strong> NIL</p>
+                            
+
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="property_id_to_delete" value="{{ property.id }}">
+                                <button type="submit" class="btn btn-danger">Delete Property</button>
+                            </form>
+
                         </div>
                     </div>
                 </div>
-                <!-- Add more properties as needed -->
+                {% endfor %}
             </div>
         </section>
 
         <!-- Add Property Section -->
         <section>
-          
-            </form>
+            <!-- Your property addition form goes here -->
         </section>
     </div>
 

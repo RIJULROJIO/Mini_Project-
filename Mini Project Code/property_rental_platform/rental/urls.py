@@ -15,14 +15,21 @@ urlpatterns = [
     path('ownerpg/',views.ownerpg,name='ownerpg'),
     path('tenantpg/',views.tenantpg,name='tenantpg'),
     path('manageprop/',views.manageprop,name='manageprop'),
+    path('propimgup/<int:property_id>/', views.propimgup, name='propimgup'),
+    path('admprop/',views.admprop,name='admprop'),
 
     path('adminhome/', views.adminh, name='adminhome'),
     path('adminregusers/', views.adminreg, name='adminregusers'),
+        path('property_images/<int:property_id>/', views.property_images, name='property_images'),
+
     path('deactivate_user/<int:user_id>/', views.deactivate_user, name='deactivate_user'),
     path('activate_user/<int:user_id>/', views.activate_user, name='activate_user'),
 
 
     path('activate/<uidb64>/<token>',views.ActivateAccountView.as_view(),name='activate'),
+     path('approve_property/<int:property_id>/', views.approve_property, name='approve_property'),
+    path('reject_property/<int:property_id>/', views.reject_property, name='reject_property'),
+  
     # Password Reset Views
      path('password_reset/', CustomPasswordResetView.as_view(), name='password_reset'),
      path('password_reset/done/',CustomPasswordResetDoneView.as_view(),name='password_reset_done'),

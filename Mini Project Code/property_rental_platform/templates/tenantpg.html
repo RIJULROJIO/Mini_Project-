@@ -17,11 +17,11 @@
             background-color: #009688;
             color: #fff;
             text-align: center;
-            padding: 5px; /* Smaller padding */
+            padding: 5px;
         }
 
         header h1 {
-            font-size: 20px; /* Smaller font size */
+            font-size: 20px;
         }
 
         .dashboard {
@@ -103,7 +103,7 @@
             text-decoration: none;
             color: #fff;
             font-weight: bold;
-            background-color: #00796B; /* Button background color */
+            background-color: #00796B;
             padding: 10px 20px;
             border-radius: 5px;
             transition: background-color 0.3s;
@@ -119,7 +119,10 @@
             transition: background-color 0.3s;
         }
 
-        /* Styles for the large message box */
+        .search-button:hover {
+            background-color: #00796B;
+        }
+
         .large-message-box {
             display: none;
             position: fixed;
@@ -132,10 +135,6 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             padding: 20px;
             z-index: 9999;
-        }
-
-        .search-button:hover {
-            background-color: #00796B;
         }
 
         /* Additional CSS styles... */
@@ -180,6 +179,10 @@
         <nav>
             <ul>
                 <li style="float: right; margin-left: 10px;">
+                    <div class="profile-picture">
+                        <!-- Add the code to display the user's profile picture here -->
+                        <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;">
+                    </div>
                     <a href="{% url 'logout' %}" style="color: black;">Log out</a>
                 </li>
             </ul>
@@ -187,18 +190,15 @@
     </header>
 
     <div class="dashboard">
-        <div class="profile-picture">
-            <!-- Add the code to display the user's profile picture here -->
-            <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;">
-        </div>
+
         <h2>Welcome, {{ request.session.username }}</h2>
 
         <!-- Property search and filter form -->
         <div class="search-form">
             <h3>Search for Properties</h3>
-            <form id="property-search-form" action="#" method="get">
+            <form id="property-search-form" action="{% url 'tenantpg' %}" method="get">
                 <label for="property-type">Property Type:</label>
-                <select name="property-type" id="property-type">
+                <select name="property_type" id="property_type">
                     <option value="">Any</option>
                     <option value="apartment">Apartment</option>
                     <option value="house">House</option>
@@ -206,18 +206,19 @@
                 </select>
 
                 <label for="max-rent">Maximum Rent:</label>
-                <input type="number" name="max-rent" id="max-rent" placeholder="Enter max rent">
+                <input type="number" name="monthly_rent" id="monthly_rent" placeholder="Enter max rent">
 
                 <!-- Additional filters -->
-                <div class="filter-title">Additional Filters:</div>
                 <div class="filter-checkbox">
                     <label for="furnished">Furnished</label>
                     <input type="checkbox" name="furnished" id="furnished">
                 </div>
                 <div class="filter-checkbox">
-                    <label for="pets-allowed">Pets Allowed</label>
-                    <input type="checkbox" name="pets-allowed" id="pets-allowed">
+                    <label for="furnished">SquareFootage</label>
+                    <input type="number" name="square_footage" id="Square" placeholder="Enter Here">
+
                 </div>
+               
 
                 <button class="search-button" type="submit">Search</button>
             </form>
@@ -230,9 +231,18 @@
                 {% for property in properties %}
                     <li>
                         <img src="{{ property.image.url }}" alt="{{ property.property_name }}">
-                        <h4>{{ property.property_name }}</h4>
-                        <p>Address: {{ property.property_address }}</p>
-                        <p>Monthly Rent: ${{ property.monthly_rent }}</p>
+                        <p class="card-text">Property type:{{ property.property_type }}</p>
+                        <p class="card-text">Address: {{ property.address }}</p>
+                        <p class="card-text">Monthly Rent: {{ property.monthly_rent }}</p>
+                        <p class="card-text">Square footage:{{ property.square_footage }}</p>
+                        <p class="card-text">Security Amount:{{ property.security_deposit }}</p>
+                        <p class="card-text">availability_date:{{ property.availability_date }}</p>
+                        <p class="card-text">Furnished:{{ property.furnished }}</p>
+
+                        <!-- Add more property details here -->
+                        <p class="card-text">Bedrooms: {{ property.bedrooms }}</p>
+                        <p class="card-text">Bathrooms: {{ property.bathrooms }}</p>
+                        <!-- Add more property details as needed -->
                     </li>
                 {% endfor %}
                 <!-- Display a message if no results are found -->
@@ -241,7 +251,6 @@
                 {% endif %}
             </ul>
         </div>
-        
 
         <!-- Upcoming rent payments -->
         <div class="section">
@@ -261,23 +270,10 @@
             messageBox.style.display = "block";
         }
 
-        // Function to close the large message box
         function closeMessageBox() {
             const messageBox = document.querySelector(".large-message-box");
             messageBox.style.display = "none";
         }
-
-        // Call the showMessageBox function when the page loads
-        window.addEventListener("load", showMessageBox);
-
-        // JavaScript for handling property search and filtering
-        const propertySearchForm = document.getElementById('property-search-form');
-
-        propertySearchForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            // Extract form data and perform an AJAX request to the server to search for properties based on form data
-            // Update the property listing with search results
-        });
     </script>
 </body>
 

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Property Image Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #009688;
+        }
+
+        .image-preview {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .upload-button {
+            padding: 10px 20px;
+            background-color: #009688;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .upload-button:hover {
+            background-color: #00796B;
+        }
+
+        .category-selector {
+            margin-top: 10px;
+        }
+
+        .category-selector select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        label[for="file-upload"] {
+            cursor: pointer;
+            padding: 10px 20px;
+            background-color: #009688;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        label[for="file-upload"]:hover {
+            background-color: #00796B;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Upload Images for Property</h2>
+        <form  action="#" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+        <div class="category-selector">
+            <label for="category-select">Select Category:</label>
+            <select id="category-select" name="category">
+                <option value="bedroom">Bedroom</option>
+                <option value="living-room">Living Room</option>
+                <option value="kitchen">Kitchen</option>
+                <option value="bathroom">Bathroom</option>
+                <option value="exterior">Exterior</option>
+            </select>
+        </div>
+
+        <div class="image-preview">
+            <!-- Images will be displayed here -->
+        </div>
+
+       
+
+        <input type="file" name="image" id="file-upload" accept="image/*" multiple >
+        <label for="file-upload">Choose Images</label>
+        <button class="upload-button" onclick="uploadImages()">Upload</button>
+        </form>
+    </div>
+
+    <script>
+        function uploadImages() {
+            const fileInput = document.getElementById('file-upload');
+            const imagePreview = document.querySelector('.image-preview');
+            const categorySelect = document.getElementById('category-select');
+            const selectedCategory = categorySelect.value;
+
+            if (fileInput.files.length > 0) {
+                for (const file of fileInput.files) {
+                    const image = document.createElement('img');
+                    image.src = URL.createObjectURL(file);
+                    image.alt = selectedCategory;
+                    imagePreview.appendChild(image);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

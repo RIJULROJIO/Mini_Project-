@@ -55,7 +55,29 @@ class Property(models.Model):
     lease_duration = models.CharField(max_length=20, choices=[('1 year', '1 Year'), ('month-to-month', 'Month-to-Month')])
     availability_date = models.DateField()
     furnished = models.BooleanField(default=False)
+    APPROVAL_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
+    approval_status = models.CharField(
+        max_length=20,
+        choices=APPROVAL_CHOICES,
+        default='pending',
+    )
     
     def __str__(self):
         return self.property_name
+
+class PropertyImage(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    category = models.CharField(max_length=20)  # Add a category field
+    image = models.ImageField(upload_to='property_images/')
+
+    def __str__(self):
+        return self.image.name
+    
+
+
 

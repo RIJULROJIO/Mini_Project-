@@ -16,7 +16,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property  # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage  # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -355,12 +355,25 @@ def ownerpg(request):
     
 
 def tenantpg(request):
-    properties = Property.objects.all()  # Get all properties
+    # Get all approved properties
+    filtered_properties = Property.objects.filter(approval_status='Approved')
 
-    context = {
-        'properties': properties,
-    }
-    
+    # Handle search and filters
+    property_type = request.GET.get('property_type')
+    monthly_rent = request.GET.get('monthly_rent')
+    furnished = request.GET.get('furnished')
+    square_footage = request.GET.get('square_footage')
+
+    # Apply filters
+    if property_type:
+        filtered_properties = filtered_properties.filter(property_type=property_type)
+    if monthly_rent:
+        filtered_properties = filtered_properties.filter(monthly_rent=monthly_rent)
+    if furnished:
+        filtered_properties = filtered_properties.filter(furnished=True)
+    if square_footage:
+        filtered_properties = filtered_properties.filter(square_footage=square_footage)
+
     if 'username' in request.session:
         username = request.session['username']
 
@@ -370,15 +383,49 @@ def tenantpg(request):
         except UserProfile.DoesNotExist:
             user_profile = None
 
+        context = {
+            'user_profile': user_profile,  # Add user_profile to the context
+            'properties': filtered_properties,  # Use filtered properties for display
+        }
+
+        response = render(request, 'tenantpg.html', context)
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('index')
+
+
+
+
+def manageprop(request):
+    if 'username' in request.session:
+        username = request.session['username']
+
+        if request.method == 'POST':
+            # Check if a property deletion request was submitted
+            property_id_to_delete = request.POST.get('property_id_to_delete')
+            if property_id_to_delete:
+                property_to_delete = get_object_or_404(Property, id=property_id_to_delete)
+                property_to_delete.delete()
+                # You can add a success message here if needed
+
+        # Get the user's profile
+        try:
+            user_profile = UserProfile.objects.get(user__username=username)
+        except UserProfile.DoesNotExist:
+            user_profile = None
+
         # Check if the user profile is found
         if user_profile:
+            # Get properties associated with the property owner
+            properties = Property.objects.filter(property_owner=user_profile.user)
+
             context = {
-                'user_profile': user_profile,  # Add user_profile to the context
+                'user_profile': user_profile,
+                'properties': properties,  # Add properties to the context
             }
 
-            response = render(request, 'tenantpg.html', context)
-            response['Cache-Control'] = 'no-store, must-revalidate'
-            return response
+            return render(request, 'manageprop.html', context)
         else:
             # Handle the case where the user profile is not found
             return redirect('index')
@@ -386,9 +433,59 @@ def tenantpg(request):
         return redirect('index')
 
 
+from django.http import Http404
 
-def manageprop(request):
-    return render(request,'manageprop.html')
+def propimgup(request, property_id):
+    try:
+        property = Property.objects.get(pk=property_id)
+    except Property.DoesNotExist:
+        raise Http404("Property does not exist")
+
+    if request.method == 'POST':
+        category = request.POST.get('category')
+        images = request.FILES.getlist('image')
+
+        for image in images:
+            PropertyImage.objects.create(property=property, category=category, image=image)
+
+        messages.success(request, "Images Added successfully")
+        return redirect('manageprop')
+
+    context = {
+        'property': property,
+    }
+
+    return render(request, 'propimgup.html', context)
+def property_images(request, property_id):
+    property = Property.objects.get(pk=property_id)
+    images = PropertyImage.objects.filter(property=property)
+
+    return render(request, 'property_images.html', {'property': property, 'images': images})
+
+    
+def admprop(request):
+    # Retrieve all properties
+    properties = Property.objects.all()
+
+    return render(request, 'admprop.html', {'properties': properties})
+
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+
+def approve_property(request, property_id):
+    property = Property.objects.get(pk=property_id)
+    property.approval_status = 'Approved'
+    property.save()
+    return HttpResponseRedirect(reverse('admprop'))
+
+def reject_property(request, property_id):
+    property = Property.objects.get(pk=property_id)
+    property.approval_status = 'Rejected'
+    property.save()
+    return HttpResponseRedirect(reverse('admprop'))
+
+
 
     
             
