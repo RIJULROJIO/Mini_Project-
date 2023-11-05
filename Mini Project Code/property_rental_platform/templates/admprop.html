@@ -5,10 +5,43 @@
     <title>Admin Property Details</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             background-color: #f2f2f2;
             margin: 0;
             padding: 0;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            height: 100%;
+            overflow: auto;
+        }
+
+        /* CSS for Header */
+        .header {
+            background-color: #555;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .sidebar a {
+            padding: 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #fff;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #555;
+        }
+
+        /* CSS for Content Area */
+        .content {
+            margin-left: 250px;
+            padding: 20px;
         }
 
         .container {
@@ -52,58 +85,79 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            color: #fff;
         }
 
         .approve-button {
             background-color: #009688;
-            color: #fff;
         }
 
         .reject-button {
             background-color: #FF5733;
-            color: #fff;
         }
+        a {
+            
+            text-decoration: none; /* Remove underline */
+            color: blueviolet; /* Use the default text color of the parent element */
+        }
+        a:hover {
+    color:blueviolet; /* Set the color for the link when hovered */
+}
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="sidebar">
+        <a href="{% url 'adminhome' %}">Dashboard</a>
+        <a href="{% url 'adminregusers' %}">User Accounts</a>
+        <a href="#">Properties</a>
+        <a href="#">Orders</a>
+    </div>
+    <div class="content">
+        <div class="header">
+            <h1>Welcome to the Admin Dashboard</h1>
+        </div>
         <h2>Property Details</h2>
         <table>
-           <!-- ... (previous code) ... -->
-<tr>
-    <th>Property ID</th>
-    <th>Property Type</th>
-    <th>Address</th>
-    <th>Monthly Rent</th>
-    <th>Approval Status</th>
-    <th>Images</th>  <!-- Add a new column for Images -->
-    <th>Actions</th>
-</tr>
-{% for property in properties %}
-<tr>
-    <td>{{ property.id }}</td>
-    <td>{{ property.property_type }}</td>
-    <td>{{ property.address }}</td>
-    <td>{{ property.monthly_rent }}</td>
-    <td>{{ property.approval_status }}</td>
-    <td>
-        <a href="{% url 'property_images' property.id %}">View Images</a>  <!-- Link to another page to view property images -->
-    </td>
-    <td>
-        <form method="post" action="{% url 'approve_property' property.id %}">
-            {% csrf_token %}
-            <button type="submit" class="approve-button">Approve</button>
-        </form>
-        <form method="post" action="{% url 'reject_property' property.id %}">
-            {% csrf_token %}
-            <button type="submit" class="reject-button">Reject</button>
-        </form>
-    </td>
-</tr>
-{% endfor %}
-<!-- ... (other code) ... -->
+            <tr>
+                <th>Property ID</th>
+                <th>Property Type</th>
+                <th>Address</th>
+                <th>Monthly Rent</th>
+                <th>Approval Status</th>
+                <th>Images</th>
+                
+                <th>Actions</th>
+                <th>More Info</th> <!-- New column for More Info button -->
 
+            </tr>
+            {% for property in properties %}
+            <tr>
+                <td>{{ property.id }}</td>
+                <td>{{ property.property_type }}</td>
+                <td>{{ property.address }}</td>
+                <td>{{ property.monthly_rent }}</td>
+                <td>{{ property.approval_status }}</td>
+                <td>
+                    <a href="{% url 'property_images' property.id %}">View Images</a>
+                </td>
+                
+                <td>
+                    <form method="post" action="{% url 'approve_property' property.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="approve-button">Approve</button>
+                    </form>
+                    <form method="post" action="{% url 'reject_property' property.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="reject-button">Reject</button>
+                    </form>
+                </td>
+                <td>
+                    <!-- Add More Info button that links to a property detail page -->
+                    <a href="{% url 'property_detail' property.id %}">More Info</a>
+                </td>
+            </tr>
+            {% endfor %}
         </table>
     </div>
 </body>

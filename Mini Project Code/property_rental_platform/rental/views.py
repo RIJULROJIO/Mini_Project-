@@ -16,7 +16,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage  # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity  # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -297,14 +297,11 @@ def ownerpg(request):
                 user = user_profile.user
                 property_type = request.POST.get('property_type')
                 address = request.POST.get('address')
-                bedrooms = request.POST.get('bedrooms')
-                bathrooms = request.POST.get('bathrooms')
-                square_footage = request.POST.get('square_footage')
+              
                 monthly_rent = request.POST.get('monthly_rent')
                 security_deposit = request.POST.get('security_deposit')
                 lease_duration = request.POST.get('lease_duration')
                 availability_date = request.POST.get('availability_date')
-                furnished = request.POST.get('furnished').lower() == "yes"
 
                 # Get the uploaded image
 
@@ -312,14 +309,11 @@ def ownerpg(request):
                 property = Property(
                     property_type=property_type,
                     address=address,
-                    bedrooms=bedrooms,
-                    bathrooms=bathrooms,
-                    square_footage=square_footage,
+                   
                     monthly_rent=monthly_rent,
                     security_deposit=security_deposit,
                     lease_duration=lease_duration,
                     availability_date=availability_date,
-                    furnished=furnished,
                     property_owner=user,  # Assign the property owner
                 )
                 property.save()
@@ -484,6 +478,49 @@ def reject_property(request, property_id):
     property.approval_status = 'Rejected'
     property.save()
     return HttpResponseRedirect(reverse('admprop'))
+
+def propamenity(request, property_id):
+    if request.method == "POST":
+        property = Property.objects.get(id=property_id)
+
+        # Create an Amenity object
+        amenity = Amenity(property=property)
+
+        # Check the property type to determine which form fields to use
+        property_type = property.property_type
+
+        if property_type in ['apartment', 'house']:
+            amenity.squarefootage = request.POST.get("sqfootage") or None
+            amenity.bedrooms = request.POST.get("bedrooms") or None
+            amenity.bathrooms = request.POST.get("bathrooms") or None
+            if property_type == 'house':
+                amenity.stories = request.POST.get("stories") or None
+                amenity.rentspace = request.POST.get("rentspace") or None
+        elif property_type in ['officespace', 'warehouse']:
+            amenity.noofrooms = request.POST.get("noofrooms") or None
+            amenity.squarefootage = request.POST.get("sqfootage") or None
+            amenity.parkingspace = request.POST.get("parkingspace") or None
+        elif property_type == 'land':
+            amenity.purpose = request.POST.get("purpose") or None
+            amenity.acrescent = request.POST.get("acrescent") or None
+
+        amenity.balcony = request.POST.get("balcony")
+        amenity.parkingspace = request.POST.get("parkingspace")
+
+        amenity.save()
+
+        return redirect('manageprop')
+
+    return render(request, 'propamenity.html')
+
+
+def property_detail(request, property_id):
+    property = get_object_or_404(Property, id=property_id)
+    amenities = Amenity.objects.filter(property=property)  # Fetch amenities related to this property
+    return render(request, 'property_detail.html', {'property': property, 'amenities': amenities})
+
+
+
 
 
 

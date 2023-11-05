@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Property Amenities</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #009688;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #009688;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #00736e;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Property Amenities</h1>
+        <form action="#" method="post" id="propertyForm">
+            {% csrf_token %}
+            <label for="property_type">Select Property Type:</label>
+            <select id="property_type" name="property_type" onchange="showFields()">
+                <option value="apartment">Apartment</option>
+                <option value="house">House</option>
+                <option value="officespace">Office Space</option>
+                <option value="warehouse">Warehouse</option>
+                <option value="land">Land</option>
+                <!-- Add more property types as needed -->
+            </select><br>
+
+            <div id="apartmentFields" class="hidden">
+                <label for="sqfootage">Square Footage:</label>
+                <input type="text" id="sqfootage_apartment" name="sqfootage"><br>
+                <label for="bedrooms">Number of Bedrooms:</label>
+                <input type="text" id="bedrooms_apartment" name="bedrooms">
+                <label for="bathrooms">Number of Bathrooms:</label>
+                <input type="text" id="bathrooms_apartment" name="bathrooms">
+            </div>
+            
+            <div id="houseFields" class="hidden">
+                <label for="sqfootage">Square Footage:</label>
+                <input type="text" id="sqfootage_house" name="sqfootage"><br>
+                <label for="bedrooms">Number of Bedrooms:</label>
+                <input type="text" id="bedrooms_house" name="bedrooms">
+                <label for= "bathrooms">Number of Bathrooms:</label>
+                <input type="text" id="bathrooms_house" name="bathrooms">
+                <label for="stories">Number of Stories:</label>
+                <input type="text" id="stories" name="stories">
+                <label for="rentspace">Rent Space Given (Full/Partial):</label>
+                <select id="rentspace" name="rentspace">
+                    <option value="full">Full</option>
+                    <option value="partial">Partial</option>
+                </select>
+            </div>
+            
+            <div id="officeSpaceFields" class="hidden">
+                <label for="noofrooms">Number of Rooms:</label>
+                <input type="text" id="noofrooms_office" name="noofrooms">
+                <label for="sqfootage">Square Footage:</label>
+                <input type="text" id="sqfootage_office" name="sqfootage"><br>
+                <label for="parkingspace">Parking Space:</label>
+                <input type="text" id="parkingspace_office" name="parkingspace">
+            </div>
+            
+            <div id="warehouseFields" class="hidden">
+                <label for="noofrooms">Number of Rooms:</label>
+                <input type="text" id="noofrooms_warehouse" name="noofrooms">
+                <label for="sqfootage">Square Footage:</label>
+                <input type="text" id="sqfootage_warehouse" name="sqfootage"><br>
+                <label for="parkingspace">Parking Space:</label>
+                <input type="text" id="parkingspace_warehouse" name="parkingspace">
+            </div>
+            
+            <div id="landFields" class="hidden">
+                <label for="purpose">Purpose:</label>
+                <input type="text" id="purpose" name="purpose">
+                <label for="acrescent">Acres/Cent:</label>
+                <input type="text" id="acrescent" name="acrescent">
+            </div>
+            
+
+            <button type="submit">Add Amenity</button>
+        </form>
+    </div>
+
+    <script>
+        function showFields() {
+            var propertyType = document.getElementById("property_type").value;
+            hideAllFields();
+            
+            if (propertyType === "apartment") {
+                document.getElementById("apartmentFields").style.display = "block";
+            } else if (propertyType === "house") {
+                document.getElementById("houseFields").style.display = "block";
+            } else if (propertyType === "officespace") {
+                document.getElementById("officeSpaceFields").style.display = "block";
+            } else if (propertyType === "warehouse") {
+                document.getElementById("warehouseFields").style.display = "block";
+            } else if (propertyType === "land") {
+                document.getElementById("landFields").style.display = "block";
+            }
+        }
+    
+        function hideAllFields() {
+            var fields = document.querySelectorAll(".hidden");
+            fields.forEach(function (field) {
+                field.style.display = "none";
+            });
+        }
+    
+        hideAllFields();
+    </script>
+    
+</body>
+</html>

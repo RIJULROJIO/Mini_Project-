@@ -33,8 +33,8 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'full_name', 'date_of_birth', 'gender', 'phone_number', 'current_address', 'photo_id')
     
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ( 'property_type', 'address', 'bedrooms', 'bathrooms', 'monthly_rent', 'security_deposit', 'lease_duration', 'availability_date', 'furnished')
-    list_filter = ('property_type', 'lease_duration', 'furnished')
+    list_display = ( 'property_type', 'address', 'monthly_rent', 'security_deposit', 'lease_duration', 'availability_date',)
+    list_filter = ('property_type', 'lease_duration')
    
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)

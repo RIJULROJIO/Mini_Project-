@@ -16,7 +16,7 @@
         }
 
         h1 {
-            background-color: #009688;
+            background-color: #7f9600;
             color: #fff;
             text-align: center;
             padding: 10px;
@@ -27,7 +27,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: lightblue;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -52,6 +52,9 @@
 
         .card {
             margin-bottom: 20px;
+            background-color: cornsilk;
+            
+
         }
 
         .card-title {
@@ -61,6 +64,7 @@
 
         .card-text {
             font-size: 16px;
+            color: #333; /* Text color for card details */
         }
 
         .form-group {
@@ -75,7 +79,7 @@
         }
 
         .btn {
-            background-color: #009688;
+            background-color: rgb(150, 0, 0);
             color: #fff;
             font-weight: bold;
             cursor: pointer;
@@ -85,20 +89,40 @@
         }
 
         .btn:hover {
-            background-color: #00796B;
+            background-color: #790000;
         }
+        .card:hover {
+        background-color: antiquewhite; /* Change the background color on hover */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a box-shadow on hover */
+        transition: background-color 0.3s, box-shadow 0.3s; /* Add a smooth transition effect */
+    }
+
+        .modal-dialog {
+            max-width: 100%;
+        }
+
+        .image-placeholder {
+            background-color: #ddd;
+            height: 200px;
+        }
+        a {
+            
+            text-decoration: none; /* Remove underline */
+            color: blueviolet; /* Use the default text color of the parent element */
+        }
+        a:hover {
+    color:blueviolet; /* Set the color for the link when hovered */
+}
     </style>
-    <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+    <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="">
 </head>
 
 <body>
     <h1>Manage Your Properties</h1>
-    <div class="profile-picture">
-        <!-- Add the code to display the user's profile picture here -->
-        <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;">
-    </div>
+    <h6><a href="{% url 'ownerpg' %}">Back to Home</a></h6>
+
     <div class="container">
-        <div class="user-name">Property Owner:{{ request.session.username }}</div>
+        <div class="user-name">Property Owner: {{ request.session.username }}</div>
 
         <!-- Property Listing Section -->
         <section>
@@ -108,65 +132,112 @@
                 <div class="col-md-4">
                     <div class="card mb-4">
                         <div class="card-body">
-                                <p class="card-title">{{ property.property_type }}</p>
-                                <p class="card-text"><strong>Address:</strong> {{ property.address }}</p>
-                                <p class="card-text"><strong>Monthly Rent:</strong> ${{ property.monthly_rent }}</p>
-                                <p class="card-text"><strong>Square Footage:</strong> {{ property.square_footage }} sq. ft.</p>
-                                <p class="card-text"><strong>Security Amount:</strong> ${{ property.security_deposit }}</p>
-                                <p class="card-text"><strong>Availability Date:</strong> {{ property.availability_date }}</p>
-                                <p class="card-text"><strong>Furnished:</strong> {{ property.furnished }}</p>
-                            
-                                <!-- Property Images Carousel/Slider -->
-                                <div id="propertyImageCarousel{{ property.id }}" class="carousel slide" data-ride="carousel">
-                                    <ol class="carousel-indicators">
-                                        {% for image in property.propertyimage_set.all %}
-                                        <li data-target="#propertyImageCarousel{{ property.id }}" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
-                                        {% endfor %}
-                                    </ol>
-                                    <div class="carousel-inner">
-                                        {% for image in property.propertyimage_set.all %}
-                                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                            <img src="{{ image.image.url }}" alt="{{ property.property_type }} Image">
-                                        </div>
-                                        {% endfor %}
+                            <p class="card-title">{{ property.property_type }}</p>
+                            <p class="card-text"><strong>Address:</strong> {{ property.address }}</p>
+                            <p class="card-text"><strong>Monthly Rent:</strong> {{ property.monthly_rent }}</p>
+                            <p class="card-text"><strong>Security Amount:</strong> {{ property.security_deposit }}</p>
+                            <p class="card-text"><strong>Availability Date:</strong> {{ property.availability_date }}</p>
+
+                            <!-- Property Images Carousel/Slider -->
+                            <div id="propertyImageCarousel{{ property.id }}" class="carousel slide" data-ride="carousel">
+                                <ol class="carousel-indicators">
+                                    {% for image in property.propertyimage_set.all %}
+                                    <li data-target="#propertyImageCarousel{{ property.id }}" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+                                    {% endfor %}
+                                </ol>
+                                <div class="carousel-inner">
+                                    {% for image in property.propertyimage_set.all %}
+                                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                        <img src="{{ image.image.url }}" alt="{{ property.property_type }} Image"
+                                            class="img-fluid">
                                     </div>
-                                    <a class="carousel-control-prev" href="#propertyImageCarousel{{ property.id }}" role="button" data-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Previous</span>
-                                    </a>
-                                    <a class="carousel-control-next" href="#propertyImageCarousel{{ property.id }}" role="button" data-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
+                                    {% empty %}
+                                    <div class="carousel-item active">
+                                        <div class="image-placeholder"></div>
+                                    </div>
+                                    {% endfor %}
                                 </div>
-                            
-                                <p class="card-text"><a href="{% url 'propimgup' property.id %}">Upload Property Images</a></p>
-                                <p class="card-text"><a href="#">Upload Property Documents</a></p>
+                                <a class="carousel-control-prev" href="#propertyImageCarousel{{ property.id }}" role="button"
+                                    data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#propertyImageCarousel{{ property.id }}" role="button"
+                                    data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+
+                            <p class="card-text"><a href="{% url 'propimgup' property.id %}">Upload Property Images</a></p>
+                            <p class="card-text"><a href="#">Upload Property Documents</a></p>
                             <!-- Inside the loop for properties -->
-<p class="card-text"><strong>Approval Status:</strong> {{ property.approval_status }}</p>
-<!-- ... (other property details) ... -->
+                            <p class="card-text"><strong>Approval Status:</strong> {{ property.approval_status }}</p>
+                            <p class="card-text"><strong>Rental Requests:</strong> NIL</p>
+                            <p class="card-text"><a href="{% url 'propamenity' property.id  %}">Add Property Amenities</a></p>
 
-                                <p class="card-text"><strong>Rental Requests:</strong> NIL</p>
-                            
 
-                            <form method="post">
+                            <form method="post" onsubmit="return confirm('Are you sure you want to delete this property?');">
                                 {% csrf_token %}
                                 <input type="hidden" name="property_id_to_delete" value="{{ property.id }}">
                                 <button type="submit" class="btn btn-danger">Delete Property</button>
+                                
                             </form>
-
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </section>
-
-        <!-- Add Property Section -->
-        <section>
-            <!-- Your property addition form goes here -->
-        </section>
     </div>
+
+    <!-- Modals for Property Images -->
+    {% for property in properties %}
+    <div class="modal fade" id="propertyImageModal{{ property.id }}" tabindex="-1" role="dialog"
+        aria-labelledby="propertyImageModalLabel{{ property.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="propertyImageModalLabel{{ property.id }}">Property Images</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="propertyImageCarousel{{ property.id }}" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            {% for image in property.propertyimage_set.all %}
+                            <li data-target="#propertyImageCarousel{{ property.id }}" data-slide-to="{{ forloop.counter0 }}"
+                                {% if forloop.first %}class="active"{% endif %}></li>
+                            {% endfor %}
+                        </ol>
+                        <div class="carousel-inner">
+                            {% for image in property.propertyimage_set.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ image.image.url }}" alt="{{ property.property_type }} Image" class="img-fluid">
+                            </div>
+                            {% empty %}
+                            <div class="carousel-item active">
+                                <div class="image-placeholder"></div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <a class="carousel-control-prev" href="#propertyImageCarousel{{ property.id }}" role="button"
+                            data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#propertyImageCarousel{{ property.id }}" role="button"
+                            data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 
     <!-- Add Bootstrap JS and jQuery for enhanced functionality (optional) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

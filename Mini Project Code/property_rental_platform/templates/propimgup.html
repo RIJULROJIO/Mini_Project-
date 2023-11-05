@@ -77,6 +77,10 @@
             border-radius: 5px;
             transition: background-color 0.3s;
         }
+        h3{
+            color: chocolate;
+
+        }
 
         label[for="file-upload"]:hover {
             background-color: #00796B;
@@ -87,16 +91,15 @@
 <body>
     <div class="container">
         <h2>Upload Images for Property</h2>
+        <h3> Make sure to add images of all available amenities!!</h3>
         <form  action="#" method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
         <div class="category-selector">
             <label for="category-select">Select Category:</label>
             <select id="category-select" name="category">
-                <option value="bedroom">Bedroom</option>
-                <option value="living-room">Living Room</option>
-                <option value="kitchen">Kitchen</option>
-                <option value="bathroom">Bathroom</option>
+                
+                <option value="bathroom">Interior</option>
                 <option value="exterior">Exterior</option>
             </select>
         </div>

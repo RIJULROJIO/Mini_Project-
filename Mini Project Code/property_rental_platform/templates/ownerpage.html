@@ -190,6 +190,10 @@
             padding: 20px;
             z-index: 9999;
         }
+        .message-content {
+    font-size: 18px;
+    text-align: center;
+}
         .user-info {
             text-align: right;
         }
@@ -201,6 +205,8 @@
 <body>
     
     <header>
+        <h1><a href="{% url 'index' %}">PROPERTY RENTALS</a></h1>
+
         
         <h1><a href="#"></a></h1>
         
@@ -256,7 +262,7 @@
                   <select id="gender" name="gender" required>
                       <option value="male" {% if user_profile.gender == 'male' %}selected{% endif %}>Male</option>
                       <option value="female" {% if user_profile.gender == 'female' %}selected{% endif %}>Female</option>
-                      <option value="other" {% if user_profile.gender == 'other' %}selected{% endif %}>Other</option>
+                      <option value="notprefertosay" {% if user_profile.gender == 'notprefertosay' %}selected{% endif %}>notprefertosay</option>
                   </select>
   
                   <!-- Phone Number Field -->

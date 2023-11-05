@@ -7,32 +7,104 @@
     <title>Property Owner Dashboard</title>
     <style>
         * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Basic styling for the body and background */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: silver;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
 
-/* Header styles */
-header {
-    background-color: #009688;
-    color: #fff;
-    text-align: center;
-    padding: 20px;
-}
+        header {
+            background-color: lightblue;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
 
-/* Header styles for h1 element */
-header h1 {
-    font-size: 36px;
-}
+        header h1 {
+            font-size: 36px;
+        }
 
-/* Navigation styles */
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 18px;
+            background-color: #d8dee0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #cff0ec;
+        }
+
+        /* ... (Existing styles) ... */
+
+        .profile-picture {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+        }
+
+        .profile-picture img {
+            max-width: 50px;
+            max-height: 50px;
+            border-radius: 50%;
+        }
+        
+        /* Updated styles for the add property form */
+        .card {
+            position: relative;
+            width: 80%;
+            margin: 20px auto;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        header nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            background-color: #a05182; /* Button background color */
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #add-property-form {
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        #add-property-form h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #99e2db;
+        }
+        /* Navigation styles */
 nav ul {
     list-style-type: none;
     padding: 0;
@@ -46,58 +118,12 @@ nav li {
 
 nav a {
     text-decoration: none;
-    color: #009688;
+    color: #10120b;
     font-weight: bold;
     font-size: 18px;
 }
-
-/* Section styles */
-section {
-    margin: 20px;
-    padding: 20px;
-    background-color: #f4f4f4;
-    border-radius: 10px;
-}
-
-section h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-section h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-/* Footer styles */
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 10px;
-}
-
-/* Styles for the large message box */
-.large-message-box {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    z-index: 9999;
-}
-    /* Existing styles... */
-
-    /* Top-level CSS for the form */
-    #add-property-form {
+ /* Top-level CSS for the form */
+ #add-property-form {
         margin: 20px;
         padding: 20px;
         background-color: #fff;
@@ -134,26 +160,26 @@ footer {
         font-weight: bold;
         cursor: pointer;
     }
-    header nav a {
-            text-decoration: none;
-            color: #fff;
-            font-weight: bold;
-            background-color: #00796B; /* Button background color */
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+
+        .user-name,
+        .profile-picture {
+            float: right;
+        }
+         /* Updated CSS styles for the form inside the card */
+         #add-property-form {
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
 
-    /* Additional styles... */
-
-
-
-.large-message-box .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    cursor: pointer;
+        footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
 }
 .card {
             position: relative;
@@ -163,22 +189,36 @@ footer {
             border-radius: 10px;
             overflow: hidden;
         }
+        .large-message-box {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 9999;
+}
+.message-content {
+    font-size: 18px;
+    text-align: center;
+}
 
-        /* Updated CSS styles for the form inside the card */
-        #add-property-form {
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
+/* CSS for Close Button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #333;
+}
 
-        .user-name,
-        .profile-picture {
-            float: right;
-        }
-        /* ... (Your existing CSS styles) ... */
+
     </style>
-        <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
-
+    <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
 </head>
 
 <body>
@@ -193,17 +233,12 @@ footer {
     </div>
     {% endif %}
     <header>
-        <nav>
-            <ul>
-                <li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}" style="color: black;">Log out</a></li>
-            </ul>
-        </nav>
+        
         
         <h1>Property Owner Dashboard</h1>
         <div class="user-name">Welcome!, {{ request.session.username }}</div>
         <div class="profile-picture">
-            <!-- Add the code to display the user's profile picture here -->
-            <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;">
+            <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture">
         </div>
         
     </header>
@@ -214,6 +249,11 @@ footer {
             <li><a href="javascript:void(0);" onclick="toggleAddPropertyForm()">Add Properties</a></li>
             <li><a href="#screening">Tenant Screening</a></li>
             <li><a href="#rent">Rent Collection</a></li>
+            <nav>
+                <ul>
+                    <li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}" style="color: black;">Log out</a></li>
+                </ul>
+            </nav>
         </ul>
     </nav>
 
@@ -222,17 +262,18 @@ footer {
         <!-- ... -->
     </section>
 
-    <section id="add-property-form" class="card" style="display: none;"> <!-- Applied the card class to the section -->
+    <section id="add-property-form" class="card" style="display: none;">
         <h2>Add Property</h2>
         <form action="#" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-
             <label for="property_type">Property Type:</label>
             <select name="property_type" id="property_type" required>
                 <option value="">--Please select--</option>
-                <option value="apartment">Apartment</option>
-                <option value="house">House</option>
-                <option value="off">Officespace</option>
+                <option value="Apartment">Apartment</option>
+                <option value="House">House</option>
+                <option value="Officespace">Officespace</option>
+                <option value="Warehouse">Warehouse</option>
+                <option value="Land">Land</option>
                 
                 <!-- Add more options as needed -->
             </select>
@@ -240,15 +281,7 @@ footer {
             <label for="address">Address:</label>
             <input type="text" name="address" id="address" required>
             <br>
-            <label for="bedrooms">Number of Bedrooms:</label>
-            <input type="number" name="bedrooms" id="bedrooms" >
-            <br>
-            <label for="bathrooms">Number of Bathrooms:</label>
-            <input type="number" name="bathrooms" id="bathrooms" >
-            <br>
-            <label for="square_footage">Square Footage:</label>
-            <input type="number" name="square_footage" id="square_footage" required>
-            <br>
+           
             <label for="monthly_rent">Monthly Rent:</label>
             <input type="number" name="monthly_rent" id="monthly_rent" required>
             <br>
@@ -264,24 +297,22 @@ footer {
             <label for="availability_date">Availability Date:</label>
             <input type="date" name="availability_date" id="availability_date" required>
             <br>
-            <label for="furnished">Furnished:</label>
-            <input type="radio" name="furnished" value="yes" id="furnished_yes"> Yes
-            <input type="radio" name="furnished" value="no" id="furnished_no"> No
+            
             
 
             <!-- Add more fields as needed -->
             <button type="submit">Submit</button>
+            <!-- (Form fields and labels) -->
         </form>
     </section>
 
-    <!-- More sections... -->
+    <!-- ... (Other sections) ... -->
 
     <footer>
         <p>&copy; 2023 Property Owner Dashboard</p>
     </footer>
 
     <script>
-        // Function to show the add property form
         function toggleAddPropertyForm() {
             const form = document.getElementById("add-property-form");
             if (form.style.display === "none") {
@@ -291,23 +322,17 @@ footer {
             }
         }
 
-        // Function to show the large message box
-        // Function to show the large message box
-function showMessageBox() {
-    const messageBox = document.querySelector(".large-message-box");
-    messageBox.style.display = "block";
-}
-
-
-        // Function to close the large message box
         function closeMessageBox() {
             const messageBox = document.querySelector(".large-message-box");
             messageBox.style.display = "none";
         }
+        function showMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "block";
+        }
 
-        // Call the showMessageBox function when the page loads
-        window.addEventListener("load", showMessageBox);
+        // Automatically close the message box after 5 seconds
+        setTimeout(closeMessageBox, 5000);
     </script>
 </body>
-
 </html>

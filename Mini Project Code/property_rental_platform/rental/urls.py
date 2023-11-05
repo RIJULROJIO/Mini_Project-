@@ -17,6 +17,9 @@ urlpatterns = [
     path('manageprop/',views.manageprop,name='manageprop'),
     path('propimgup/<int:property_id>/', views.propimgup, name='propimgup'),
     path('admprop/',views.admprop,name='admprop'),
+    path('propamenity/<int:property_id>/', views.propamenity, name='propamenity'),
+        path('property/<int:property_id>/', views.property_detail, name='property_detail'),
+
 
     path('adminhome/', views.adminh, name='adminhome'),
     path('adminregusers/', views.adminreg, name='adminregusers'),

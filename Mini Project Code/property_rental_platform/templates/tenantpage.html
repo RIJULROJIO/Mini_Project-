@@ -255,7 +255,7 @@
                   <select id="gender" name="gender" required>
                       <option value="male" {% if user_profile.gender == 'male' %}selected{% endif %}>Male</option>
                       <option value="female" {% if user_profile.gender == 'female' %}selected{% endif %}>Female</option>
-                      <option value="other" {% if user_profile.gender == 'other' %}selected{% endif %}>Other</option>
+                      <option value="notprefertosay" {% if user_profile.gender == 'notprefertosay' %}selected{% endif %}>notprefertosay</option>
                   </select>
   
                   <!-- Phone Number Field -->

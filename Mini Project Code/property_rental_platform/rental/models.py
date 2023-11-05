@@ -47,14 +47,11 @@ class Property(models.Model):
     )
     property_type = models.CharField(max_length=20, choices=[('apartment', 'Apartment'), ('house', 'House'), ('office', 'Office')])
     address = models.CharField(max_length=255)
-    bedrooms = models.PositiveIntegerField()
-    bathrooms = models.PositiveIntegerField()
-    square_footage = models.PositiveIntegerField()
+   
     monthly_rent = models.DecimalField(max_digits=10, decimal_places=2)
     security_deposit = models.DecimalField(max_digits=10, decimal_places=2)
     lease_duration = models.CharField(max_length=20, choices=[('1 year', '1 Year'), ('month-to-month', 'Month-to-Month')])
     availability_date = models.DateField()
-    furnished = models.BooleanField(default=False)
     APPROVAL_CHOICES = [
         ('pending', 'Pending'),
         ('approved', 'Approved'),
@@ -77,7 +74,29 @@ class PropertyImage(models.Model):
 
     def __str__(self):
         return self.image.name
-    
+
+class Amenity(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='amenities')
+
+    # Fields specific to different property types
+    squarefootage = models.PositiveIntegerField(null=True, blank=True)
+
+    bedrooms = models.PositiveIntegerField(null=True, blank=True)
+    bathrooms = models.PositiveIntegerField(null=True, blank=True)
+    stories = models.PositiveIntegerField(null=True, blank=True)
+    acresofland = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    rentspace = models.CharField(max_length=8, choices=[
+        ('full', 'Full'),
+        ('partial', 'Partial')
+    ], null=True, blank=True)
+    noofrooms = models.PositiveIntegerField(null=True, blank=True)
+    parkingspace = models.TextField( null=True, blank=True)
+    purpose = models.TextField(null=True, blank=True)  # Fixed the syntax here
+    acrescent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        return self.amenity.name
+
 
 
 
