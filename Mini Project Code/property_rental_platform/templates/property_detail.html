@@ -63,92 +63,95 @@
         th.col2, td.col2 {
             width: 50%;
         }
+
+        /* Style for the table */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #009688;
+        }
+
+        th {
+            background-color: #009688;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Style for the page container */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 
 <body>
-    <h1>Property Details</h1>
-    <p>Property ID: {{ property.id }}</p>
-    <p>Property Type: {{ property.property_type }}</p>
-    <p>Address: {{ property.address }}</p>
-    <p>Monthly Rent: ${{ property.monthly_rent }}</p>
-    <p>Approval Status: {{ property.approval_status }}</p>
-
-    <!-- Display the property details in a table -->
-    <h2>Property Details:</h2>
-    <table>
-        <tr>
-            <th class="col1">Attribute</th>
-            <th class="col2">Value</th>
-        </tr>
-        <tr>
-            <td class="col1">Property ID</td>
-            <td class="col2">{{ property.id }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Property Type</td>
-            <td class="col2">{{ property.property_type }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Address</td>
-            <td class="col2">{{ property.address }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Monthly Rent</td>
-            <td class="col2">${{ property.monthly_rent }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Approval Status</td>
-            <td class="col2">{{ property.approval_status }}</td>
-        </tr>
-    </table>
+    <div class="container">
+        <h1>Property Details</h1>
+        <p>Property Type: {{ property.property_type }}</p>
+        <p>Address: {{ property.address }}</p>
+        <p>Monthly Rent: {{ property.monthly_rent }}</p>
+        <p>Approval Status: {{ property.approval_status }}</p>
+    </div>
 
     <!-- Display the property amenities in a table -->
-    <h2>Property Amenities:</h2>
-    <table>
-        <tr>
-            <th class="col1">Amenity</th>
-            <th class="col2">Value</th>
-        </tr>
-        {% for amenity in amenities %}
-        <tr>
-            <td class="col1">Square Footage</td>
-            <td class="col2">{{ amenity.squarefootage }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Bedrooms</td>
-            <td class="col2">{{ amenity.bedrooms }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Bathrooms</td>
-            <td class="col2">{{ amenity.bathrooms }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Stories</td>
-            <td class="col2">{{ amenity.stories }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Acres/Cent</td>
-            <td class="col2">{{ amenity.acrescent }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Rent Space</td>
-            <td class="col2">{{ amenity.get_rentspace_display }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Number of Rooms</td>
-            <td class="col2">{{ amenity.noofrooms }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Parking Space</td>
-            <td class="col2">{{ amenity.parkingspace }}</td>
-        </tr>
-        <tr>
-            <td class="col1">Purpose</td>
-            <td class="col2">{{ amenity.purpose }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="container">
+        <h2>Property Amenity</h2>
+        <table>
+            <tr>
+                <th class="col1">Amenity</th>
+                <th class="col2">Available</th>
+            </tr>
+            <tr>
+                <td class="col1">Square Footage</td>
+                <td class="col2">{{ latest_amenity.squarefootage }}</td>
+            </tr>
+            <tr>
+                <td class="col1">Bedrooms</td>
+                <td class="col2">{{ latest_amenity.bedrooms }}</td>
+            </tr>
+            <tr>
+                <td class="col1">Bathrooms</td>
+                <td class="col2">{{ latest_amenity.bathrooms }}</td>
+            </tr>
+            <tr>
+                <td class="col1">Stories</td>
+                <td class="col2">{{ latest_amenity.stories }}</td>
+            </tr>
+            <tr>
+                <td class="col1">Acres/Cent</td>
+                <td class="col2">{{ latest_amenity.acrescent }}</td>
+            </tr>
+            <tr>
+                <td class="col1">Rent Space</td>
+                <td class="col2">{{ latest_amenity.get_rentspace_display }}</td>
+            </tr>
+            <tr>
+                <td class="col1">Number of Rooms</td>
+                <td class="col2">{{ latest_amenity.noofrooms }}</td>
+            </tr>
+            <tr>
+                <td class="col1">Parking Space</td>
+                <td class="col2">{{ latest_amenity.parkingspace }}</td>
+            </tr>
+            <tr>
+                <td class="col1">Purpose</td>
+                <td class="col2">{{ latest_amenity.purpose }}</td>
+            </tr>
+        </table>
+    </div>
 </body>
 
 </html>

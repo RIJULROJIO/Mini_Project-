@@ -19,6 +19,7 @@ urlpatterns = [
     path('admprop/',views.admprop,name='admprop'),
     path('propamenity/<int:property_id>/', views.propamenity, name='propamenity'),
         path('property/<int:property_id>/', views.property_detail, name='property_detail'),
+        path('ownerinfo/',views.ownerinfo,name='ownerinfo'),
 
 
     path('adminhome/', views.adminh, name='adminhome'),

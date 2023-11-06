@@ -354,19 +354,51 @@ def tenantpg(request):
 
     # Handle search and filters
     property_type = request.GET.get('property_type')
-    monthly_rent = request.GET.get('monthly_rent')
-    furnished = request.GET.get('furnished')
-    square_footage = request.GET.get('square_footage')
+    min_rent = request.GET.get('min_rent')
+    max_rent = request.GET.get('max_rent')
 
     # Apply filters
     if property_type:
         filtered_properties = filtered_properties.filter(property_type=property_type)
-    if monthly_rent:
-        filtered_properties = filtered_properties.filter(monthly_rent=monthly_rent)
-    if furnished:
-        filtered_properties = filtered_properties.filter(furnished=True)
+
+    # Apply rent amount range filter
+    if min_rent and max_rent:
+        filtered_properties = filtered_properties.filter(monthly_rent__range=(min_rent, max_rent))
+    elif min_rent:
+        filtered_properties = filtered_properties.filter(monthly_rent__gte=min_rent)
+    elif max_rent:
+        filtered_properties = filtered_properties.filter(monthly_rent__lte=max_rent)
+
+    # Additional filters based on the fields from the table
+    square_footage = request.GET.get('square_footage')
+    bedrooms = request.GET.get('bedrooms')
+    bathrooms = request.GET.get('bathrooms')
+    stories = request.GET.get('stories')
+    acrescent = request.GET.get('acrescent')
+    rent_space = request.GET.get('rent_space')
+    no_of_rooms = request.GET.get('no_of_rooms')
+    parking_space = request.GET.get('parking_space')
+    purpose = request.GET.get('purpose')
+
+    # Apply additional filters
     if square_footage:
-        filtered_properties = filtered_properties.filter(square_footage=square_footage)
+        filtered_properties = filtered_properties.filter(latest_amenity__squarefootage=square_footage)
+    if bedrooms:
+        filtered_properties = filtered_properties.filter(latest_amenity__bedrooms=bedrooms)
+    if bathrooms:
+        filtered_properties = filtered_properties.filter(latest_amenity__bathrooms=bathrooms)
+    if stories:
+        filtered_properties = filtered_properties.filter(latest_amenity__stories=stories)
+    if acrescent:
+        filtered_properties = filtered_properties.filter(latest_amenity__acrescent=acrescent)
+    if rent_space:
+        filtered_properties = filtered_properties.filter(latest_amenity__rentspace=rent_space)
+    if no_of_rooms:
+        filtered_properties = filtered_properties.filter(latest_amenity__noofrooms=no_of_rooms)
+    if parking_space:
+        filtered_properties = filtered_properties.filter(latest_amenity__parkingspace=parking_space)
+    if purpose:
+        filtered_properties = filtered_properties.filter(latest_amenity__purpose=purpose)
 
     if 'username' in request.session:
         username = request.session['username']
@@ -378,8 +410,8 @@ def tenantpg(request):
             user_profile = None
 
         context = {
-            'user_profile': user_profile,  # Add user_profile to the context
-            'properties': filtered_properties,  # Use filtered properties for display
+            'user_profile': user_profile,
+            'properties': filtered_properties,
         }
 
         response = render(request, 'tenantpg.html', context)
@@ -387,6 +419,7 @@ def tenantpg(request):
         return response
     else:
         return redirect('index')
+
 
 
 
@@ -482,31 +515,40 @@ def reject_property(request, property_id):
 def propamenity(request, property_id):
     if request.method == "POST":
         property = Property.objects.get(id=property_id)
-
+        
         # Create an Amenity object
         amenity = Amenity(property=property)
 
-        # Check the property type to determine which form fields to use
-        property_type = property.property_type
+        # Get the selected property type from the form
+        property_type = request.POST.get("property_type")
 
-        if property_type in ['apartment', 'house']:
-            amenity.squarefootage = request.POST.get("sqfootage") or None
-            amenity.bedrooms = request.POST.get("bedrooms") or None
-            amenity.bathrooms = request.POST.get("bathrooms") or None
-            if property_type == 'house':
-                amenity.stories = request.POST.get("stories") or None
-                amenity.rentspace = request.POST.get("rentspace") or None
-        elif property_type in ['officespace', 'warehouse']:
-            amenity.noofrooms = request.POST.get("noofrooms") or None
-            amenity.squarefootage = request.POST.get("sqfootage") or None
-            amenity.parkingspace = request.POST.get("parkingspace") or None
+        # Update amenity details based on property type
+        if property_type == 'apartment':
+            amenity.squarefootage = request.POST.get("sqfootage_apartment")
+            amenity.bedrooms = request.POST.get("bedrooms_apartment")
+            amenity.bathrooms = request.POST.get("bathrooms_apartment")
+        elif property_type == 'house':
+            amenity.squarefootage = request.POST.get("sqfootage_house")
+            amenity.bedrooms = request.POST.get("bedrooms_house")
+            amenity.bathrooms = request.POST.get("bathrooms_house")
+            amenity.stories = request.POST.get("stories")
+            amenity.rentspace = request.POST.get("rentspace")
+        elif property_type == 'officespace':
+            amenity.noofrooms = request.POST.get("noofrooms_office")
+            amenity.squarefootage = request.POST.get("sqfootage_office")
+            amenity.parkingspace = request.POST.get("parkingspace_office")
+        elif property_type == 'warehouse':
+            amenity.noofrooms = request.POST.get("noofrooms_warehouse")
+            amenity.squarefootage = request.POST.get("sqfootage_warehouse")
+            amenity.parkingspace = request.POST.get("parkingspace_warehouse")
         elif property_type == 'land':
-            amenity.purpose = request.POST.get("purpose") or None
-            amenity.acrescent = request.POST.get("acrescent") or None
+            amenity.purpose = request.POST.get("purpose")
+            amenity.acrescent = request.POST.get("acrescent")
 
+        # Other common fields
         amenity.balcony = request.POST.get("balcony")
-        amenity.parkingspace = request.POST.get("parkingspace")
 
+        # Save the amenity to the database
         amenity.save()
 
         return redirect('manageprop')
@@ -514,10 +556,30 @@ def propamenity(request, property_id):
     return render(request, 'propamenity.html')
 
 
+
+from django.db.models import Max
+
 def property_detail(request, property_id):
     property = get_object_or_404(Property, id=property_id)
-    amenities = Amenity.objects.filter(property=property)  # Fetch amenities related to this property
-    return render(request, 'property_detail.html', {'property': property, 'amenities': amenities})
+    
+    # Fetch the latest entered amenity for this property
+    latest_amenity = Amenity.objects.filter(property=property).latest('id')
+
+        
+    return render(request, 'property_detail.html', {'property': property, 'latest_amenity': latest_amenity})
+
+
+
+def ownerinfo(request):
+    # Retrieve the user's profile based on the currently logged-in user
+    user_profile = UserProfile.objects.get(user=request.user)
+
+    context = {
+        "user_profile": user_profile,
+    }
+
+    return render(request, "user_profile.html", context)
+
 
 
 

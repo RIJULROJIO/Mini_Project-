@@ -80,7 +80,6 @@ class Amenity(models.Model):
 
     # Fields specific to different property types
     squarefootage = models.PositiveIntegerField(null=True, blank=True)
-
     bedrooms = models.PositiveIntegerField(null=True, blank=True)
     bathrooms = models.PositiveIntegerField(null=True, blank=True)
     stories = models.PositiveIntegerField(null=True, blank=True)
@@ -90,12 +89,12 @@ class Amenity(models.Model):
         ('partial', 'Partial')
     ], null=True, blank=True)
     noofrooms = models.PositiveIntegerField(null=True, blank=True)
-    parkingspace = models.TextField( null=True, blank=True)
-    purpose = models.TextField(null=True, blank=True)  # Fixed the syntax here
+    parkingspace = models.TextField(null=True, blank=True)
+    purpose = models.TextField(null=True, blank=True)
     acrescent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
-        return self.amenity.name
+        return self.property.name
 
 
 
