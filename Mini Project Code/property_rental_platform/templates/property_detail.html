@@ -1,157 +1,182 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Property Details</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-            padding: 0;
-        }
+       body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh; /* Set minimum height to 100% of the viewport height */
+    position: relative; /* Set relative positioning for children elements */
+}
 
-        h1 {
-            font-size: 24px;
-            color: #009688;
-        }
+header {
+    background-color: floralwhite;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
 
-        h2 {
-            font-size: 20px;
-            color: #009688;
-            margin-top: 20px;
-        }
+footer {
+    background-color: #86a09d;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    position: fixed; /* Fixed positioning for the footer */
+    bottom: 40;
+    width: 100%;
+}
 
-        p {
-            font-size: 16px;
-        }
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
+h1, h2 {
+    color: #009688;
+    margin-bottom: 20px;
+}
 
-        li {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
+.property-info p {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+}
 
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
 
-        th, td {
-            text-align: left;
-            padding: 8px;
-        }
+th, td {
+    padding: 12px;
+    border: 1px solid #009688;
+    text-align: left;
+}
 
-        th {
-            background-color: #009688;
-            color: #fff;
-        }
+th {
+    background-color: #009688;
+    color: #fff;
+}
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+h2{
+    color: blueviolet;
+}
 
-        th.col1, td.col1 {
-            width: 50%;
-        }
+.none-value {
+    color: #888;
+}
 
-        th.col2, td.col2 {
-            width: 50%;
-        }
 
-        /* Style for the table */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #009688;
-        }
-
-        th {
-            background-color: #009688;
-            color: #fff;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        /* Style for the page container */
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
     </style>
+    <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="image/x-icon">
 </head>
 
 <body>
+    <header>
+        <h1>Property Rentals</h1>
+        <h2>Look in Further, {{ request.session.username }}</h2>
+
+      
+    </header>
+
     <div class="container">
-        <h1>Property Details</h1>
-        <p>Property Type: {{ property.property_type }}</p>
-        <p>Address: {{ property.address }}</p>
-        <p>Monthly Rent: {{ property.monthly_rent }}</p>
-        <p>Approval Status: {{ property.approval_status }}</p>
+        <div class="property-info">
+            <p><strong>Property Type:</strong> {{ property.property_type }}</p>
+            <p><strong>Address:</strong> {{ property.address }}</p>
+            <p><strong>Monthly Rent:</strong> Rs{{ property.monthly_rent }}</p>
+        </div>
     </div>
 
     <!-- Display the property amenities in a table -->
     <div class="container">
-        <h2>Property Amenity</h2>
+        <h2>Property Amenities</h2>
         <table>
             <tr>
-                <th class="col1">Amenity</th>
-                <th class="col2">Available</th>
+                <th>Amenity</th>
+                <th>Details</th>
             </tr>
-            <tr>
-                <td class="col1">Square Footage</td>
-                <td class="col2">{{ latest_amenity.squarefootage }}</td>
-            </tr>
-            <tr>
-                <td class="col1">Bedrooms</td>
-                <td class="col2">{{ latest_amenity.bedrooms }}</td>
-            </tr>
-            <tr>
-                <td class="col1">Bathrooms</td>
-                <td class="col2">{{ latest_amenity.bathrooms }}</td>
-            </tr>
-            <tr>
-                <td class="col1">Stories</td>
-                <td class="col2">{{ latest_amenity.stories }}</td>
-            </tr>
-            <tr>
-                <td class="col1">Acres/Cent</td>
-                <td class="col2">{{ latest_amenity.acrescent }}</td>
-            </tr>
-            <tr>
-                <td class="col1">Rent Space</td>
-                <td class="col2">{{ latest_amenity.get_rentspace_display }}</td>
-            </tr>
-            <tr>
-                <td class="col1">Number of Rooms</td>
-                <td class="col2">{{ latest_amenity.noofrooms }}</td>
-            </tr>
-            <tr>
-                <td class="col1">Parking Space</td>
-                <td class="col2">{{ latest_amenity.parkingspace }}</td>
-            </tr>
-            <tr>
-                <td class="col1">Purpose</td>
-                <td class="col2">{{ latest_amenity.purpose }}</td>
-            </tr>
+            {% if latest_amenity %}
+                {% if latest_amenity.squarefootage %}
+                    <tr>
+                        <td>Square Footage</td>
+                        <td>{{ latest_amenity.squarefootage }} sq. ft.</td>
+                    </tr>
+                {% endif %}
+                {% if latest_amenity.bedrooms %}
+                    <tr>
+                        <td>Bedrooms</td>
+                        <td>{{ latest_amenity.bedrooms }}</td>
+                    </tr>
+                {% endif %}
+                {% if latest_amenity.bathrooms %}
+                    <tr>
+                        <td>Bathrooms</td>
+                        <td>{{ latest_amenity.bathrooms }}</td>
+                    </tr>
+                {% endif %}
+                {% if latest_amenity.stories %}
+                    <tr>
+                        <td>Stories</td>
+                        <td>{{ latest_amenity.stories }}</td>
+                    </tr>
+                {% endif %}
+                {% if latest_amenity.acrescent %}
+                    <tr>
+                        <td>Acres/Cent</td>
+                        <td>{{ latest_amenity.acrescent }}</td>
+                    </tr>
+                {% endif %}
+                {% if latest_amenity.rentspace %}
+                    <tr>
+                        <td>Rent Space</td>
+                        <td>{{ latest_amenity.get_rentspace_display }}</td>
+                    </tr>
+                {% endif %}
+                {% if latest_amenity.noofrooms %}
+                    <tr>
+                        <td>Number of Rooms</td>
+                        <td>{{ latest_amenity.noofrooms }}</td>
+                    </tr>
+                {% endif %}
+                {% if latest_amenity.parkingspace %}
+                    <tr>
+                        <td>Parking Space</td>
+                        <td>{{ latest_amenity.parkingspace }}</td>
+                    </tr>
+                {% endif %}
+                {% if latest_amenity.purpose %}
+                    <tr>
+                        <td>Purpose</td>
+                        <td>{{ latest_amenity.purpose }}</td>
+                    </tr>
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td colspan="2" class="none-value">No amenities available.</td>
+                </tr>
+            {% endif %}
         </table>
     </div>
+
+    <footer>
+        <p>&copy; 2023 Your Company. All rights reserved.</p>
+    </footer>
 </body>
 
 </html>

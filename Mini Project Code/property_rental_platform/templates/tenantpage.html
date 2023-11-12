@@ -68,7 +68,7 @@
         main {
             padding: 20px;
             background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
-            
+
             border-radius: 10px;
             margin: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
@@ -104,80 +104,83 @@
             bottom: 0;
             width: 100%;
         }
+
         /* CSS for Get Started Button */
-.get-started-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #00796B; /* Button background color */
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-    margin-top: 20px;
-}
+        .get-started-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #00796B; /* Button background color */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
 
-.get-started-button:hover {
-    background-color: #005550; /* Change color on hover */
-}
-#registration-form {
-    display: none;
-    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px auto; /* Center the form horizontally */
-    max-width: 400px; /* Set a maximum width for the form */
-    
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
-}
+        .get-started-button:hover {
+            background-color: #005550; /* Change color on hover */
+        }
 
-#registration-form label {
-    display: block;
-    margin-bottom: 10px;
-    color: #00796B; /* Label text color */
-}
+        #registration-form {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto; /* Center the form horizontally */
+            max-width: 400px; /* Set a maximum width for the form */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
+        }
 
-#registration-form input[type="text"],
-#registration-form input[type="date"],
-#registration-form input[type="tel"],
-#registration-form select,
-#registration-form input[type="file"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f4f4f4; /* Input background color */
-}
+        #registration-form label {
+            display: block;
+            margin-bottom: 10px;
+            color: #00796B; /* Label text color */
+        }
 
-#registration-form input[type="text"]:focus,
-#registration-form input[type="date"]:focus,
-#registration-form input[type="tel"]:focus,
-#registration-form select:focus,
-#registration-form input[type="file"]:focus {
-    outline: none;
-    border-color: #00796B; /* Input border color on focus */
-}
+        #registration-form input[type="text"],
+        #registration-form input[type="date"],
+        #registration-form input[type="tel"],
+        #registration-form select,
+        #registration-form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f4f4f4; /* Input background color */
+        }
 
-#registration-form button {
-    background-color: #00796B;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+        #registration-form input[type="text"]:focus,
+        #registration-form input[type="date"]:focus,
+        #registration-form input[type="tel"]:focus,
+        #registration-form select:focus,
+        #registration-form input[type="file"]:focus {
+            outline: none;
+            border-color: #00796B; /* Input border color on focus */
+        }
 
-#registration-form button:hover {
-    background-color: #005550; /* Change color on hover */
-}
-#validation-messages {
-    color: red;
-    margin-top: 10px;
-}
-.large-message-box {
+        #registration-form button {
+            background-color: #00796B;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #registration-form button:hover {
+            background-color: #005550; /* Change color on hover */
+        }
+
+        #validation-messages {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .large-message-box {
             display: none;
             position: fixed;
             top: 50%;
@@ -190,102 +193,79 @@
             padding: 20px;
             z-index: 9999;
         }
+
         .user-info {
             text-align: right;
         }
-
     </style>
-        <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
-
+    <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
 </head>
 <body>
-    
     <header>
         <h1><a href="#"></a></h1>
-        
+
         <nav>
             <ul>
-<li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}">Log out</a></li>
+                <li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}">Log out</a></li>
             </ul>
         </nav>
     </header>
-    
+
     <main>
         {% if messages %}
         <div class="large-message-box">
             <span class="close-button" onclick="closeMessageBox()">&times;</span>
             <div class="message-content">
                 {% for message in messages %}
-                    {{ message|safe }}<br>
+                {{ message|safe }}<br>
                 {% endfor %}
             </div>
         </div>
         {% endif %}
         <!-- User Info Section -->
         <div class="user-info">
-
             <div class="user-name">Hello!, {{ request.session.username }}</div>
             <div class="user-description">Tenant</div>
             <a href="#" class="get-started-button" id="show-form-button">Edit Profile</a>
-
+            <a href="{% url 'tenantpg' %}" class="get-started-button" id="show-form-button">Dashboard</a>
         </div>
-        
         <!-- End of User Info Section -->
         <div class="form-container" id="registration-form">
-            <form action="#" method="post"   enctype="multipart/form-data">
-                {% csrf_token %}                
+            <form action="#" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div id="validation-messages"></div>
-
-                <!-- ID Field -->
-                
-
-
-                  <!-- Full Name Field -->
-                  <label for="fullname">Full Name:</label>
-                  <input type="text" id="fullname" name="fullname" value="{{ user_profile.full_name }}" required placeholder="Full Name">
-                  <div id="validation-messages"></div>
-  
-                  <!-- Date of Birth Field -->
-                  <label for="dateofbirth">Date of Birth (must be 18 years or older):</label>
-                  <input type="date" id="dateofbirth" name="dateofbirth" value="{{ user_profile.date_of_birth|date:'Y-m-d' }}" max="2004-12-31" required>
-                  <div id="validation-messages"></div>
-  
-                  <!-- Gender Field -->
-                  <label for="gender">Gender:</label>
-                  <select id="gender" name="gender" required>
-                      <option value="male" {% if user_profile.gender == 'male' %}selected{% endif %}>Male</option>
-                      <option value="female" {% if user_profile.gender == 'female' %}selected{% endif %}>Female</option>
-                      <option value="notprefertosay" {% if user_profile.gender == 'notprefertosay' %}selected{% endif %}>notprefertosay</option>
-                  </select>
-  
-                  <!-- Phone Number Field -->
-                  <label for="phoneno">Phone Number (numeric characters only):</label>
-                  <input type="tel" id="phoneno" name="phoneno" value="{{ user_profile.phone_number }}" pattern="[0-9]+" required placeholder="Phone Number">
-                  <div id="validation-messages"></div>
-  
-                  <!-- Current Address Field -->
-                  <label for="currentaddress">Current Address:</label>
-                  <input type="text" id="currentaddress" name="currentaddress" value="{{ user_profile.current_address }}" required placeholder="Current Address">
-                  <div id="validation-messages"></div>
-  
-    <!-- Display previously uploaded Photo name -->
-    <label for="photoid">Current Photo ID :</label>
-    <input type="text" id="photoidFileName" value="{{ user_profile.photo_id.name }}" readonly>
-
-    <!-- File Input to update the PHOTO if needed -->
-    <input type="file" id="photoid" name="photoid"  value="{{ user_profile.photo_id.name }}" readonly accept="image/*">
-
-                  
-                  
-                  
-                
-
-
-
+                <!-- Full Name Field -->
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" value="{{ user_profile.full_name }}" required placeholder="Full Name">
+                <div id="validation-messages-fullname"></div>
+                <!-- Date of Birth Field -->
+                <label for="dateofbirth">Date of Birth (must be 18 years or older):</label>
+                <input type="date" id="dateofbirth" name="dateofbirth" value="{{ user_profile.date_of_birth|date:'Y-m-d' }}" max="2004-12-31" required>
+                <div id="validation-messages-dateofbirth"></div>
+                <!-- Gender Field -->
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="male" {% if user_profile.gender == 'male' %}selected{% endif %}>Male</option>
+                    <option value="female" {% if user_profile.gender == 'female' %}selected{% endif %}>Female</option>
+                    <option value="notprefertosay" {% if user_profile.gender == 'notprefertosay' %}selected{% endif %}>Not Prefer to Say</option>
+                </select>
+                <!-- Phone Number Field -->
+                <label for="phoneno">Phone Number (numeric characters only):</label>
+                <input type="tel" id="phoneno" name="phoneno" value="{{ user_profile.phone_number }}" pattern="[0-9]+" required placeholder="Phone Number">
+                <div id="validation-messages-phoneno"></div>
+                <!-- Current Address Field -->
+                <label for="currentaddress">Current Address:</label>
+                <input type="text" id="currentaddress" name="currentaddress" value="{{ user_profile.current_address }}" required placeholder="Current Address">
+                <div id="validation-messages-currentaddress"></div>
+                <!-- Display previously uploaded Photo name -->
+                <label for="photoid">Current Photo ID :</label>
+                <input type="text" id="photoidFileName" value="{{ user_profile.photo_id.name }}" readonly>
+                <!-- File Input to update the PHOTO if needed -->
+                <input type="file" id="photoid" name="photoid" value="{{ user_profile.photo_id.name }}" accept="image/*">
                 <button type="submit">Update</button>
-            </form>        </div>
+            </form>
+        </div>
     </main>
-    
     <footer>
         <p>&copy; 2023 User Profile</p>
     </footer>
@@ -294,37 +274,32 @@
         const showFormButton = document.getElementById('show-form-button');
         const registrationForm = document.getElementById('registration-form');
         const validationMessages = document.getElementById('validation-messages');
-
-
-        showFormButton.addEventListener('click', function() {
-            registrationForm.style.display = 'block';
-        });
-         // Event listeners for real-time validation
         const fullnameInput = document.getElementById('fullname');
         const dateofbirthInput = document.getElementById('dateofbirth');
         const phonenoInput = document.getElementById('phoneno');
         const currentaddressInput = document.getElementById('currentaddress');
         const photoidInput = document.getElementById('photoid');
 
+        showFormButton.addEventListener('click', function() {
+            registrationForm.style.display = 'block';
+        });
+
+        // Event listeners for real-time validation
         fullnameInput.addEventListener('input', validateFullname);
         dateofbirthInput.addEventListener('input', validateDateOfBirth);
         phonenoInput.addEventListener('input', validatePhoneNo);
         currentaddressInput.addEventListener('input', validateCurrentAddress);
 
-        
-
         function validateFullname() {
-            // Example validation: Full Name must not be empty
-            const fullnameValue = fullnameInput.value;
-            if (fullnameValue.trim() === '') {
+            const fullnameValue = fullnameInput.value.trim();
+            if (fullnameValue === '') {
                 displayValidationMessage('Full Name is required.');
             } else {
-                clearValidationMessage();
+                clearValidationMessage('validation-messages-fullname');
             }
         }
 
         function validateDateOfBirth() {
-            // Example validation: Date of Birth must be 18 years or older
             const dateOfBirthValue = dateofbirthInput.value;
             const birthDate = new Date(dateOfBirthValue);
             const eighteenYearsAgo = new Date();
@@ -332,50 +307,51 @@
             if (birthDate > eighteenYearsAgo) {
                 displayValidationMessage('You must be 18 years or older.');
             } else {
-                clearValidationMessage();
+                clearValidationMessage('validation-messages-dateofbirth');
             }
         }
 
         function validatePhoneNo() {
-            // Example validation: Phone Number must contain only numeric characters
-            const phoneNoValue = phonenoInput.value;
+            const phoneNoValue = phonenoInput.value.trim();
             if (!/^\d+$/.test(phoneNoValue)) {
                 displayValidationMessage('Phone Number must contain only numeric characters.');
             } else {
-                clearValidationMessage();
+                clearValidationMessage('validation-messages-phoneno');
             }
         }
 
         function validateCurrentAddress() {
-            // Example validation: Current Address must not be empty
-            const currentAddressValue = currentaddressInput.value;
-            if (currentAddressValue.trim() === '') {
+            const currentAddressValue = currentaddressInput.value.trim();
+            if (currentAddressValue === '') {
                 displayValidationMessage('Current Address is required.');
             } else {
-                clearValidationMessage();
+                clearValidationMessage('validation-messages-currentaddress');
             }
         }
 
-        function displayValidationMessage(message) {
-            validationMessages.textContent = message;
+        function displayValidationMessage(message, targetId) {
+            const target = document.getElementById(targetId);
+            target.textContent = message;
         }
 
-        function clearValidationMessage() {
-            validationMessages.textContent = '';
+        function clearValidationMessage(targetId) {
+            const target = document.getElementById(targetId);
+            target.textContent = '';
         }
+
         // Function to show the large message box
         function showMessageBox() {
-            const messageBox = document.querySelector(".large-message-box");
-            messageBox.style.display = "block";
+            const messageBox = document.querySelector('.large-message-box');
+            messageBox.style.display = 'block';
 
             // Automatically hide the message box after 5 seconds (5000 milliseconds)
             setTimeout(() => {
-                messageBox.style.display = "none";
-            }, 2000); // Adjust the time (in milliseconds) as needed
+                messageBox.style.display = 'none';
+            }, 5000); // Adjust the time (in milliseconds) as needed
         }
 
         // Call the showMessageBox function when the page loads
-        window.addEventListener("load", showMessageBox);
+        window.addEventListener('load', showMessageBox);
     </script>
 </body>
 </html>

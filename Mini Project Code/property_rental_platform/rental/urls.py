@@ -16,10 +16,19 @@ urlpatterns = [
     path('tenantpg/',views.tenantpg,name='tenantpg'),
     path('manageprop/',views.manageprop,name='manageprop'),
     path('propimgup/<int:property_id>/', views.propimgup, name='propimgup'),
+    path('propdocs/<int:property_id>/', views.propdocs, name='propdocs'),
+
     path('admprop/',views.admprop,name='admprop'),
+        path('admviewdocs/<int:property_id>/', views.admviewdocs, name='admviewdocs'),
+
     path('propamenity/<int:property_id>/', views.propamenity, name='propamenity'),
         path('property/<int:property_id>/', views.property_detail, name='property_detail'),
-        path('ownerinfo/',views.ownerinfo,name='ownerinfo'),
+        path('ownerinfo/<int:property_id>/', views.ownerinfo, name='ownerinfo'),
+            path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
+             path('cart/', views.view_cart, name='view_cart'),
+
+
+
 
 
     path('adminhome/', views.adminh, name='adminhome'),

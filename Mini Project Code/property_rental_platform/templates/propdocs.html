@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Property Documents</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #009688;
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #009688;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #00796b;
+        }
+        header {
+    background-color: floralwhite;
+    color: #0c0101;
+    padding: 10px;
+    text-align: center;
+}
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Property Rentals</h1>
+        <h2>UploadPropertyDocuments, {{ request.session.username }}</h2>
+
+      
+    </header>
+    <div class="container">
+        <h1>Upload Property Documents</h1>
+        <form action="{% url 'propdocs' property_id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="property_id" value="{{ property_id }}">
+            <div class="form-group">
+                <label for="ownership-docs">Ownership Documents:</label>
+                <input type="file" name="ownership-docs" id="ownership-docs" accept=".pdf, .doc, .docx">
+            </div>
+
+            <div class="form-group">
+                <label for="financial-docs">Financial Documents:</label>
+                <input type="file" name="financial-docs" id="financial-docs" accept=".pdf, .doc, .docx">
+            </div>
+
+            <div class="form-group">
+                <label for="property-details">Property Details:</label>
+                <input type="file" name="property-details" id="property-details" accept=".pdf, .doc, .docx">
+            </div>
+
+            <div class="form-group">
+                <label for="maintenance-records">Maintenance and Renovation Records:</label>
+                <input type="file" name="maintenance-records" id="maintenance-records" accept=".pdf, .doc, .docx">
+            </div>
+
+            <!-- Add more document categories as needed -->
+
+            <button type="submit">Upload Documents</button>
+        </form>
+    </div>
+</body>
+
+</html>

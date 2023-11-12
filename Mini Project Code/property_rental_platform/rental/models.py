@@ -36,6 +36,8 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     current_address = models.CharField(max_length=255, null=True, blank=True)
     photo_id = models.FileField(upload_to='photo_ids/', null=True, blank=True)
+    cart = models.ManyToManyField('Property', blank=True)
+
 
     def __str__(self):
         return str(self.user)
@@ -63,9 +65,14 @@ class Property(models.Model):
         choices=APPROVAL_CHOICES,
         default='pending',
     )
-    
+      # Soft deletion field
+    deleted = models.BooleanField(default=False)
+    in_cart = models.BooleanField(default=False)
+
+
     def __str__(self):
-        return self.property_name
+        return self.address
+   
 
 class PropertyImage(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
@@ -96,6 +103,14 @@ class Amenity(models.Model):
     def __str__(self):
         return self.property.name
 
+
+class PropertyDocument(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='documents')
+    document_type = models.CharField(max_length=50)  # Example: 'ownership-docs', 'financial-docs', etc.
+    document = models.FileField(upload_to='property_documents/')
+    
+    def __str__(self):
+        return f"{self.property.address} - {self.document_type}"
 
 
 

@@ -16,7 +16,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity  # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument  # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -227,7 +227,14 @@ def owner(request):
     
     
 def adminh(request):
-    return render(request,'adminhome.html')
+    
+     if 'username' in request.session:
+        response = render(request, 'adminhome.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+     else:
+        return redirect('index')
+
 
 def adminreg(request):
     role_filter = request.GET.get('role')
@@ -347,59 +354,34 @@ def ownerpg(request):
     else:
         return redirect('index')
     
-
 def tenantpg(request):
-    # Get all approved properties
     filtered_properties = Property.objects.filter(approval_status='Approved')
 
-    # Handle search and filters
     property_type = request.GET.get('property_type')
     min_rent = request.GET.get('min_rent')
     max_rent = request.GET.get('max_rent')
 
-    # Apply filters
+# Create Q objects to build complex queries
+    filter_params = Q()
+
     if property_type:
-        filtered_properties = filtered_properties.filter(property_type=property_type)
+        filter_params &= Q(property_type=property_type)
 
-    # Apply rent amount range filter
-    if min_rent and max_rent:
-        filtered_properties = filtered_properties.filter(monthly_rent__range=(min_rent, max_rent))
-    elif min_rent:
-        filtered_properties = filtered_properties.filter(monthly_rent__gte=min_rent)
-    elif max_rent:
-        filtered_properties = filtered_properties.filter(monthly_rent__lte=max_rent)
+    # if monthly_rent:
+    #     filter_params &= Q(monthly_rent=monthly_rent)
 
-    # Additional filters based on the fields from the table
-    square_footage = request.GET.get('square_footage')
-    bedrooms = request.GET.get('bedrooms')
-    bathrooms = request.GET.get('bathrooms')
-    stories = request.GET.get('stories')
-    acrescent = request.GET.get('acrescent')
-    rent_space = request.GET.get('rent_space')
-    no_of_rooms = request.GET.get('no_of_rooms')
-    parking_space = request.GET.get('parking_space')
-    purpose = request.GET.get('purpose')
+    if min_rent:
+        filter_params &= Q(monthly_rent__gte=min_rent)
 
-    # Apply additional filters
-    if square_footage:
-        filtered_properties = filtered_properties.filter(latest_amenity__squarefootage=square_footage)
-    if bedrooms:
-        filtered_properties = filtered_properties.filter(latest_amenity__bedrooms=bedrooms)
-    if bathrooms:
-        filtered_properties = filtered_properties.filter(latest_amenity__bathrooms=bathrooms)
-    if stories:
-        filtered_properties = filtered_properties.filter(latest_amenity__stories=stories)
-    if acrescent:
-        filtered_properties = filtered_properties.filter(latest_amenity__acrescent=acrescent)
-    if rent_space:
-        filtered_properties = filtered_properties.filter(latest_amenity__rentspace=rent_space)
-    if no_of_rooms:
-        filtered_properties = filtered_properties.filter(latest_amenity__noofrooms=no_of_rooms)
-    if parking_space:
-        filtered_properties = filtered_properties.filter(latest_amenity__parkingspace=parking_space)
-    if purpose:
-        filtered_properties = filtered_properties.filter(latest_amenity__purpose=purpose)
+    if max_rent: 
+        filter_params &= Q(monthly_rent__lte=max_rent)
 
+# Apply the filters
+    filtered_properties = filtered_properties.filter(filter_params)
+
+   
+
+    
     if 'username' in request.session:
         username = request.session['username']
 
@@ -419,7 +401,26 @@ def tenantpg(request):
         return response
     else:
         return redirect('index')
+    
 
+def add_to_cart(request):
+    if request.method == 'POST':
+        property_id = request.POST.get('property_id')
+        property = get_object_or_404(Property, id=property_id)
+
+        # Assuming you have a UserProfile model with a cart field
+        if 'username' in request.session:
+            username = request.session['username']
+            user_profile = Profile.objects.get(user__username=username)
+
+            messages.success(request, "Property Added to Cart")
+
+            # Add the property to the user's cart
+            user_profile.cart.add(property)
+
+
+    # Redirect back to the tenantpg page
+    return redirect('tenantpg')
 
 
 
@@ -432,8 +433,10 @@ def manageprop(request):
             # Check if a property deletion request was submitted
             property_id_to_delete = request.POST.get('property_id_to_delete')
             if property_id_to_delete:
+                # Soft delete the property by updating the 'deleted' field
                 property_to_delete = get_object_or_404(Property, id=property_id_to_delete)
-                property_to_delete.delete()
+                property_to_delete.deleted = True
+                property_to_delete.save()
                 # You can add a success message here if needed
 
         # Get the user's profile
@@ -444,8 +447,8 @@ def manageprop(request):
 
         # Check if the user profile is found
         if user_profile:
-            # Get properties associated with the property owner
-            properties = Property.objects.filter(property_owner=user_profile.user)
+            # Get non-deleted properties associated with the property owner
+            properties = Property.objects.filter(property_owner=user_profile.user, deleted=False)
 
             context = {
                 'user_profile': user_profile,
@@ -570,15 +573,63 @@ def property_detail(request, property_id):
 
 
 
-def ownerinfo(request):
-    # Retrieve the user's profile based on the currently logged-in user
-    user_profile = UserProfile.objects.get(user=request.user)
+def ownerinfo(request, property_id):
+    # Retrieve the property based on the property_id
+    property = get_object_or_404(Property, pk=property_id)
+
+    # Retrieve the property owner's profile
+    owner_profile = UserProfile.objects.get(user=property.property_owner)
 
     context = {
-        "user_profile": user_profile,
+        "property": property,
+        "owner_profile": owner_profile,
     }
 
-    return render(request, "user_profile.html", context)
+    return render(request, "ownerinfo.html", context)
+
+
+from django.http import HttpResponse
+
+def propdocs(request, property_id):
+    if request.method == 'POST':
+        property_instance = Property.objects.get(id=property_id)
+
+        # Assuming the input names in your HTML form are 'ownership-docs', 'financial-docs', etc.
+        document_types = ['ownership-docs', 'financial-docs', 'property-details', 'maintenance-records']
+        
+        for doc_type in document_types:
+            document = request.FILES.get(doc_type, None)
+            
+            if document:
+                PropertyDocument.objects.create(property=property_instance, document_type=doc_type, document=document)
+
+        return redirect('manageprop')  # You can redirect to another page if needed
+    else:
+        return render(request, 'propdocs.html', {'property_id': property_id})
+    
+
+def admviewdocs(request, property_id):
+    property_obj = get_object_or_404(Property, id=property_id)
+    property_documents = PropertyDocument.objects.filter(property=property_obj)
+    context = {'property': property_obj, 'property_documents': property_documents}
+   
+    return render(request, 'admviewdocs.html', context)
+
+
+def view_cart(request):
+    # Get the user's profile
+    user_profile = get_object_or_404(Profile, user=request.user)
+
+    
+    # Get properties in the user's cart
+    cart_properties = user_profile.cart.all()
+
+    context = {'cart_properties': cart_properties}
+    return render(request, 'cart.html', context)
+
+
+
+
 
 
 

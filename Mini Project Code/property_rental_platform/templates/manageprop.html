@@ -134,8 +134,8 @@
                         <div class="card-body">
                             <p class="card-title">{{ property.property_type }}</p>
                             <p class="card-text"><strong>Address:</strong> {{ property.address }}</p>
-                            <p class="card-text"><strong>Monthly Rent:</strong> {{ property.monthly_rent }}</p>
-                            <p class="card-text"><strong>Security Amount:</strong> {{ property.security_deposit }}</p>
+                            <p class="card-text"><strong>Monthly Rent:</strong> Rs{{ property.monthly_rent }}</p>
+                            <p class="card-text"><strong>Security Amount:</strong>Rs {{ property.security_deposit }}</p>
                             <p class="card-text"><strong>Availability Date:</strong> {{ property.availability_date }}</p>
 
                             <!-- Property Images Carousel/Slider -->
@@ -170,18 +170,16 @@
                             </div>
 
                             <p class="card-text"><a href="{% url 'propimgup' property.id %}">Upload Property Images</a></p>
-                            <p class="card-text"><a href="#">Upload Property Documents</a></p>
+                            <p class="card-text"><a href="{% url 'propdocs' property.id %}">Upload Property Documents</a></p>
                             <!-- Inside the loop for properties -->
                             <p class="card-text"><strong>Approval Status:</strong> {{ property.approval_status }}</p>
                             <p class="card-text"><strong>Rental Requests:</strong> NIL</p>
                             <p class="card-text"><a href="{% url 'propamenity' property.id  %}">Add Property Amenities</a></p>
 
-
                             <form method="post" onsubmit="return confirm('Are you sure you want to delete this property?');">
                                 {% csrf_token %}
                                 <input type="hidden" name="property_id_to_delete" value="{{ property.id }}">
                                 <button type="submit" class="btn btn-danger">Delete Property</button>
-                                
                             </form>
                         </div>
                     </div>

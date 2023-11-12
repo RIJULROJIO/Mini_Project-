@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -104,6 +105,8 @@
     color:blueviolet; /* Set the color for the link when hovered */
 }
     </style>
+            <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
 </head>
 
 <body>
@@ -129,6 +132,8 @@
                 
                 <th>Actions</th>
                 <th>More Info</th> <!-- New column for More Info button -->
+                <th>OwnerDetails</th>
+                <th>Documents</th>
 
             </tr>
             {% for property in properties %}
@@ -136,7 +141,7 @@
                 <td>{{ property.id }}</td>
                 <td>{{ property.property_type }}</td>
                 <td>{{ property.address }}</td>
-                <td>{{ property.monthly_rent }}</td>
+                <td>Rs{{ property.monthly_rent }}</td>
                 <td>{{ property.approval_status }}</td>
                 <td>
                     <a href="{% url 'property_images' property.id %}">View Images</a>
@@ -155,6 +160,14 @@
                 <td>
                     <!-- Add More Info button that links to a property detail page -->
                     <a href="{% url 'property_detail' property.id %}">More Info</a>
+                </td>
+                <td>
+                    <!-- Add More Info button that links to a property detail page -->
+                    <a href="{% url 'ownerinfo' property.id %}">Owner Info</a>
+                </td>
+                <td>
+                    <!-- Add More Info button that links to a property detail page -->
+                    <a href="{% url 'admviewdocs' property.id %}">Documents</a>
                 </td>
             </tr>
             {% endfor %}

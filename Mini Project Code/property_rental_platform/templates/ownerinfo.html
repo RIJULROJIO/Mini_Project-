@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>Property Owner Information</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,6 +12,37 @@
             margin: 0;
             padding: 0;
         }
+        
+header {
+    background-color: floralwhite;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+footer {
+    background-color: #86a09d;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    position: fixed; /* Fixed positioning for the footer */
+    bottom: 40;
+    width: 100%;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    color: #009688;
+    margin-bottom: 20px;
+}
 
         .container {
             max-width: 600px;
@@ -46,50 +78,57 @@
             max-width: 100px;
         }
 
-        .back-button {
-            margin-top: 20px;
+        /* Top-level CSS */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 767px) {
+            .container {
+                max-width: 100%;
+                margin: 10px;
+                box-shadow: none;
+            }
         }
     </style>
+    <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
 </head>
 <body>
+    <header>
+        <h1>Property Rentals</h1>
+        <h2>OwnerDetails, {{ request.session.username }}</h2>
+
+      
+    </header>
     <div class="container">
-        <h1>User Profile</h1>
+        <h1>Property Owner Information</h1>
 
         <div class="user-details">
-            <div class="label">Full Name:</div>
-            <div class="value">{{ user_profile.full_name }}</div>
+            <div class="label">Owner's Full Name:</div>
+            <div class="value">{{ owner_profile.full_name }}</div>
         </div>
 
         <div class="user-details">
-            <div class="label">Date of Birth:</div>
-            <div class="value">{{ user_profile.date_of_birth }}</div>
+            <div class="label">Owner's Phone Number:</div>
+            <div class="value">{{ owner_profile.phone_number }}</div>
         </div>
 
         <div class="user-details">
-            <div class="label">Gender:</div>
-            <div class="value">{{ user_profile.gender }}</div>
+            <div class="label">Owner's Current Address:</div>
+            <div class="value">{{ owner_profile.current_address }}</div>
         </div>
 
         <div class="user-details">
-            <div class="label">Phone Number:</div>
-            <div class="value">{{ user_profile.phone_number }}</div>
-        </div>
-
-        <div class="user-details">
-            <div class="label">Current Address:</div>
-            <div class="value">{{ user_profile.current_address }}</div>
-        </div>
-
-        <div class="user-details">
-            <div class="label">Photo ID:</div>
-            {% if user_profile.photo_id %}
-                <img src="{{ user_profile.photo_id.url }}" alt="User Photo ID" class="photo">
+            <div class="label">Owner's Photo ID:</div>
+            {% if owner_profile.photo_id %}
+                <img src="{{ owner_profile.photo_id.url }}" alt="Owner's Photo ID" class="photo">
             {% else %}
                 No Photo ID uploaded.
             {% endif %}
         </div>
-
-        <a href="{% url 'owner' %}" class="back-button">Back to Profile Edit</a>
+        
     </div>
 </body>
 </html>

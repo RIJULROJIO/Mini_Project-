@@ -18,6 +18,8 @@
             padding: 0;
             background-color: silver;
             background-size: cover;
+            background-image: url('{% static "images/p23.jpg" %}');
+
             background-repeat: no-repeat;
             background-attachment: fixed;
             color: #333;
@@ -142,6 +144,26 @@ nav a {
         display: block;
         font-weight: bold;
     }
+    /* New styles for the larger profile picture */
+.profile-picture-large {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 50px; /* Adjust the size as needed */
+    height: 50px; /* Adjust the size as needed */
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #fff; /* Add background color for the circular container */
+}
+
+/* Style for the circular image */
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Maintain aspect ratio and cover the circular container */
+    border-radius: 50%;
+}
+
 
     #add-property-form input[type="text"],
     #add-property-form input[type="number"],
@@ -190,18 +212,20 @@ nav a {
             overflow: hidden;
         }
         .large-message-box {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    z-index: 9999;
-}
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 9999;
+        }
+
+/* CSS for Message Box Content */
 .message-content {
     font-size: 18px;
     text-align: center;
@@ -216,6 +240,7 @@ nav a {
     color: #333;
 }
 
+        
 
     </style>
     <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
@@ -237,9 +262,10 @@ nav a {
         
         <h1>Property Owner Dashboard</h1>
         <div class="user-name">Welcome!, {{ request.session.username }}</div>
-        <div class="profile-picture">
-            <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture">
+        <div class="profile-picture-large">
+            <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" class="profile-image">
         </div>
+        
         
     </header>
 
@@ -313,26 +339,27 @@ nav a {
     </footer>
 
     <script>
+         // Function to show the large message box
+         function showMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "block";
+
+            // Automatically hide the message box after 5 seconds (5000 milliseconds)
+            setTimeout(() => {
+                messageBox.style.display = "none";
+            }, 2000); // Adjust the time (in milliseconds) as needed
+        }
+
+        // Call the showMessageBox function when the page loads
+        window.addEventListener("load", showMessageBox);
         function toggleAddPropertyForm() {
-            const form = document.getElementById("add-property-form");
-            if (form.style.display === "none") {
+            var form = document.getElementById("add-property-form");
+            if (form.style.display === "none" || form.style.display === "") {
                 form.style.display = "block";
             } else {
                 form.style.display = "none";
             }
         }
-
-        function closeMessageBox() {
-            const messageBox = document.querySelector(".large-message-box");
-            messageBox.style.display = "none";
-        }
-        function showMessageBox() {
-            const messageBox = document.querySelector(".large-message-box");
-            messageBox.style.display = "block";
-        }
-
-        // Automatically close the message box after 5 seconds
-        setTimeout(closeMessageBox, 5000);
     </script>
 </body>
 </html>
