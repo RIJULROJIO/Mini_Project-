@@ -24,8 +24,10 @@ urlpatterns = [
     path('propamenity/<int:property_id>/', views.propamenity, name='propamenity'),
         path('property/<int:property_id>/', views.property_detail, name='property_detail'),
         path('ownerinfo/<int:property_id>/', views.ownerinfo, name='ownerinfo'),
-            path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
-             path('cart/', views.view_cart, name='view_cart'),
+            # path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
+            #  path('cart/', views.view_cart, name='view_cart'),
+                #path('submit_rental_request/', views.submit_rental_request, name='submit_rental_request'),
+
 
 
 

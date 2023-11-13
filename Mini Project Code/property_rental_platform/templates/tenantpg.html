@@ -286,10 +286,10 @@ footer {
         <nav>
             <a href="{% url 'logout' %}" style="color: black; float: left; margin-left: 10px;">Log out</a>
         </nav>
-        <nav>
-            <a href="{% url 'view_cart' %}" style="color: black; float: left; margin-left: 10px;">View Cart</a>
+        <!-- <nav>
+            <a href="" style="color: black; float: left; margin-left: 10px;">View Cart</a>
 
-        </nav>
+        </nav> -->
         <h1>Tenant Dashboard</h1>
         <div class="profile-picture-large">
             <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" class="profile-image">
@@ -358,11 +358,11 @@ footer {
                             </a>
                             
                             <!-- Inside the property-card in tenantpg.html -->
-<form method="post" action="{% url 'add_to_cart' %}">
+<form method="post" action="">
     {% csrf_token %}
     <input type="hidden" name="property_id" value="{{ property.id }}">
     <button type="submit" class="btn btn-success rent-button">
-        <i class="fas fa-shopping-cart"></i> Add to Cart
+        <i class="fas fa-shopping-cart"></i> Rent Now
     </button>
 </form>
 

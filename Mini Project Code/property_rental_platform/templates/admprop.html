@@ -127,13 +127,14 @@
                 <th>Property Type</th>
                 <th>Address</th>
                 <th>Monthly Rent</th>
-                <th>Approval Status</th>
                 <th>Images</th>
                 
                 <th>Actions</th>
                 <th>More Info</th> <!-- New column for More Info button -->
                 <th>OwnerDetails</th>
                 <th>Documents</th>
+                <th>Approval Status</th>
+
 
             </tr>
             {% for property in properties %}
@@ -147,16 +148,7 @@
                     <a href="{% url 'property_images' property.id %}">View Images</a>
                 </td>
                 
-                <td>
-                    <form method="post" action="{% url 'approve_property' property.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="approve-button">Approve</button>
-                    </form>
-                    <form method="post" action="{% url 'reject_property' property.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="reject-button">Reject</button>
-                    </form>
-                </td>
+               
                 <td>
                     <!-- Add More Info button that links to a property detail page -->
                     <a href="{% url 'property_detail' property.id %}">More Info</a>
@@ -168,6 +160,16 @@
                 <td>
                     <!-- Add More Info button that links to a property detail page -->
                     <a href="{% url 'admviewdocs' property.id %}">Documents</a>
+                </td>
+                <td>
+                    <form method="post" action="{% url 'approve_property' property.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="approve-button">Approve</button>
+                    </form>
+                    <form method="post" action="{% url 'reject_property' property.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="reject-button">Reject</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}

@@ -36,7 +36,6 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     current_address = models.CharField(max_length=255, null=True, blank=True)
     photo_id = models.FileField(upload_to='photo_ids/', null=True, blank=True)
-    cart = models.ManyToManyField('Property', blank=True)
 
 
     def __str__(self):
@@ -111,6 +110,13 @@ class PropertyDocument(models.Model):
     
     def __str__(self):
         return f"{self.property.address} - {self.document_type}"
+
+
+
+
+    
+
+
 
 
 

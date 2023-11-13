@@ -403,24 +403,24 @@ def tenantpg(request):
         return redirect('index')
     
 
-def add_to_cart(request):
-    if request.method == 'POST':
-        property_id = request.POST.get('property_id')
-        property = get_object_or_404(Property, id=property_id)
+# def add_to_cart(request):
+#     if request.method == 'POST':
+#         property_id = request.POST.get('property_id')
+#         property = get_object_or_404(Property, id=property_id)
 
-        # Assuming you have a UserProfile model with a cart field
-        if 'username' in request.session:
-            username = request.session['username']
-            user_profile = Profile.objects.get(user__username=username)
+#         # Assuming you have a UserProfile model with a cart field
+#         if 'username' in request.session:
+#             username = request.session['username']
+#             user_profile = Profile.objects.get(user__username=username)
 
-            messages.success(request, "Property Added to Cart")
+#             messages.success(request, "Property Added to Cart")
 
-            # Add the property to the user's cart
-            user_profile.cart.add(property)
+#             # Add the property to the user's cart
+#             user_profile.cart.add(property)
 
 
-    # Redirect back to the tenantpg page
-    return redirect('tenantpg')
+#     # Redirect back to the tenantpg page
+#     return redirect('tenantpg')
 
 
 
@@ -616,16 +616,16 @@ def admviewdocs(request, property_id):
     return render(request, 'admviewdocs.html', context)
 
 
-def view_cart(request):
-    # Get the user's profile
-    user_profile = get_object_or_404(Profile, user=request.user)
+# def view_cart(request):
+#     # Get the user's profile
+#     user_profile = get_object_or_404(Profile, user=request.user)
 
     
-    # Get properties in the user's cart
-    cart_properties = user_profile.cart.all()
+#     # Get properties in the user's cart
+#     cart_properties = user_profile.cart.all()
 
-    context = {'cart_properties': cart_properties}
-    return render(request, 'cart.html', context)
+#     context = {'cart_properties': cart_properties}
+#     return render(request, 'cart.html', context)
 
 
 
