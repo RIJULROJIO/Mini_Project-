@@ -16,7 +16,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument  # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest  # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -361,14 +361,11 @@ def tenantpg(request):
     min_rent = request.GET.get('min_rent')
     max_rent = request.GET.get('max_rent')
 
-# Create Q objects to build complex queries
+    # Create Q objects to build complex queries
     filter_params = Q()
 
     if property_type:
         filter_params &= Q(property_type=property_type)
-
-    # if monthly_rent:
-    #     filter_params &= Q(monthly_rent=monthly_rent)
 
     if min_rent:
         filter_params &= Q(monthly_rent__gte=min_rent)
@@ -376,20 +373,21 @@ def tenantpg(request):
     if max_rent: 
         filter_params &= Q(monthly_rent__lte=max_rent)
 
-# Apply the filters
+    # Apply the filters
     filtered_properties = filtered_properties.filter(filter_params)
 
-   
-
-    
     if 'username' in request.session:
         username = request.session['username']
 
         # Get the user's profile
         try:
             user_profile = Profile.objects.get(user__username=username)
-        except UserProfile.DoesNotExist:
+        except Profile.DoesNotExist:
             user_profile = None
+
+        # Check if a rental request has been accepted for each property
+        for property in filtered_properties:
+            property.is_rental_request_accepted = property.rentalrequest_set.filter(tenant=user_profile, status='Accepted').exists()
 
         context = {
             'user_profile': user_profile,
@@ -626,6 +624,50 @@ def admviewdocs(request, property_id):
 
 #     context = {'cart_properties': cart_properties}
 #     return render(request, 'cart.html', context)
+
+def submit_rental_request(request, property_id):
+    if request.method == 'POST':
+        # Assuming you have a form with the tenant's information
+        # In a real scenario, you might want to authenticate the user or get the tenant information in some way
+
+        # Get the property and tenant based on the IDs
+        property = Property.objects.get(pk=property_id)
+        tenant = request.user.profile  # Assuming the tenant information is associated with the user's profile
+
+        # Check if a rental request already exists for this property and tenant
+        existing_request = RentalRequest.objects.filter(property=property, tenant=tenant).exists()
+
+        if not existing_request:
+            # Create a new rental request
+            rental_request = RentalRequest(property=property, tenant=tenant)
+            rental_request.save()
+
+            messages.success(request, 'Rental request submitted successfully!')
+        else:
+            messages.warning(request, 'You have already submitted a rental request for this property.')
+
+        # Redirect back to the property details page or wherever you want
+
+    # Handle the case where the request method is not POST (optional)
+    return redirect('tenantpage')  # 
+
+def rentnxt(request):
+    return render(request,"rentnxt.html")
+
+def accept_rental_request(request, request_id):
+    if request.method == 'POST':
+        # Get the rental request based on the request_id
+        rental_request = get_object_or_404(RentalRequest, id=request_id)
+
+        # Add logic to update the rental request status to 'Accepted'
+        rental_request.status = 'Accepted'
+        rental_request.save()
+
+        # Add any additional logic you need (e.g., send notifications, update other models, etc.)
+
+    # Redirect back to the manage properties page
+    return redirect('manageprop')
+
 
 
 

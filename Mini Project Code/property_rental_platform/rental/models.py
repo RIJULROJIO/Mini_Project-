@@ -112,6 +112,27 @@ class PropertyDocument(models.Model):
         return f"{self.property.address} - {self.document_type}"
 
 
+class RentalRequest(models.Model):
+    PENDING = 'Pending'
+    ACCEPTED = 'Accepted'
+    REJECTED = 'Rejected'
+
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (ACCEPTED, 'Accepted'),
+        (REJECTED, 'Rejected'),
+    ]
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    tenant = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING)
+
+
+    def __str__(self):
+     return f'RentalRequest - {self.property} - {self.tenant} - Status: {self.status}'
+
+
+
 
 
     

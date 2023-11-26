@@ -11,129 +11,128 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
-                body {
+        body {
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
             margin: 0;
             padding: 0;
         }
-   
 
-header {
-    background-color: #bbcecc;
-    color: #fff;
-    text-align: center;
-    padding: 5px;
-}
+        header {
+            background-color: #bbcecc;
+            color: #fff;
+            text-align: center;
+            padding: 5px;
+        }
 
-header h1 {
-    font-size: 28px;
-}
+        header h1 {
+            font-size: 28px;
+        }
 
-.dashboard {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
-.dashboard h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: #009688;
-}
+        .dashboard h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #009688;
+        }
 
-.section {
-    margin: 20px 0;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
 
-.section h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-    color: #009688;
-}
+        .section h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #009688;
+        }
 
-.property-list {
-    display: flex;
-    flex-wrap: wrap;
-    list-style-type: none;
-    padding: 0;
-}
+        .property-list {
+            display: flex;
+            flex-wrap: wrap;
+            list-style-type: none;
+            padding: 0;
+        }
 
-.property-card {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px;
-    background-color: cornflowerblue;
-    flex: 1;
-    max-width: calc(33.33% - 20px); /* Three columns with margin */
-    min-height: 300px;
-}
+        .property-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px;
+            background-color: cornflowerblue;
+            flex: 1;
+            max-width: calc(33.33% - 20px); /* Three columns with margin */
+            min-height: 300px;
+        }
 
-.property-card img {
-    max-width: 100%;
-    border-radius: 5px;
-    margin: 10px 0; /* Add margin to images */
-}
+        .property-card img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin: 10px 0; /* Add margin to images */
+        }
 
-.property-card .property-details {
-    padding: 10px;
-}
+        .property-card .property-details {
+            padding: 10px;
+        }
 
-.property-card h4 {
-    font-size: 20px;
-    margin: 0;
-    color: #009688;
-}
+        .property-card h4 {
+            font-size: 20px;
+            margin: 0;
+            color: #009688;
+        }
 
-.property-card p {
-    font-size: 16px;
-    margin: 0;
-}
+        .property-card p {
+            font-size: 16px;
+            margin: 0;
+        }
 
-.search-form {
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-top: 20px;
-}
+        .search-form {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
 
-.search-form label {
-    font-weight: bold;
-}
+        .search-form label {
+            font-weight: bold;
+        }
 
-.search-form input[type="text"],
-.search-form select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 5px;
-}
+        .search-form input[type="text"],
+        .search-form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
 
-.search-button {
-    background-color: #009688;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
+        .search-button {
+            background-color: #009688;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
 
-.search-button:hover {
-    background-color: #00796B;
-}
+        .search-button:hover {
+            background-color: #00796B;
+        }
 
-.large-message-box {
+        .large-message-box {
             display: none;
             position: fixed;
             top: 50%;
@@ -147,80 +146,74 @@ header h1 {
             z-index: 9999;
         }
 
-/* CSS for Message Box Content */
-.message-content {
-    font-size: 18px;
-    text-align: center;
-}
+        /* CSS for Message Box Content */
+        .message-content {
+            font-size: 18px;
+            text-align: center;
+        }
 
-/* CSS for Close Button */
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    color: #333;
-}
+        /* CSS for Close Button */
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #333;
+        }
 
-        
+        /* Additional CSS styles... */
 
-/* Additional CSS styles... */
+        .filter-title {
+            font-weight: bold;
+            margin-top: 15px;
+            color: #009688;
+        }
 
-.filter-title {
-    font-weight: bold;
-    margin-top: 15px;
-    color: #009688;
-}
+        .filter-checkbox {
+            margin-top: 10px;
+        }
 
-.filter-checkbox {
-    margin-top: 10px;
-}
+        /* New styles for the larger profile picture */
+        .profile-picture-large {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            width: 90px; /* Adjust the size as needed */
+            height: 90px; /* Adjust the size as needed */
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #fff; /* Add background color for the circular container */
+        }
 
+        /* Style for the circular image */
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Maintain aspect ratio and cover the circular container */
+            border-radius: 50%;
+        }
 
+        /* Improved navigation link style */
+        header nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            background-color: #00796B;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
 
-/* New styles for the larger profile picture */
-.profile-picture-large {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 90px; /* Adjust the size as needed */
-    height: 90px; /* Adjust the size as needed */
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: #fff; /* Add background color for the circular container */
-}
+        header nav a:hover {
+            background-color: #005950;
+        }
 
-/* Style for the circular image */
-.profile-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Maintain aspect ratio and cover the circular container */
-    border-radius: 50%;
-}
-
-
-/* Improved navigation link style */
-header nav a {
-    text-decoration: none;
-    color: #fff;
-    font-weight: bold;
-    background-color: #00796B;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-header nav a:hover {
-    background-color: #005950;
-}
-
-footer {
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 10px;
-}
-
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
 
         /* Your existing CSS... */
 
@@ -237,10 +230,32 @@ footer {
             max-width: 100%;
             height: auto;
         }
+
         /* Style for the "Rent" button */
-/* Style for the "Rent" button */
-.rent-button {
-    background-color: #009688;
+        /* Style for the "Rent" button */
+        .rent-button {
+            background-color: #009688;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px; /* Add margin to push the button down */
+        }
+
+        .rent-button:hover {
+            background-color: #00796B;
+        }
+
+        /* Adjust the margin between the "More Info" and "Rent" buttons */
+        .property-details a {
+            margin-right: 10px;
+        }
+        /* Style for the "Pay Now" button */
+.btn-primary {
+    background-color: blue;
     color: #fff;
     font-weight: bold;
     border: none;
@@ -251,20 +266,21 @@ footer {
     margin-top: 10px; /* Add margin to push the button down */
 }
 
-.rent-button:hover {
-    background-color: #00796B;
+.btn-primary:hover {
+    background-color: #005950;
+}
+.popup-message {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1;
 }
 
-/* Adjust the margin between the "More Info" and "Rent" buttons */
-.property-details a {
-    margin-right: 10px;
-}
 
-
-
-        /* Your CSS styles... */
-
-        /* Additional CSS styles... */
     </style>
 
     <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="image/x-icon">
@@ -285,21 +301,16 @@ footer {
     <header>
         <nav>
             <a href="{% url 'logout' %}" style="color: black; float: left; margin-left: 10px;">Log out</a>
+            <a href="{% url 'tenantpage' %}" style="color: black; float:left; margin-right: 10px;">Back</a>
         </nav>
-        <!-- <nav>
-            <a href="" style="color: black; float: left; margin-left: 10px;">View Cart</a>
-
-        </nav> -->
         <h1>Tenant Dashboard</h1>
         <div class="profile-picture-large">
             <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" class="profile-image">
         </div>
-        
     </header>
 
     <div class="dashboard">
         <h2>Welcome, {{ request.session.username }}</h2>
-
 
         <!-- Property search and filter form -->
         <div class="search-form">
@@ -313,13 +324,8 @@ footer {
                     <option value="office">Office</option>
                 </select>
                 <label for="min_rent">Enter the range for rent:</label>
-<input type="number" name="min_rent" placeholder=" Monthly Rent">
-
-<input type="number" name="max_rent" placeholder=" Monthly Rent">
-
-
-
-              
+                <input type="number" name="min_rent" placeholder=" Monthly Rent">
+                <input type="number" name="max_rent" placeholder=" Monthly Rent">
 
                 <!-- Add checkboxes and input fields for other filters (stories, acrescent, rent space, number of rooms, parking space, purpose) -->
 
@@ -347,25 +353,38 @@ footer {
                             <h4>{{ property.property_name }}</h4>
                             <p><strong>Property type:</strong> {{ property.property_type }}</p><br>
                             <p><strong>Address:</strong> {{ property.address }}</p><br>
-                            <p><strong>Monthly Rent:</strong>Rs{{ property.monthly_rent }}</p><br>
-                            <p><strong>Security Amount:</strong>Rs {{ property.security_deposit }}</p><br>
+                            <p><strong>Monthly Rent:</strong> Rs{{ property.monthly_rent }}</p><br>
+                            <p><strong>Security Amount:</strong> Rs {{ property.security_deposit }}</p><br>
                             <p><strong>Availability Date:</strong> {{ property.availability_date }}</p><br>
                             <a href="{% url 'property_detail' property.id %}" class="btn btn-info">
                                 <i class="fas fa-info-circle"></i> More Info
                             </a>
-                            <a href="{% url 'ownerinfo' property.id %}" class="btn btn-info">
+                            <a href="{% url 'ownerinfo' property.id %}" class="btn btn-info" style="margin-right: 10px;">
                                 <i class="fas fa-info-circle"></i> Owner Info
                             </a>
+                            <!-- View Documents Button -->
+                            <a href="{% url 'admviewdocs' property.id %}" class="btn btn-secondary" style="margin-top: 10px; margin-right: 10px;">
+                                <i class="fas fa-file-alt"></i> View Documents
+                            </a>
+                            {% if not property.is_rental_request_accepted %}
+                            <div class="popup-message">Rental request already sent</div>
+                        {% endif %}
+                            <!-- Inside the property card in tenantpg.html -->
+                            <form method="post" action="{% url 'submit_rental_request' property.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success rent-button">
+                                    <i class="fas fa-shopping-cart"></i> Rent Now
+                                </button>
+                            </form>
+                            {% if property.is_rental_request_accepted %}
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">
+                                    Pay Now
+                                </button>
+                            </form>
                             
-                            <!-- Inside the property-card in tenantpg.html -->
-<form method="post" action="">
-    {% csrf_token %}
-    <input type="hidden" name="property_id" value="{{ property.id }}">
-    <button type="submit" class="btn btn-success rent-button">
-        <i class="fas fa-shopping-cart"></i> Rent Now
-    </button>
-</form>
-
+                            {% endif %}
                         </div>
                     </li>
                 {% endfor %}
@@ -389,8 +408,8 @@ footer {
     </footer>
 
     <script>
-         // Function to show the large message box
-         function showMessageBox() {
+        // Function to show the large message box
+        function showMessageBox() {
             const messageBox = document.querySelector(".large-message-box");
             messageBox.style.display = "block";
 
@@ -402,6 +421,31 @@ footer {
 
         // Call the showMessageBox function when the page loads
         window.addEventListener("load", showMessageBox);
+
+        document.addEventListener("DOMContentLoaded", function () {
+        // Get all property cards
+        var propertyCards = document.querySelectorAll(".property-card");
+
+        // Iterate through each property card
+        propertyCards.forEach(function (card) {
+            // Check if the card has a popup message
+            var popupMessage = card.querySelector(".popup-message");
+
+            if (popupMessage) {
+                // Show the popup if rental request not accepted
+                if (!card.classList.contains("rental-request-accepted")) {
+                    popupMessage.style.display = "block";
+                }
+
+                // Hide the popup when clicking outside of it
+                document.addEventListener("click", function (event) {
+                    if (!popupMessage.contains(event.target)) {
+                        popupMessage.style.display = "none";
+                    }
+                });
+            }
+        });
+    });
     </script>
 </body>
 

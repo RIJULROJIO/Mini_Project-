@@ -17,9 +17,13 @@ urlpatterns = [
     path('manageprop/',views.manageprop,name='manageprop'),
     path('propimgup/<int:property_id>/', views.propimgup, name='propimgup'),
     path('propdocs/<int:property_id>/', views.propdocs, name='propdocs'),
+    path('submit_rental_request/<int:property_id>/', views.submit_rental_request, name='submit_rental_request'),
 
     path('admprop/',views.admprop,name='admprop'),
         path('admviewdocs/<int:property_id>/', views.admviewdocs, name='admviewdocs'),
+        path('accept_rental_request/<int:request_id>/', views.accept_rental_request, name='accept_rental_request'),
+
+        path('rentnxt/',views.rentnxt,name='rentnxt'),
 
     path('propamenity/<int:property_id>/', views.propamenity, name='propamenity'),
         path('property/<int:property_id>/', views.property_detail, name='property_detail'),
