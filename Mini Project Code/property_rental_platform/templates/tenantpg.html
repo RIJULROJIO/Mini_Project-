@@ -402,7 +402,6 @@
         <div class="section">
             <h3>Upcoming Rent Payments</h3>
             <p>Rent Payment: 1,200 (Due on 15th of the month)</p>
-            <p>Security Deposit: 2,000 (Due on 1st of the month)</p>
         </div>
     </div>
 
@@ -455,24 +454,34 @@
             // Check if the "Pay Now" button was clicked before
             var payNowButton = card.querySelector(".btn-primary");
 
-            // // Use sessionStorage to persist the information
-            // var paymentStatus = sessionStorage.getItem("paymentStatus");
+            // Use sessionStorage to persist the information
+            var paymentStatus = sessionStorage.getItem("paymentStatus");
 
-            // if (paymentStatus === "paid") {
-            //     // If payment is done, hide "Pay Now" button permanently
-            //     payNowButton.style.display = "none";
-            // } else {
-            //     // If payment is not done, add click event listener
-            //     payNowButton.addEventListener("click", function () {
-            //         // Hide "Pay Now" button permanently
-            //         payNowButton.style.display = "none";
-            //         // Set payment status to "paid" in sessionStorage
-            //         sessionStorage.setItem("paymentStatus", "paid");
-            //     });
-            // }
-        });
-    });
+            if (paymentStatus === "paid") {
+                // If payment is done, hide "Pay Now" button permanently
+                payNowButton.style.display = "none";
+
+                // Show a new button in its place
+                var newButton = document.createElement("button");
+                newButton.className = "btn btn-success";
+                newButton.textContent = "Rented";
+                card.appendChild(newButton);
+            } else {
+                // If payment is not done, add click event listener
+                payNowButton.addEventListener("click", function () {
+                    // Hide "Pay Now" button permanently
+                    payNowButton.style.display = "none";
+
+                    // Set payment status to "paid" in sessionStorage
+                    sessionStorage.setItem("paymentStatus", "paid");
+                });
+            }
+      });
+     });
+
+    
 </script>
+
 
 
 </body>
