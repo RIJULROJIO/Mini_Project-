@@ -1,0 +1,73 @@
+<!-- create_lease_agreement.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Lease Agreement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Lease Agreement Details</h1>
+       
+
+        <label for="start_date">Start Date:</label>
+        <p>{{ lease_agreement.start_date }}</p>
+
+        <label for="end_date">End Date:</label>
+        <p>{{ lease_agreement.end_date }}</p>
+
+        <label for="rent_amount">Rent Amount:</label>
+        <p>{{ lease_agreement.rent_amount }}</p>
+
+        <label for="security_deposit">Security Deposit:</label>
+        <p>{{ lease_agreement.security_deposit }}</p>
+
+        <a href="{% url 'manageprop' %}" class="back-link">Back to Property Management</a>
+    </div>
+</body>
+
+</html>

@@ -16,7 +16,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest  # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -651,8 +651,7 @@ def submit_rental_request(request, property_id):
     # Handle the case where the request method is not POST (optional)
     return redirect('tenantpage')  # 
 
-def rentnxt(request):
-    return render(request,"rentnxt.html")
+
 
 def accept_rental_request(request, request_id):
     if request.method == 'POST':
@@ -667,6 +666,86 @@ def accept_rental_request(request, request_id):
 
     # Redirect back to the manage properties page
     return redirect('manageprop')
+
+
+
+
+# # views.py
+
+# from django.http import JsonResponse
+
+from django.views.decorators.csrf import csrf_exempt
+from razorpay import Client
+
+
+razorpay_api_key = settings.RAZORPAY_API_KEY
+razorpay_secret_key = settings.RAZORPAY_API_SECRET
+
+razorpay_client = Client(auth=(razorpay_api_key, razorpay_secret_key))
+
+
+@csrf_exempt
+def rentnxt(request):
+    # Amount to be paid (in paisa), you can change this dynamically based on your logic
+    amount = 100
+
+    # Create a Razorpay order (you need to implement this based on your logic)
+    order_data = {
+        'amount': amount,
+        'currency': 'INR',
+        'receipt': 'order_rcptid_11',
+        'payment_capture': '1',  # Auto-capture payment
+    }
+
+    # Create an order
+    order = razorpay_client.order.create(data=order_data)
+
+    context = {
+        'razorpay_api_key': razorpay_api_key,
+        'amount': order_data['amount'],
+        'currency': order_data['currency'],
+        'order_id': order['id'],
+    }
+
+    return render(request, 'payment.html', context)
+
+
+def lease(request, property_id):
+    # Try to get the Property object or return a 404 response if it doesn't exist
+    property = get_object_or_404(Property, pk=property_id)
+
+    if request.method == 'POST':
+        # Get data from the form
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        rent_amount = request.POST.get('rent_amount')
+        security_deposit = request.POST.get('security_deposit')
+
+        # Create a LeaseAgreement instance and save it to the database
+        lease_agreement = LeaseAgreement(
+            property=property,
+            start_date=start_date,
+            end_date=end_date,
+            rent_amount=rent_amount,
+            security_deposit=security_deposit,
+        )
+        lease_agreement.save()
+
+        # You can add a success message or redirect to another page
+        return redirect('manageprop')
+
+    return render(request, 'lease.html', {'property': property})
+
+# def view_lease_agreement(request, lease_agreement_id):
+#     lease_agreement = get_object_or_404(LeaseAgreement, id=lease_agreement_id)
+#     return render(request, 'viewlease.html', {'lease_agreement': lease_agreement})
+
+
+
+
+
+
+
 
 
 

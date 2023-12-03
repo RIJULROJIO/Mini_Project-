@@ -370,24 +370,27 @@
                             <div class="popup-message">Rental request already sent</div>
                         {% endif %}
                             <!-- Inside the property card in tenantpg.html -->
+                            {% if property.is_rental_request_accepted %}
+                            <form method="post" action="{% url 'payment'  %}">
+
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">
+                                    Pay Now
+                                </button>
+                               
+                              
+                            </form>
+                        {% else %}
                             <form method="post" action="{% url 'submit_rental_request' property.id %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-success rent-button">
                                     <i class="fas fa-shopping-cart"></i> Rent Now
                                 </button>
                             </form>
-                            {% if property.is_rental_request_accepted %}
-                            <form method="post" action="">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary">
-                                    Pay Now
-                                </button>
-                            </form>
-                            
-                            {% endif %}
-                        </div>
+                        {% endif %}
                     </li>
                 {% endfor %}
+                
                 <!-- Display a message if no results are found -->
                 {% if properties.count == 0 %}
                     <p>No properties found matching your search criteria.</p>
@@ -407,22 +410,26 @@
         <p>&copy; 2023 Property Owner Dashboard</p>
     </footer>
 
-    <script>
-        // Function to show the large message box
-        function showMessageBox() {
-            const messageBox = document.querySelector(".large-message-box");
-            messageBox.style.display = "block";
+    <!-- ... Your existing HTML code ... -->
 
-            // Automatically hide the message box after 5 seconds (5000 milliseconds)
-            setTimeout(() => {
-                messageBox.style.display = "none";
-            }, 2000); // Adjust the time (in milliseconds) as needed
-        }
+<!-- ... Your existing HTML code ... -->
 
-        // Call the showMessageBox function when the page loads
-        window.addEventListener("load", showMessageBox);
+<script>
+    // Function to show the large message box
+    function showMessageBox() {
+        const messageBox = document.querySelector(".large-message-box");
+        messageBox.style.display = "block";
 
-        document.addEventListener("DOMContentLoaded", function () {
+        // Automatically hide the message box after 5 seconds (5000 milliseconds)
+        setTimeout(() => {
+            messageBox.style.display = "none";
+        }, 2000); // Adjust the time (in milliseconds) as needed
+    }
+
+    // Call the showMessageBox function when the page loads
+    window.addEventListener("load", showMessageBox);
+
+    document.addEventListener("DOMContentLoaded", function () {
         // Get all property cards
         var propertyCards = document.querySelectorAll(".property-card");
 
@@ -444,9 +451,30 @@
                     }
                 });
             }
+
+            // Check if the "Pay Now" button was clicked before
+            var payNowButton = card.querySelector(".btn-primary");
+
+            // // Use sessionStorage to persist the information
+            // var paymentStatus = sessionStorage.getItem("paymentStatus");
+
+            // if (paymentStatus === "paid") {
+            //     // If payment is done, hide "Pay Now" button permanently
+            //     payNowButton.style.display = "none";
+            // } else {
+            //     // If payment is not done, add click event listener
+            //     payNowButton.addEventListener("click", function () {
+            //         // Hide "Pay Now" button permanently
+            //         payNowButton.style.display = "none";
+            //         // Set payment status to "paid" in sessionStorage
+            //         sessionStorage.setItem("paymentStatus", "paid");
+            //     });
+            // }
         });
     });
-    </script>
+</script>
+
+
 </body>
 
 </html>

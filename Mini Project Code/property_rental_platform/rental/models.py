@@ -66,7 +66,6 @@ class Property(models.Model):
     )
       # Soft deletion field
     deleted = models.BooleanField(default=False)
-    in_cart = models.BooleanField(default=False)
 
 
     def __str__(self):
@@ -130,6 +129,26 @@ class RentalRequest(models.Model):
 
     def __str__(self):
      return f'RentalRequest - {self.property} - {self.tenant} - Status: {self.status}'
+    
+
+class LeaseAgreement(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    rent_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    security_deposit = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Lease Agreement for {self.property}'
+
+  
+
+
+
+
+
 
 
 

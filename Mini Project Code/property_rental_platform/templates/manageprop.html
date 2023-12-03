@@ -1,6 +1,7 @@
 {% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>Property Management</title>
@@ -62,11 +63,11 @@
             background-color: antiquewhite;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .card-body {
-    height: 800px; /* Set your desired fixed height */
-    overflow: hidden; /* Hide overflow content if it exceeds the fixed height */
-}
 
+        .card-body {
+            height: 800px; /* Set your desired fixed height */
+            overflow: hidden; /* Hide overflow content if it exceeds the fixed height */
+        }
 
         .card-title {
             font-size: 20px;
@@ -222,32 +223,31 @@
                             <!-- Inside the loop for properties -->
                             <p class="card-text"><strong>Approval Status:</strong> {{ property.approval_status }}</p>
                             <!-- Display Rental Requests for the particular property -->
-                           
+                            <div class="card-text">
+                                <strong>Rental Requests:</strong> {{ property.rentalrequest_set.count }}
+                                <ul class="list-unstyled">
+                                    {% for request in property.rentalrequest_set.all %}
+                                        <li>
+                                            <strong>Tenant:</strong> {{ request.tenant.full_name }} |
+                                            <strong>Contact no:</strong>{{ request.tenant.phone_number }} |
+                                            <strong>Created at:</strong> {{ request.created_at }}
+                                            {% if request.status == 'Accepted' %}
+                                                <button class="btn btn-success" disabled>Accepted</button>
+                                                <!-- Show an icon to create a lease agreement -->
+                                                <a href="{% url 'lease' property.id %}">
+                                                    <i class="fas fa-file-contract"></i>
+                                                </a>
+                                            {% else %}
+                                                <form method="post" action="{% url 'accept_rental_request' request.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-primary">Accept Request</button>
+                                                </form>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
                             <!-- Add other details as needed -->
-                            <p class="card-text"><a href="{% url 'propamenity' property.id  %}">Add Property Amenities</a></p>
-                           <!-- Display Rental Requests for the particular property -->
-<div class="card-text">
-    <strong>Rental Requests:</strong> {{ property.rentalrequest_set.count }}
-    <ul class="list-unstyled">
-        {% for request in property.rentalrequest_set.all %}
-            <li>
-                <strong>Tenant:</strong> {{ request.tenant.full_name }} |
-                <strong>Contact no:</strong>{{ request.tenant.phone_number }} |
-                <strong>Created at:</strong> {{ request.created_at }}
-                {% if request.status == 'Accepted' %}
-                    <button class="btn btn-success" disabled>Accepted</button>
-                {% else %}
-                    <form method="post" action="{% url 'accept_rental_request' request.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Accept Request</button>
-                    </form>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-</div>
-<!-- Add other details as needed -->
-
 
                             <form method="post" onsubmit="return confirm('Are you sure you want to delete this property?');">
                                 {% csrf_token %}

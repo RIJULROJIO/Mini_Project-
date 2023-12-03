@@ -1,0 +1,93 @@
+<!-- create_lease_agreement.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Lease Agreement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Create Lease Agreement</h1>
+        <form method="post" action="#">
+            {% csrf_token %}
+           
+
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" id="start_date" required>
+
+            <label for="end_date">End Date:</label>
+            <input type="date" name="end_date" id="end_date" required>
+
+            <label for="rent_amount">Rent Amount:</label>
+            <input type="text" name="rent_amount" id="rent_amount" required>
+
+           
+
+            <label for="security_deposit">Security Deposit:</label>
+            <input type="text" name="security_deposit" id="security_deposit" required>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+
+</html>

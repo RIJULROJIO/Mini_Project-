@@ -22,8 +22,12 @@ urlpatterns = [
     path('admprop/',views.admprop,name='admprop'),
         path('admviewdocs/<int:property_id>/', views.admviewdocs, name='admviewdocs'),
         path('accept_rental_request/<int:request_id>/', views.accept_rental_request, name='accept_rental_request'),
+        path('lease/<int:property_id>/', views.lease, name='lease'),
+        # path('viewlease/<int:lease_agreement_id>/', views.view_lease_agreement, name='viewlease'),
 
-        path('rentnxt/',views.rentnxt,name='rentnxt'),
+
+
+        path('payment/', views.rentnxt, name='payment'),
 
     path('propamenity/<int:property_id>/', views.propamenity, name='propamenity'),
         path('property/<int:property_id>/', views.property_detail, name='property_detail'),
