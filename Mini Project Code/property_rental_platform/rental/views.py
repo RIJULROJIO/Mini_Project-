@@ -68,7 +68,31 @@ class EmailThread(threading.Thread):
         self.email_message.send()
 
 def index(request):
-    return render(request, 'index.html')
+    filtered_properties = Property.objects.filter(approval_status='Approved')
+
+    property_type = request.GET.get('property_type')
+    min_rent = request.GET.get('min_rent')
+    max_rent = request.GET.get('max_rent')
+
+    # Create Q objects to build complex queries
+    filter_params = Q()
+
+    if property_type:
+        filter_params &= Q(property_type=property_type)
+
+    if min_rent:
+        filter_params &= Q(monthly_rent__gte=min_rent)
+
+    if max_rent: 
+        filter_params &= Q(monthly_rent__lte=max_rent)
+
+    # Apply the filters
+    filtered_properties = filtered_properties.filter(filter_params)
+    context = {
+            'properties': filtered_properties,
+        }
+    
+    return render(request, 'index.html',context)
 
 def signup(request):
     if request.method == "POST":

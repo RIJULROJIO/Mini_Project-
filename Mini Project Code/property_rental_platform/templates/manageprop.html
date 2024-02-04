@@ -220,6 +220,8 @@
 
                             <p class="card-text"><a href="{% url 'propimgup' property.id %}">Upload Property Images</a></p>
                             <p class="card-text"><a href="{% url 'propdocs' property.id %}">Upload Property Documents</a></p>
+                            <p class="card-text"><a href="{% url 'propamenity' property.id %}">Add Property Amenities</a></p>
+
                             <!-- Inside the loop for properties -->
                             <p class="card-text"><strong>Approval Status:</strong> {{ property.approval_status }}</p>
                             <!-- Display Rental Requests for the particular property -->
