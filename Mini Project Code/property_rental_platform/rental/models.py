@@ -143,7 +143,14 @@ class LeaseAgreement(models.Model):
     def __str__(self):
         return f'Lease Agreement for {self.property}'
 
-  
+
+class Notification(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    sender = models.ForeignKey(CustomUser, related_name='sender', on_delete=models.CASCADE)
+    notification_type = models.CharField(max_length=50)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
 
 
 

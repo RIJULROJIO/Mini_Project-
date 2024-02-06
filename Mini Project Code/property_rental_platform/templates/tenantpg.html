@@ -380,9 +380,20 @@
                                 <button type="submit" class="btn btn-primary">
                                     Pay Now
                                 </button>
+                            </form>
+
+                                <!-- Add this button after the "Pay Now" button -->
+                               
+                                <form method="post" action="{% url 'generate_property_pdf' property.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-warning">
+                                        Property Invoice
+                                    </button>
+                                </form>
+                               
+
                                
                               
-                            </form>
                         {% else %}
                             <form method="post" action="{% url 'submit_rental_request' property.id %}">
                                 {% csrf_token %}
@@ -404,7 +415,7 @@
         <!-- Upcoming rent payments -->
         <div class="section">
             <h3>Upcoming Rent Payments</h3>
-            <p>Rent Payment: 1,200 (Due on 15th of the month)</p>
+            <!-- <p>Rent Payment: 1,200 (Due on 15th of the month)</p> -->
         </div>
     </div>
 
@@ -417,22 +428,7 @@
 <!-- ... Your existing HTML code ... -->
 
 <script>
-    // Function to show the large message box
-    function showMessageBox() {
-        const messageBox = document.querySelector(".large-message-box");
-        messageBox.style.display = "block";
-
-        // Automatically hide the message box after 5 seconds (5000 milliseconds)
-        setTimeout(() => {
-            messageBox.style.display = "none";
-        }, 2000); // Adjust the time (in milliseconds) as needed
-    }
-
-    // Call the showMessageBox function when the page loads
-    window.addEventListener("load", showMessageBox);
-
     document.addEventListener("DOMContentLoaded", function () {
-        // Get all property cards
         var propertyCards = document.querySelectorAll(".property-card");
 
         // Iterate through each property card
@@ -441,17 +437,10 @@
             var popupMessage = card.querySelector(".popup-message");
 
             if (popupMessage) {
-                // Show the popup if rental request not accepted
+                // Show the popup if the rental request is not accepted
                 if (!card.classList.contains("rental-request-accepted")) {
                     popupMessage.style.display = "block";
                 }
-
-                // Hide the popup when clicking outside of it
-                document.addEventListener("click", function (event) {
-                    if (!popupMessage.contains(event.target)) {
-                        popupMessage.style.display = "none";
-                    }
-                });
             }
 
             // Check if the "Pay Now" button was clicked before
@@ -479,11 +468,21 @@
                     sessionStorage.setItem("paymentStatus", "paid");
                 });
             }
-      });
-     });
 
-    
+            // Check if the "Rented" button is present
+            var rentedButton = card.querySelector(".btn-success");
+
+            // Conditionally show/hide the "Generate PDF" button
+            var generatePdfButton = card.querySelector(".btn-generate-pdf"); // Update this class
+
+            if (generatePdfButton) {
+                generatePdfButton.style.display = rentedButton ? "block" : "none";
+            }
+        });
+    });
 </script>
+
+
 
 
 

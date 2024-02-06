@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <style>
+        .notification-box {
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .info { background-color: #3498db; }
+        .success { background-color: #2ecc71; }
+        .warning { background-color: #e67e22; }
+        .error { background-color: #e74c3c; }
+    </style>
+</head>
+<body>
+    {% if notifications %}
+        <h1>Notifications</h1>
+        {% for notification in notifications %}
+            <div class="notification-box {% if notification.notification_type|default:'' == 'info' %}info{% elif notification.notification_type|default:'' == 'success' %}success{% elif notification.notification_type|default:'' == 'warning' %}warning{% elif notification.notification_type|default:'' == 'error' %}error{% endif %}">
+                <strong>{{ notification.notification_type|title }}</strong>: {{ notification.message }}
+                <br>
+                <small>{{ notification.timestamp }}</small>
+                {% if not notification.is_read %}
+                    <a href="{% url 'mark_as_read' notification.id %}">Mark as Read</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No notifications available.</p>
+    {% endif %}
+</body>
+</html>

@@ -16,7 +16,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -764,16 +764,79 @@ def lease(request, property_id):
 #     lease_agreement = get_object_or_404(LeaseAgreement, id=lease_agreement_id)
 #     return render(request, 'viewlease.html', {'lease_agreement': lease_agreement})
 
+def update_property_view(request, property_id):
+    property_instance = get_object_or_404(Property, id=property_id)
+
+    if request.method == 'POST':
+        # Process the form data when the form is submitted
+        property_instance.property_type = request.POST.get('property_type')
+        property_instance.address = request.POST.get('address')
+        property_instance.monthly_rent = request.POST.get('monthly_rent')
+        property_instance.security_deposit = request.POST.get('security_deposit')
+        property_instance.lease_duration = request.POST.get('lease_duration')
+        property_instance.availability_date = request.POST.get('availability_date')
+
+        # Save the updated property details
+        property_instance.save()
+
+        # Create a notification for the property owner
+        Notification.objects.create(
+            user=request.user,  # Property owner's user object
+            sender=request.user,  # Assuming the property owner is the sender
+            notification_type='info',  # You can adjust the type as needed
+            message=f'Property details for {property_instance.property_type} updated successfully.',
+        )
+
+        # Redirect to the property details page after updating
+        return redirect('manageprop')
+    else:
+        # Display the form with the current property details
+        return render(request, 'updateprop.html', {'property': property_instance})
 
 
 
 
+from reportlab.pdfgen import canvas
+def generate_property_pdf(request, property_id):
+    # Get the property object
+    property = get_object_or_404(Property, id=property_id)
+
+    # Add logic to check if the property is rented (use your own conditions)
+    # if property.is_rented:
+    #     return HttpResponse("This property is not rented.")  # or redirect to an error page
+
+    # Create a PDF response
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'filename="{property.property_type}_invoice.pdf"'
+
+    # Create the PDF content
+    p = canvas.Canvas(response)
+    p.drawString(100, 800, f"Property Invoice for {property.property_type}")
+
+    # Add more property details to the PDF
+    p.drawString(100, 780, f"Property Type: {property.property_type}")
+    p.drawString(100, 760, f"Address: {property.address}")
+    p.drawString(100, 740, f"Monthly Rent: Rs{property.monthly_rent}")
+    # Add more details as needed
+
+    # Save the PDF content
+    p.showPage()
+    p.save()
+
+    return response
 
 
+def view_notifications(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('-timestamp')
+    return render(request, 'notifications.html', {'notifications': notifications})
 
+def mark_as_read(request, notification_id):
+    notification = Notification.objects.get(id=notification_id)
+    notification.is_read = True
+    notification.save()
+    notification.delete()
 
-
-
+    return redirect('view_notifications')
 
 
 

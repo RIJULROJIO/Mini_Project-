@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>Admin Property Details</title>
+    <title>Admin Property Details - Analytics Dashboard</title>
     <style>
         body {
             background-color: #f2f2f2;
@@ -96,17 +96,34 @@
         .reject-button {
             background-color: #FF5733;
         }
+
+        .analytics-section {
+            margin-top: 30px;
+        }
+
+        .chart-container {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
         a {
             
             text-decoration: none; /* Remove underline */
             color: blueviolet; /* Use the default text color of the parent element */
         }
         a:hover {
-    color:blueviolet; /* Set the color for the link when hovered */
-}
+            color: blueviolet; /* Set the color for the link when hovered */
+        }
     </style>
-            <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
-
+    <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
 </head>
 
 <body>
@@ -128,14 +145,11 @@
                 <th>Address</th>
                 <th>Monthly Rent</th>
                 <th>Images</th>
-                
                 <th>Actions</th>
                 <th>More Info</th> <!-- New column for More Info button -->
                 <th>OwnerDetails</th>
                 <th>Documents</th>
                 <th>Approval Status</th>
-
-
             </tr>
             {% for property in properties %}
             <tr>
@@ -147,8 +161,6 @@
                 <td>
                     <a href="{% url 'property_images' property.id %}">View Images</a>
                 </td>
-                
-               
                 <td>
                     <!-- Add More Info button that links to a property detail page -->
                     <a href="{% url 'property_detail' property.id %}">More Info</a>
@@ -174,7 +186,59 @@
             </tr>
             {% endfor %}
         </table>
+
+        <!-- Additional Analytics Section -->
+        <div class="analytics-section">
+            <h2>Analytics Overview</h2>
+
+            <!-- Chart Container for Property Types -->
+            <div class="chart-container">
+                <h3>Property Types Distribution</h3>
+                <canvas id="propertyTypesChart"></canvas>
+            </div>
+
+            <!-- Chart Container for Approval Status -->
+            <div class="chart-container">
+                <h3>Approval Status Distribution</h3>
+                <canvas id="approvalStatusChart"></canvas>
+            </div>
+        </div>
     </div>
+
+    <!-- Additional scripts for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Chart data (You need to adapt this based on your analytics)
+        var propertyTypesData = {
+            labels: ['Apartment', 'House', 'Office', 'Officespace', 'Warehouse', 'Land'],
+            datasets: [{
+                data: [30, 25, 15, 10, 10, 10],
+                backgroundColor: ['#009688', '#FF5733', '#FFC300', '#3498db', '#2ecc71', '#e74c3c'],
+            }]
+        };
+
+        var approvalStatusData = {
+            labels: ['Approved', 'Pending', 'Rejected'],
+            datasets: [{
+                data: [60, 20, 20],
+                backgroundColor: ['#009688', '#3498db', '#e74c3c'],
+            }]
+        };
+
+        // Render Property Types Chart
+        var propertyTypesChartCanvas = document.getElementById('propertyTypesChart');
+        var propertyTypesChart = new Chart(propertyTypesChartCanvas, {
+            type: 'doughnut',
+            data: propertyTypesData,
+        });
+
+        // Render Approval Status Chart
+        var approvalStatusChartCanvas = document.getElementById('approvalStatusChart');
+        var approvalStatusChart = new Chart(approvalStatusChartCanvas, {
+            type: 'pie',
+            data: approvalStatusData,
+        });
+    </script>
 </body>
 
 </html>

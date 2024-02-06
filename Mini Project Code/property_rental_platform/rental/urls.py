@@ -28,10 +28,16 @@ urlpatterns = [
 
 
         path('payment/', views.rentnxt, name='payment'),
+    path('generate_property_pdf/<int:property_id>/', views.generate_property_pdf, name='generate_property_pdf'),
+    path('notifications/', views.view_notifications, name='view_notifications'),
+    path('notifications/mark_as_read/<int:notification_id>/', views.mark_as_read, name='mark_as_read'),
+
 
     path('propamenity/<int:property_id>/', views.propamenity, name='propamenity'),
         path('property/<int:property_id>/', views.property_detail, name='property_detail'),
         path('ownerinfo/<int:property_id>/', views.ownerinfo, name='ownerinfo'),
+        path('update_property/<int:property_id>/', views.update_property_view, name='update_property'),
+
             # path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
             #  path('cart/', views.view_cart, name='view_cart'),
                 #path('submit_rental_request/', views.submit_rental_request, name='submit_rental_request'),

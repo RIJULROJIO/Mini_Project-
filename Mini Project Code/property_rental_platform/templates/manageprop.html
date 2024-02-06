@@ -150,6 +150,21 @@
         a:hover {
             color: blueviolet;
         }
+        .button-group {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .update-button {
+        color: #fff;
+        background-color: #17a2b8; /* Choose a color for the update button */
+        border-color: #17a2b8;
+    }
+
+    .update-button:hover {
+        background-color: #117a8b; /* Adjust the hover color as needed */
+        border-color: #117a8b;
+    }
     </style>
     <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="">
 </head>
@@ -249,13 +264,16 @@
                                     {% endfor %}
                                 </ul>
                             </div>
-                            <!-- Add other details as needed -->
+                            <a href="{% url 'update_property' property.id %}" class="btn btn-warning update-button">Update Details</a>
 
+                            <!-- Add other details as needed -->
+                            
                             <form method="post" onsubmit="return confirm('Are you sure you want to delete this property?');">
                                 {% csrf_token %}
                                 <input type="hidden" name="property_id_to_delete" value="{{ property.id }}">
                                 <button type="submit" class="btn btn-danger">Delete Property</button>
                             </form>
+
                         </div>
                     </div>
                 </div>

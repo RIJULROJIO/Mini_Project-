@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Update Property Details</title>
+    <!-- Add your CSS links or styles here -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            background-color: #7f9600;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            font-size: 24px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        button {
+            background-color: #009688;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+            color: blueviolet;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Update Property Details</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="property_type">Property Type:</label>
+        <select name="property_type" id="property_type" required>
+            <option value="">--Please select--</option>
+            <option value="Apartment">Apartment</option>
+            <option value="House">House</option>
+            <option value="Officespace">Officespace</option>
+            <option value="Warehouse">Warehouse</option>
+            <option value="Land">Land</option>
+            
+            <!-- Add more options as needed -->
+        </select>
+
+        <label for="address">Address:</label>
+        <input type="text" name="address" id="address" required value="{{ property.address }}">
+
+        <label for="monthly_rent">Monthly Rent:</label>
+        <input type="number" name="monthly_rent" id="monthly_rent" required value="{{ property.monthly_rent }}">
+
+        <label for="security_deposit">Security Deposit:</label>
+        <input type="number" name="security_deposit" id="security_deposit" required value="{{ property.security_deposit }}">
+
+        <br>
+        <label for="lease_duration">Lease Duration:</label>
+        <select name="lease_duration" id="lease_duration" required>
+            <option value="1 year">1 year</option>
+            <option value="Month-to-month">Month-to-month</option>
+        </select>
+        <br>
+
+        <label for="availability_date">Availability Date:</label>
+        <input type="date" name="availability_date" id="availability_date" required value="{{ property.availability_date }}">
+
+        <!-- Add more fields as needed -->
+
+        <button type="submit">Update Property</button>
+    </form>
+
+    <a href="{% url 'manageprop' %}">Back to Manage Properties</a>
+</body>
+
+</html>
