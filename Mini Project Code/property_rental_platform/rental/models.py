@@ -154,7 +154,20 @@ class Notification(models.Model):
 
 
 
+class ServiceProviderProfile(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
 
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    business_name = models.CharField(max_length=200)
+    experience = models.IntegerField(null=True, blank=True)
+    certification_file = models.FileField(upload_to='certifications/')
+    address = models.TextField()
+    approved = models.BooleanField(null=True)
+
+
+    def __str__(self):
+        return self.name
 
 
 

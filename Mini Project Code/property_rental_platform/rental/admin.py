@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser,UserProfile,Profile,Property
+from .models import CustomUser,UserProfile,Profile,Property,RentalRequest
 
 
 
@@ -42,4 +42,9 @@ admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Property, PropertyAdmin)
 
 
+@admin.register(RentalRequest)
+class RentalRequestAdmin(admin.ModelAdmin):
+    list_display = ['property', 'tenant', 'created_at', 'status']
+    list_filter = ['status']
+    search_fields = ['property__property_type', 'tenant__full_name']  # Adjust as needed
 

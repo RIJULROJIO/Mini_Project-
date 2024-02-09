@@ -1,0 +1,287 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Service Provider Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #8bc5a3;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"] {
+            background-color: #afd1e8;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .user-info {
+            text-align: center;
+            padding: 10px;
+            background-color: #1cdbe6;
+            border-radius: 50px;
+            margin: 10px 0;
+        }
+
+        .user-name {
+            font-size: 24px;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .user-description {
+            font-size: 16px;
+            color: #777;
+        }
+
+        a {
+            text-decoration: none;
+            color: #d8d7d6;
+        }
+
+        h1 {
+            color: rgb(244, 243, 242);
+        }
+
+        header nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        header nav li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        header nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            background-color: #00796B; /* Button background color */
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        /* .large-message-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .message-content {
+            font-size: 18px;
+            text-align: center;
+        } */
+
+        .dashboard-btn {
+            background-color: #3498db;
+            color: #eef2f2;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dashboard-btn:hover {
+            background-color: #2070a6;
+        }
+
+        footer {
+            background-color: #8bc5a3;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 999; /* Ensure the footer is above other elements */
+        }
+        /* .large-message-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 9999;
+        }
+
+/* CSS for Message Box Content */
+.message-content {
+    font-size: 18px;
+    text-align: center;
+}
+
+/* CSS for Close Button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #333;
+} */
+    </style>
+    <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="">
+</head>
+<body>
+    <!-- {% if messages %}
+    <div class="large-message-box">
+        <span class="close-button" onclick="closeMessageBox()">&times;</span>
+        <div class="message-content">
+            {% for message in messages %}
+                {{ message|safe }}<br>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %} -->
+    <header>
+        <strong><h1>Profile</h1></strong>
+        <nav>
+            <ul>
+                <li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}">Log out</a></li>
+                <li style="float: left; margin-right: 10px;"><a href="{% url 'view_notifications' %}">Notifications</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    {% if messages %}
+        <div class="large-message-box">
+            <span class="close-button" onclick="closeMessageBox()">&times;</span>
+            <div class="message-content">
+                {% for message in messages %}
+                    {{ message|safe }}<br>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="user-info">
+        <div class="user-name">Hello!, {{ request.session.username }}</div>
+        <div class="user-description">Property ServiceProvider</div>
+    </div>
+
+    <div class="update-profile-container">
+        <form method="post" enctype="multipart/form-data" action="{% url 'serproviderpage' %}">
+            {% csrf_token %}
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="{{ user_profile.name }}" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" value="{{ user_profile.phone }}" required>
+
+            <label for="business_name">Business Name:</label>
+            <input type="text" id="business_name" name="business_name" value="{{ user_profile.business_name }}" required>
+
+            <label for="experience">Experience (in years):</label>
+            <input type="number" id="experience" name="experience" value="{{ user_profile.experience }}" required>
+
+            <label for="certification">License/Certification:</label>
+            <input type="file" id="certification" name="certification_file" accept=".pdf, .doc, .docx">
+            {% if user_profile.certification_file %}
+                <p>Current Certification File: <a href="{{ user_profile.certification_file.url }}" target="_blank" style="text-decoration: underline;">{{ user_profile.certification_file.name }}</a></p>
+                <p>File Size: {{ user_profile.certification_file.size|filesizeformat }}</p>
+            {% endif %}
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" value="{{ user_profile.address }}" required>
+
+            <button type="submit">Update Profile</button>
+        </form>
+        {% if user_profile.approved is not None %}
+        {% if user_profile.approved %}
+            <form method="post" action="{% url 'serproviderdash' %}">
+                {% csrf_token %}
+
+                <button type="submit" class="dashboard-btn">Dashboard</button>
+            </form>
+        {% else %}
+            <p style="color: #f00;">Your profile has been rejected. Please contact support for more information.</p>
+        {% endif %}
+    {% else %}
+        <p style="color: #f00;">Your profile is pending approval. Please wait for approval.</p>
+    {% endif %}
+</div>
+
+    <!-- <footer>
+        <p>&copy; 2023 Property Rentals ServiceProvider Profile</p>
+    </footer> -->
+
+    <script>
+        function showMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "block";
+
+            // Automatically hide the message box after 5 seconds (5000 milliseconds)
+            setTimeout(() => {
+                messageBox.style.display = "none";
+            }, 2000); // Adjust the time (in milliseconds) as needed
+        }
+
+        // Call the showMessageBox function when the page loads
+        window.addEventListener("load", showMessageBox);
+    </script>
+</body>
+</html>

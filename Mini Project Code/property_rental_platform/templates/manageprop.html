@@ -65,7 +65,7 @@
         }
 
         .card-body {
-            height: 800px; /* Set your desired fixed height */
+            height: 900px; /* Set your desired fixed height */
             overflow: hidden; /* Hide overflow content if it exceeds the fixed height */
         }
 
@@ -150,21 +150,37 @@
         a:hover {
             color: blueviolet;
         }
+
         .button-group {
-        display: flex;
-        justify-content: space-between;
-    }
+            display: flex;
+            justify-content: space-between;
+        }
 
-    .update-button {
-        color: #fff;
-        background-color: #17a2b8; /* Choose a color for the update button */
-        border-color: #17a2b8;
-    }
+        .update-button {
+            color: #fff;
+            background-color: #17a2b8; /* Choose a color for the update button */
+            border-color: #17a2b8;
+        }
 
-    .update-button:hover {
-        background-color: #117a8b; /* Adjust the hover color as needed */
-        border-color: #117a8b;
-    }
+        .update-button:hover {
+            background-color: #117a8b; /* Adjust the hover color as needed */
+            border-color: #117a8b;
+        }
+
+        .clear-button {
+            background-color: #d9534f; /* Red color for the clear button */
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+
+        .clear-button:hover {
+            background-color: #c9302c; /* Darker red on hover */
+        }
     </style>
     <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="">
 </head>
@@ -262,12 +278,19 @@
                                             {% endif %}
                                         </li>
                                     {% endfor %}
+                                    <!-- Clear Rental Requests Button -->
+                                    <li>
+                                        <form method="post" action="{% url 'clear_rental_requests' property.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="clear-button"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </li>
                                 </ul>
                             </div>
                             <a href="{% url 'update_property' property.id %}" class="btn btn-warning update-button">Update Details</a>
 
                             <!-- Add other details as needed -->
-                            
+
                             <form method="post" onsubmit="return confirm('Are you sure you want to delete this property?');">
                                 {% csrf_token %}
                                 <input type="hidden" name="property_id_to_delete" value="{{ property.id }}">

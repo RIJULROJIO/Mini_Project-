@@ -16,7 +16,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -151,6 +151,8 @@ def login(request):
                 return redirect("tenantpage")
             elif user.role == 'owner':
                 return redirect("ownerpage")  # Create an 'ownerpage' URL
+            elif user.role == 'provider':
+                return redirect("serproviderpage")
             elif user.role == 'admin':
                 return redirect("adminhome")
         else:
@@ -446,7 +448,6 @@ def tenantpg(request):
 
 
 
-
 def manageprop(request):
     if 'username' in request.session:
         username = request.session['username']
@@ -483,6 +484,25 @@ def manageprop(request):
             return redirect('index')
     else:
         return redirect('index')
+    
+
+
+
+
+def clear_rental_requests(request, property_id):
+    try:
+        property_instance = Property.objects.get(id=property_id)
+        rental_requests = property_instance.rentalrequest_set.all()
+        rental_requests.delete()
+
+        messages.success(request, "Rental requests cleared successfully.")
+    except Property.DoesNotExist:
+        messages.error(request, "Property not found.")
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+
+    return redirect('manageprop')
+
 
 
 from django.http import Http404
@@ -638,17 +658,6 @@ def admviewdocs(request, property_id):
     return render(request, 'admviewdocs.html', context)
 
 
-# def view_cart(request):
-#     # Get the user's profile
-#     user_profile = get_object_or_404(Profile, user=request.user)
-
-    
-#     # Get properties in the user's cart
-#     cart_properties = user_profile.cart.all()
-
-#     context = {'cart_properties': cart_properties}
-#     return render(request, 'cart.html', context)
-
 def submit_rental_request(request, property_id):
     if request.method == 'POST':
         # Assuming you have a form with the tenant's information
@@ -675,6 +684,7 @@ def submit_rental_request(request, property_id):
     # Handle the case where the request method is not POST (optional)
     return redirect('tenantpage')  # 
 
+# 
 
 
 def accept_rental_request(request, request_id):
@@ -707,17 +717,19 @@ razorpay_secret_key = settings.RAZORPAY_API_SECRET
 
 razorpay_client = Client(auth=(razorpay_api_key, razorpay_secret_key))
 
-
 @csrf_exempt
-def rentnxt(request):
-    # Amount to be paid (in paisa), you can change this dynamically based on your logic
-    amount = 100
+def rentnxt(request, property_id):
+    # Retrieve the Property object
+    property = Property.objects.get(pk=property_id)
+
+    # Calculate the amount based on the monthly rent
+    amount = int((property.monthly_rent + property.security_deposit) * 100)
 
     # Create a Razorpay order (you need to implement this based on your logic)
     order_data = {
         'amount': amount,
         'currency': 'INR',
-        'receipt': 'order_rcptid_11',
+        'receipt': f'order_rcptid_{property.id}',
         'payment_capture': '1',  # Auto-capture payment
     }
 
@@ -838,14 +850,105 @@ def mark_as_read(request, notification_id):
 
     return redirect('view_notifications')
 
+def serproviderpage(request):
+    # Check if the user is logged in
+    if 'username' in request.session:
+        try:
+            # Get the user's profile based on the currently logged-in user
+            user_profile = ServiceProviderProfile.objects.get(user=request.user)
+        except ServiceProviderProfile.DoesNotExist:
+            user_profile = ServiceProviderProfile.objects.create(user=request.user)
+
+        if request.method == "POST":
+            name = request.POST.get('name')
+            phone = request.POST.get('phone')
+            business_name = request.POST.get('business_name')
+            experience = request.POST.get('experience')
+            certification_file = request.FILES.get('certification_file')
+            address = request.POST.get('address')
+
+            # Update user_profile fields with the data from the POST request
+            user_profile.name = name
+            user_profile.phone = phone
+            user_profile.business_name = business_name
+            user_profile.experience = experience
+            user_profile.address = address
+
+            if certification_file:
+                user_profile.certification_file = certification_file
+
+            # Save the updated user_profile
+            user_profile.save()
+
+            # Check if the profile is approved or rejected
+            if user_profile.approved:
+                Notification.objects.create(
+                    user=request.user,
+                    sender=request.user,  # You can set the sender to None or to any user you want
+                    notification_type='info',  # You can adjust the type as needed
+                    message=f'Your service provider profile has been approved.',
+                )
+            elif user_profile.rejected:
+                Notification.objects.create(
+                    user=request.user,
+                    sender=request.user,  # You can set the sender to None or to any user you want
+                    notification_type='warning',  # You can adjust the type as needed
+                    message=f'Your service provider profile has been rejected.',
+                )
+
+            # Redirect or show a success message as needed
+            messages.success(request, "Profile updated successfully.")
+            return redirect("serproviderpage")
+
+        context = {"user_profile": user_profile}
+
+        response = render(request, 'serproviderpage.html', context)
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('index')
 
 
 
+def adminserpropage(request):
+    service_provider_profiles = ServiceProviderProfile.objects.all()
+    return render(request, 'adminserpropage.html', {'service_provider_profiles': service_provider_profiles})
+
+def approve_profile(request, profile_id):
+    profile = ServiceProviderProfile.objects.get(id=profile_id)
+    profile.approved = True
+    profile.save()
+
+    # Create a notification for approval
+    Notification.objects.create(
+        user=profile.user,  # Assuming `user` is a foreign key in the profile model
+        sender=profile.user,  # You can set the sender to None or to any user you want
+        notification_type='info',  # You can adjust the type as needed
+        message=f'Your service provider profile has been approved.',
+    )
+
+    messages.success(request, f"Profile for {profile.name} has been approved.")
+    return redirect('adminserpropage')
+
+def reject_profile(request, profile_id):
+    profile = ServiceProviderProfile.objects.get(id=profile_id)
+    profile.approved = False
+    profile.save()
+
+    # Create a notification for rejection
+    Notification.objects.create(
+        user=profile.user,  # Assuming `user` is a foreign key in the profile model
+        sender=profile.user,  # You can set the sender to None or to any user you want
+        notification_type='warning',  # You can adjust the type as needed
+        message=f'Your service provider profile has been rejected.',
+    )
+
+    messages.warning(request, f"Profile for {profile.name} has been rejected.")
+    return redirect('adminserpropage')
 
 
-
-
-
+def serproviderdash(request):
+    return render(request,"serproviderdash.html")
 
 
     

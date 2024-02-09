@@ -59,22 +59,24 @@
         }
 
         .property-list {
-            display: flex;
-            flex-wrap: wrap;
-            list-style-type: none;
-            padding: 0;
-        }
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
+    justify-content: space-between; /* Ensure equal spacing between cards */
+}
 
-        .property-card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 10px;
-            background-color: cornflowerblue;
-            flex: 1;
-            max-width: calc(33.33% - 20px); /* Three columns with margin */
-            min-height: 300px;
-        }
+.property-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px;
+    background-color: cornflowerblue;
+    width: calc(33.33% - 20px); /* Distribute cards in three columns with margin */
+    box-sizing: border-box; /* Include padding and border in the width */
+    min-height: 300px;
+}
+
 
         .property-card img {
             max-width: 100%;
@@ -374,7 +376,7 @@
                         {% endif %}
                             <!-- Inside the property card in tenantpg.html -->
                             {% if property.is_rental_request_accepted %}
-                            <form method="post" action="{% url 'payment'  %}">
+                            <form method="post" action="{% url 'payment' property.id %}">
 
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-primary">
@@ -482,7 +484,7 @@
     });
 </script>
 
-
+ 
 
 
 

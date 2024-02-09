@@ -27,7 +27,7 @@ urlpatterns = [
 
 
 
-        path('payment/', views.rentnxt, name='payment'),
+    path('payment/<int:property_id>/', views.rentnxt, name='payment'),
     path('generate_property_pdf/<int:property_id>/', views.generate_property_pdf, name='generate_property_pdf'),
     path('notifications/', views.view_notifications, name='view_notifications'),
     path('notifications/mark_as_read/<int:notification_id>/', views.mark_as_read, name='mark_as_read'),
@@ -65,7 +65,15 @@ urlpatterns = [
      path('reset/<uidb64>/<token>/',CustomPasswordResetConfirmView.as_view(),name='password_reset_confirm'),
      path('reset/done/',CustomPasswordResetCompleteView.as_view(),name='password_reset_complete'),
 
-     
+
+    path('serproviderpage/', views.serproviderpage, name='serproviderpage'),
+    path('adminserpropage/', views.adminserpropage, name='adminserpropage'),
+    path('serproviderdash/',views.serproviderdash,name='serproviderdash'),
+    path('admin-approve-profile/<int:profile_id>/', views.approve_profile, name='approve_profile'),
+    path('admin-reject-profile/<int:profile_id>/', views.reject_profile, name='reject_profile'),
+
+    path('clear_rental_requests/<int:property_id>/', views.clear_rental_requests, name='clear_rental_requests'),
+
 
 ]
 

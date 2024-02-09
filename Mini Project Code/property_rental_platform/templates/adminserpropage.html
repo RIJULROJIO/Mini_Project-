@@ -1,0 +1,137 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Service Provider Profiles</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            background-color: #131618;
+            color: #fff;
+            padding: 5px;
+            text-align: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        section {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .profile-container {
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            background-color: #c9d889;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .profile-container.approved {
+            background-color: #83c93d; /* Change to your approved color */
+        }
+
+        .profile-container:hover {
+            background-color: #f0f4ee;
+        }
+
+        .profile-details {
+            padding: 15px;
+        }
+
+        .profile-details p {
+            margin: 8px 0;
+        }
+
+        .approval-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+        }
+
+        .approve-btn, .reject-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .approve-btn {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .reject-btn {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        footer {
+            background-color: #06090b;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+        <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
+</head>
+<body>
+    
+    <header>
+        <h1 style="margin: 0;">Admin - Service Provider Profiles</h1>
+    </header>
+    
+    <section>
+        {% for profile in service_provider_profiles %}
+       <!-- Update your template -->
+<div class="profile-container {% if profile.approved %}approved{% endif %}">
+    <div class="profile-details">
+        <h2>{{ profile.name }}</h2>
+        <p><strong>Phone:</strong> {{ profile.phone }}</p>
+        <p><strong>Business Name:</strong> {{ profile.business_name }}</p>
+        <p><strong>Experience:</strong> {{ profile.experience }} years</p>
+        <p><strong>Address:</strong> {{ profile.address }}</p>
+        <p><strong>License/Certification:</strong> <a href="{{ profile.certification_file.url }}" target="_blank" style="color: #1E88E5;">{{ profile.certification_file.name }}</a></p>
+    </div>
+
+    <div class="approval-buttons">
+        {% if profile.approved %}
+            <button class="approve-btn" disabled>Approved</button>
+        {% else %}
+            <form method="post" action="{% url 'approve_profile' profile.id %}">
+                {% csrf_token %}
+                <button type="submit" class="approve-btn">Approve</button>
+            </form>
+        {% endif %}
+
+        <form method="post" action="{% url 'reject_profile' profile.id %}">
+            {% csrf_token %}
+            <button type="submit" class="reject-btn">Reject</button>
+        </form>
+    </div>
+</div>
+
+        {% endfor %}
+    </section>
+
+    <footer>
+        <p style="margin: 0;">&copy; 2023 Admin Dashboard</p>
+    </footer>
+</body>
+</html>
