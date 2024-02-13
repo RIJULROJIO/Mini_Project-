@@ -6,6 +6,8 @@
     <title>Tenant Dashboard</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -371,39 +373,38 @@
                             <a href="{% url 'admviewdocs' property.id %}" class="btn btn-secondary" style="margin-top: 10px; margin-right: 10px;">
                                 <i class="fas fa-file-alt"></i> View Documents
                             </a>
-                            {% if not property.is_rental_request_accepted %}
-                            <div class="popup-message">Rental request already sent</div>
-                        {% endif %}
-                            <!-- Inside the property card in tenantpg.html -->
-                            {% if property.is_rental_request_accepted %}
-                            <form method="post" action="{% url 'payment' property.id %}">
+                           <!-- Inside the property card in tenantpg.html -->
+{% if not property.is_rental_request_accepted %}
+{% if property.is_rental_request_sent %}
+    <div class="popup-message">Rental request already sent</div>
+{% endif %}
+{% endif %}
 
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary">
-                                    Pay Now
-                                </button>
-                            </form>
+{% if property.is_rental_request_accepted %}
+<form method="post" action="{% url 'payment' property.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">
+        Pay Now
+    </button>
+</form>
 
-                                <!-- Add this button after the "Pay Now" button -->
-                               
-                                <form method="post" action="{% url 'generate_property_pdf' property.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-warning">
-                                        Property Invoice
-                                    </button>
-                                </form>
-                               
+<!-- Add this button after the "Pay Now" button -->
+<form method="post" action="{% url 'generate_property_pdf' property.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-warning">
+        Property Invoice
+    </button>
+</form>
+{% else %}
+<form method="post" action="{% url 'submit_rental_request' property.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success rent-button">
+        <i class="fas fa-thumbs-up"></i> Rent Now
+    </button>
+</form>
 
-                               
-                              
-                        {% else %}
-                            <form method="post" action="{% url 'submit_rental_request' property.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-success rent-button">
-                                    <i class="fas fa-shopping-cart"></i> Rent Now
-                                </button>
-                            </form>
-                        {% endif %}
+{% endif %}
+
                     </li>
                 {% endfor %}
                 
@@ -415,11 +416,23 @@
         </div>
 
         <!-- Upcoming rent payments -->
-        <div class="section">
-            <h3>Upcoming Rent Payments</h3>
-            <!-- <p>Rent Payment: 1,200 (Due on 15th of the month)</p> -->
-        </div>
-    </div>
+        <!-- Upcoming rent payments -->
+<!-- Upcoming Rent Payments -->
+<!-- Upcoming Rent Payments -->
+<div class="section">
+    <h3>Upcoming Rent Payments</h3>
+    {% for property in properties %}
+        {% if property.is_rental_request_accepted %}
+            <div class="property-card">
+                <h4 style="color: #000;">{{ property.property_type }}</h4>
+                <p><strong>Next Rent Payment:</strong> {{ property.upcoming_payment_date|date:"F d, Y" }}</p>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+
+
 
     <footer>
         <p>&copy; 2023 Property Owner Dashboard</p>
@@ -430,49 +443,49 @@
 <!-- ... Your existing HTML code ... -->
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var propertyCards = document.querySelectorAll(".property-card");
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     var propertyCards = document.querySelectorAll(".property-card");
 
-        // Iterate through each property card
-        propertyCards.forEach(function (card) {
-            // Check if the card has a popup message
-            var popupMessage = card.querySelector(".popup-message");
+    //     // Iterate through each property card
+    //     propertyCards.forEach(function (card) {
+    //         // Check if the card has a popup message
+    //         var popupMessage = card.querySelector(".popup-message");
 
-            if (popupMessage) {
-                // Show the popup if the rental request is not accepted
-                if (!card.classList.contains("rental-request-accepted")) {
-                    popupMessage.style.display = "block";
-                }
-            }
+    //         if (popupMessage) {
+    //             // Show the popup if the rental request is not accepted
+    //             if (!card.classList.contains("rental-request-accepted")) {
+    //                 popupMessage.style.display = "block";
+    //             }
+    //         }
 
-            // Check if the "Pay Now" button was clicked before
-            var payNowButton = card.querySelector(".btn-primary");
+    //         // Check if the "Pay Now" button was clicked before
+    //         var payNowButton = card.querySelector(".btn-primary");
 
-            // Use sessionStorage to persist the information
-            var paymentStatus = sessionStorage.getItem("paymentStatus");
+    //         // Use sessionStorage to persist the information
+    //         var paymentStatus = sessionStorage.getItem("paymentStatus");
 
-            if (paymentStatus === "paid") {
-                // If payment is done, hide "Pay Now" button permanently
-                payNowButton.style.display = "none";
+    //         if (paymentStatus === "paid") {
+    //             // If payment is done, hide "Pay Now" button permanently
+    //             payNowButton.style.display = "none";
 
-                // Show a new button in its place
-                var newButton = document.createElement("button");
-                newButton.className = "btn btn-success";
-                newButton.textContent = "Rented";
-                card.appendChild(newButton);
-            } else {
-                // If payment is not done, add click event listener
-                payNowButton.addEventListener("click", function () {
-                    // Hide "Pay Now" button permanently
-                    payNowButton.style.display = "none";
+    //             // Show a new button in its place
+    //             var newButton = document.createElement("button");
+    //             newButton.className = "btn btn-success";
+    //             newButton.textContent = "Rented";
+    //             card.appendChild(newButton);
+    //         } else {
+    //             // If payment is not done, add click event listener
+    //             payNowButton.addEventListener("click", function () {
+    //                 // Hide "Pay Now" button permanently
+    //                 payNowButton.style.display = "none";
 
-                    // Set payment status to "paid" in sessionStorage
-                    sessionStorage.setItem("paymentStatus", "paid");
-                });
-            }
+    //                 // Set payment status to "paid" in sessionStorage
+    //                 sessionStorage.setItem("paymentStatus", "paid");
+    //             });
+    //         }
 
-            // Check if the "Rented" button is present
-            var rentedButton = card.querySelector(".btn-success");
+    //         // Check if the "Rented" button is present
+    //         var rentedButton = card.querySelector(".btn-success");
 
             // Conditionally show/hide the "Generate PDF" button
             var generatePdfButton = card.querySelector(".btn-generate-pdf"); // Update this class
@@ -480,8 +493,8 @@
             if (generatePdfButton) {
                 generatePdfButton.style.display = rentedButton ? "block" : "none";
             }
-        });
-    });
+    //     });
+    // });
 </script>
 
  

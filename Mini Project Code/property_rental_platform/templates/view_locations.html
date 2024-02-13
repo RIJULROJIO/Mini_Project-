@@ -1,0 +1,38 @@
+{% extends 'base_map.html' %}
+
+{% block content %}
+  <h2>View Property Locations</h2>
+  <div id="map" style="height: 650px;"></div>
+
+  <script>
+    var mymap = L.map('map').setView([10.8505, 76.2711], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(mymap);
+
+    // Loop through the properties and add markers
+        {% for property in properties %}
+         var address = "{{ property.address|escapejs }}";
+         var type="{{ property.property_type|escapejs }}"; // Ensure proper escaping
+
+      // Use Nominatim for geocoding without an API key
+      var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address);
+
+      // Fetch coordinates from the geocoding service
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.length > 0) {
+            var lat = data[0].lat;
+            var lon = data[0].lon;
+
+            L.marker([lat, lon])
+              .addTo(mymap)
+              // .bindPopup("{{ property.address|escapejs }}");
+              .bindPopup("{{ property.property_type|escapejs }}");
+          }
+        });
+    {% endfor %}
+  </script>
+{% endblock %}

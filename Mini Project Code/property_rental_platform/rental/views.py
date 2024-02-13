@@ -1,5 +1,8 @@
+import datetime
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
+import razorpay
+import requests
 from .utils import *
 from django.views.generic import View
 #for activating user account
@@ -16,7 +19,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile,Payment,Service # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -88,11 +91,17 @@ def index(request):
 
     # Apply the filters
     filtered_properties = filtered_properties.filter(filter_params)
+
+    for property in filtered_properties:
+        # Check if a rental request has been accepted for each property
+        property.is_rental_request_accepted = property.rentalrequest_set.filter(status='Accepted').exists()
+
     context = {
-            'properties': filtered_properties,
-        }
-    
-    return render(request, 'index.html',context)
+        'properties': filtered_properties,
+    }
+
+    return render(request, 'index.html', context)
+
 
 def signup(request):
     if request.method == "POST":
@@ -379,7 +388,14 @@ def ownerpg(request):
             return redirect('index')
     else:
         return redirect('index')
+
+# from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+
     
+from datetime import datetime
+
+
 def tenantpg(request):
     filtered_properties = Property.objects.filter(approval_status='Approved')
 
@@ -415,6 +431,28 @@ def tenantpg(request):
         for property in filtered_properties:
             property.is_rental_request_accepted = property.rentalrequest_set.filter(tenant=user_profile, status='Accepted').exists()
 
+            if property.is_rental_request_accepted:
+                # Calculate upcoming rent payment date based on availability date and lease duration
+                availability_date = property.availability_date
+                lease_duration = property.lease_duration
+
+                if lease_duration == '1 year':
+                    upcoming_payment_date = availability_date + relativedelta(years=1)
+                elif lease_duration == 'Month-to-month':
+                    # Calculate rent due for the next month
+                    # current_date = datetime.now()
+                    # if current_date.day <= 15:
+                    #     upcoming_payment_date = current_date.replace(day=15)
+                    # else:
+                        upcoming_payment_date = (availability_date + relativedelta(months=1))
+                else:
+                    # Handle other lease durations as needed
+                    upcoming_payment_date = None
+
+                property.upcoming_payment_date = upcoming_payment_date
+
+                
+
         context = {
             'user_profile': user_profile,
             'properties': filtered_properties,
@@ -427,24 +465,7 @@ def tenantpg(request):
         return redirect('index')
     
 
-# def add_to_cart(request):
-#     if request.method == 'POST':
-#         property_id = request.POST.get('property_id')
-#         property = get_object_or_404(Property, id=property_id)
 
-#         # Assuming you have a UserProfile model with a cart field
-#         if 'username' in request.session:
-#             username = request.session['username']
-#             user_profile = Profile.objects.get(user__username=username)
-
-#             messages.success(request, "Property Added to Cart")
-
-#             # Add the property to the user's cart
-#             user_profile.cart.add(property)
-
-
-#     # Redirect back to the tenantpg page
-#     return redirect('tenantpg')
 
 
 
@@ -725,7 +746,7 @@ def rentnxt(request, property_id):
     # Calculate the amount based on the monthly rent
     amount = int((property.monthly_rent + property.security_deposit) * 100)
 
-    # Create a Razorpay order (you need to implement this based on your logic)
+    # Create a Razorpay order
     order_data = {
         'amount': amount,
         'currency': 'INR',
@@ -744,6 +765,62 @@ def rentnxt(request, property_id):
     }
 
     return render(request, 'payment.html', context)
+
+from django.db import transaction
+from razorpay.errors import BadRequestError
+
+
+
+from razorpay.errors import SignatureVerificationError
+
+@csrf_exempt
+def handle_payment(request):
+    if request.method == 'POST':
+        # Get the Razorpay payment ID and order ID from the request
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+
+        try:
+            # Verify the payment signature
+            attributes = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': razorpay_payment_id,
+            }
+            razorpay_client.utility.verify_payment_signature(attributes)
+
+            # Fetch the payment details
+            payment = razorpay_client.payment.fetch(razorpay_payment_id)
+            order = razorpay_client.order.fetch(razorpay_order_id)
+
+            # If the payment is successful, save the details to the database
+            if payment['status'] == 'captured':
+                user = request.user
+                amount = order['amount']
+                currency = order['currency']
+
+                with transaction.atomic():
+                    Payment.objects.create(
+                        razorpay_payment_id=razorpay_payment_id,
+                        razorpay_order_id=razorpay_order_id,
+                        amount=amount,
+                        currency=currency,
+                        user=user,
+                    )
+
+                messages.success(request, 'Payment successful. Thank you!')
+                return redirect('tenantpg')
+            else:
+                messages.error(request, 'Payment failed. Please try again.')
+                return redirect('tenantpg')
+        except SignatureVerificationError as e:
+            messages.error(request, f'Razorpay signature verification failed: {e}')
+            return redirect('tenantpg')
+        except Exception as e:
+            messages.error(request, f'Error processing payment: {e}')
+            return redirect('tenantpg')
+    else:
+        return redirect('tenantpg')
+
 
 
 def lease(request, property_id):
@@ -911,8 +988,10 @@ def serproviderpage(request):
 
 
 def adminserpropage(request):
-    service_provider_profiles = ServiceProviderProfile.objects.all()
+    service_provider_profiles = ServiceProviderProfile.objects.prefetch_related('service_set').all()
     return render(request, 'adminserpropage.html', {'service_provider_profiles': service_provider_profiles})
+
+
 
 def approve_profile(request, profile_id):
     profile = ServiceProviderProfile.objects.get(id=profile_id)
@@ -948,11 +1027,53 @@ def reject_profile(request, profile_id):
 
 
 def serproviderdash(request):
-    return render(request,"serproviderdash.html")
+
+     if request.method == 'POST':
+        service_name = request.POST.get('service_name')
+        service_category = request.POST.get('service_category')
+        property_type = request.POST.get('property_type')
+        service_description = request.POST.get('service_description')
+        service_price = request.POST.get('service_price')
+        location = request.POST.get('location')
+
+        # Assuming the user is logged in
+        provider_profile = ServiceProviderProfile.objects.get(user=request.user)
+
+        # Save the service to the database
+        Service.objects.create(
+            service_provider_profile=provider_profile,
+            service_name=service_name,
+            service_category=service_category,
+            property_type=property_type,
+            service_description=service_description,
+            service_price=service_price,
+            location=location
+        )
+
+        # return redirect('serproviderpage')  # Redirect to the service provider page after successful submission
+
+     return render(request, "serproviderdash.html")
 
 
     
-            
+def view_locations(request):
+    properties = Property.objects.all()
+
+    # Add this block to fetch geocoded coordinates for each property
+    for property in properties:
+        address = property.address
+        url = 'https://api.opencagedata.com/geocode/v1/json?q=' + address + '&key=YOUR_OPENCAGE_API_KEY'
+
+        response = requests.get(url)
+        data = response.json()
+
+        if data.get('results') and data['results'][0].get('geometry'):
+            property.latitude = data['results'][0]['geometry']['lat']
+            property.longitude = data['results'][0]['geometry']['lng']
+        else:
+            property.latitude = None
+            property.longitude = None
+    return render(request,'view_locations.html',{'properties': properties})          
 
     
 

@@ -26,6 +26,7 @@ urlpatterns = [
         # path('viewlease/<int:lease_agreement_id>/', views.view_lease_agreement, name='viewlease'),
 
 
+        path('handle_payment/', views.handle_payment, name='handle_payment'),
 
     path('payment/<int:property_id>/', views.rentnxt, name='payment'),
     path('generate_property_pdf/<int:property_id>/', views.generate_property_pdf, name='generate_property_pdf'),
@@ -73,6 +74,7 @@ urlpatterns = [
     path('admin-reject-profile/<int:profile_id>/', views.reject_profile, name='reject_profile'),
 
     path('clear_rental_requests/<int:property_id>/', views.clear_rental_requests, name='clear_rental_requests'),
+    path('view_locations/',views.view_locations,name='view_locations'),
 
 
 ]

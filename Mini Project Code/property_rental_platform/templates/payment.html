@@ -1,3 +1,5 @@
+<!-- payment.html -->
+
 <html lang="en">
 <head>
     <!-- Other head elements -->
@@ -23,12 +25,19 @@
             handler: function(response) {
                 // This function will be called on successful payment
                 console.log(response);
-                alert('Payment successful. Payment ID: ' + response.razorpay_payment_id);
-                
-                // Add a redirect to the 'tenantpg' URL
-                window.location.href = '{% url "tenantpg" %}';
-                
-                // You can perform further actions here, like updating your database
+
+                // Post the payment details to your Django view for handling
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '{% url "handle_payment" %}', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        // Redirect to the 'tenantpg' URL after successful payment
+                        window.location.href = '{% url "tenantpg" %}';
+                    }
+                };
+                var data = 'razorpay_payment_id=' + response.razorpay_payment_id + '&razorpay_order_id=' + response.razorpay_order_id;
+                xhr.send(data);
             },
         };
     

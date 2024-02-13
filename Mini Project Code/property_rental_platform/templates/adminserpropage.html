@@ -87,51 +87,139 @@
             width: 100%;
             box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
         }
+          /* CSS for Sidebar */
+          .sidebar {
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .sidebar a {
+            padding: 15px;
+            text-decoration: none;
+            font-size: 15px;
+            color: #fff;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #555;
+        }
+        .services-section {
+            display: none; /* Hide services by default */
+            margin-top: 10px;
+        }
+
+        .services-section.active {
+            display: block; /* Show services when active class is present */
+        }
+
+        .services-heading.active {
+            display: block; /* Show heading when active class is present */
+        }
+
     </style>
         <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
 
 </head>
 <body>
+    <div class="sidebar">
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'adminregusers' %}">User Accounts</a>
+        <a href="{% url 'admprop' %}">Properties</a>
+        <a href="{% url 'adminserpropage' %}">ServiceProviders</a>
+    </div>
     
     <header>
         <h1 style="margin: 0;">Admin - Service Provider Profiles</h1>
     </header>
     
-    <section>
+    <section class="service-providers">
         {% for profile in service_provider_profiles %}
-       <!-- Update your template -->
-<div class="profile-container {% if profile.approved %}approved{% endif %}">
-    <div class="profile-details">
-        <h2>{{ profile.name }}</h2>
-        <p><strong>Phone:</strong> {{ profile.phone }}</p>
-        <p><strong>Business Name:</strong> {{ profile.business_name }}</p>
-        <p><strong>Experience:</strong> {{ profile.experience }} years</p>
-        <p><strong>Address:</strong> {{ profile.address }}</p>
-        <p><strong>License/Certification:</strong> <a href="{{ profile.certification_file.url }}" target="_blank" style="color: #1E88E5;">{{ profile.certification_file.name }}</a></p>
-    </div>
+            <div class="profile-container {% if profile.approved %}approved{% endif %}">
+                <div class="profile-details">
+                    <h2>{{ profile.business_name }}</h2>
+                    <p><strong>Phone:</strong> {{ profile.phone }}</p>
+                    <p><strong>Experience:</strong> {{ profile.experience }} years</p>
+                    <p><strong>Address:</strong> {{ profile.address }}</p>
+                    <p><strong>License/Certification:</strong>
+                        {% if profile.certification_file %}
+                            <a href="{{ profile.certification_file.url }}" target="_blank" style="color: #1E88E5;">
+                                {{ profile.certification_file.name }}
+                            </a>
+                        {% else %}
+                            No certification file available.
+                        {% endif %}
+                    </p>
+                </div>
+                <h3 class="services-heading" style="color: firebrick;">Services Offered</h3>
 
-    <div class="approval-buttons">
-        {% if profile.approved %}
-            <button class="approve-btn" disabled>Approved</button>
-        {% else %}
-            <form method="post" action="{% url 'approve_profile' profile.id %}">
-                {% csrf_token %}
-                <button type="submit" class="approve-btn">Approve</button>
-            </form>
-        {% endif %}
 
-        <form method="post" action="{% url 'reject_profile' profile.id %}">
-            {% csrf_token %}
-            <button type="submit" class="reject-btn">Reject</button>
-        </form>
-    </div>
-</div>
+                <div class="services-section">
+                    {% if profile.service_set.all %}
+                        <ul>
+                            {% for service in profile.service_set.all %}
+                                <li>
+                                    <strong>{{ service.service_name }}</strong>
+                                    {% if service.service_description %}
+                                        <p>{{ service.service_description }}</p>
+                                    {% endif %}
+                                    {% if service.service_category %}
+                                        <p><strong>Category:</strong> {{ service.service_category }}</p>
+                                    {% endif %}
+                                    {% if service.property_type %}
+                                        <p><strong>Property Type:</strong> {{ service.property_type }}</p>
+                                    {% endif %}
+                                    {% if service.service_price %}
+                                        <p><strong>Price:</strong> {{ service.service_price }}</p>
+                                    {% endif %}
+                                    {% if service.location %}
+                                        <p><strong>Location:</strong> {{ service.location }}</p>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No services available.</p>
+                    {% endif %}
+                </div>
 
+                <div class="approval-buttons">
+                    {% if profile.approved %}
+                        <button class="approve-btn" disabled>Approved</button>
+                    {% else %}
+                        <form method="post" action="{% url 'approve_profile' profile.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="approve-btn">Approve</button>
+                        </form>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'reject_profile' profile.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="reject-btn">Reject</button>
+                    </form>
+                </div>
+            </div>
         {% endfor %}
     </section>
 
     <footer>
         <p style="margin: 0;">&copy; 2023 Admin Dashboard</p>
     </footer>
+    <script>
+        // JavaScript to toggle the visibility of services section and heading
+        document.querySelectorAll('.profile-container').forEach(function(container) {
+            const servicesSection = container.querySelector('.services-section');
+            const servicesHeading = container.querySelector('.services-heading');
+            
+            container.addEventListener('click', function() {
+                servicesSection.classList.toggle('active');
+                servicesHeading.classList.toggle('active');
+            });
+        });
+    </script>
 </body>
 </html>

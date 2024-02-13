@@ -48,3 +48,11 @@ class RentalRequestAdmin(admin.ModelAdmin):
     list_filter = ['status']
     search_fields = ['property__property_type', 'tenant__full_name']  # Adjust as needed
 
+# from .models import Service
+
+# class ServiceAdmin(admin.ModelAdmin):
+#     list_display = ('service_name', 'service_category', 'property_type', 'service_price', 'location')
+#     # list_filter = ('service_category', 'property_type', 'location', 'approved')
+#     # search_fields = ('service_name', 'service_category', 'property_type', 'location')
+
+# admin.site.register(Service, ServiceAdmin)
