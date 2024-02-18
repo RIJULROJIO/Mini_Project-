@@ -418,6 +418,8 @@ def tenantpg(request):
     # Apply the filters
     filtered_properties = filtered_properties.filter(filter_params)
 
+    rented_properties = []  # Initialize rented_properties as an empty list
+
     if 'username' in request.session:
         username = request.session['username']
 
@@ -439,23 +441,17 @@ def tenantpg(request):
                 if lease_duration == '1 year':
                     upcoming_payment_date = availability_date + relativedelta(years=1)
                 elif lease_duration == 'Month-to-month':
-                    # Calculate rent due for the next month
-                    # current_date = datetime.now()
-                    # if current_date.day <= 15:
-                    #     upcoming_payment_date = current_date.replace(day=15)
-                    # else:
-                        upcoming_payment_date = (availability_date + relativedelta(months=1))
+                    upcoming_payment_date = (availability_date + relativedelta(months=1))
                 else:
-                    # Handle other lease durations as needed
                     upcoming_payment_date = None
 
                 property.upcoming_payment_date = upcoming_payment_date
-
-                
+                rented_properties.append(property)  # Append the property to rented_properties list
 
         context = {
             'user_profile': user_profile,
             'properties': filtered_properties,
+            'rented_properties': rented_properties,
         }
 
         response = render(request, 'tenantpg.html', context)
@@ -463,6 +459,7 @@ def tenantpg(request):
         return response
     else:
         return redirect('index')
+
     
 
 
@@ -526,7 +523,7 @@ def clear_rental_requests(request, property_id):
 
 
 
-from django.http import Http404
+from django.http import Http404, JsonResponse
 
 def propimgup(request, property_id):
     try:
@@ -743,6 +740,9 @@ def rentnxt(request, property_id):
     # Retrieve the Property object
     property = Property.objects.get(pk=property_id)
 
+    # Get the user profile of the logged-in user
+    user_profile = request.user.profile
+
     # Calculate the amount based on the monthly rent
     amount = int((property.monthly_rent + property.security_deposit) * 100)
 
@@ -755,7 +755,17 @@ def rentnxt(request, property_id):
     }
 
     # Create an order
-    order = razorpay_client.order.create(data=order_data)
+    order_response = razorpay_client.order.create(data=order_data)
+    order = order_response
+
+    # Create a Payment record with the associated user profile
+    payment = Payment.objects.create(
+        razorpay_payment_id='',
+        razorpay_order_id='',
+        property=property,
+        user_profile=user_profile,
+        # Add other fields as needed
+    )
 
     context = {
         'razorpay_api_key': razorpay_api_key,
@@ -766,60 +776,60 @@ def rentnxt(request, property_id):
 
     return render(request, 'payment.html', context)
 
-from django.db import transaction
+
+
+
 from razorpay.errors import BadRequestError
 
-
-
-from razorpay.errors import SignatureVerificationError
-
+@login_required  # Add this decorator to ensure the user is logged in
 @csrf_exempt
 def handle_payment(request):
     if request.method == 'POST':
-        # Get the Razorpay payment ID and order ID from the request
         razorpay_payment_id = request.POST.get('razorpay_payment_id')
         razorpay_order_id = request.POST.get('razorpay_order_id')
 
+        # Debug information
+        print(f"Received Razorpay Order ID: {razorpay_order_id}")
+
         try:
-            # Verify the payment signature
-            attributes = {
-                'razorpay_order_id': razorpay_order_id,
-                'razorpay_payment_id': razorpay_payment_id,
-            }
-            razorpay_client.utility.verify_payment_signature(attributes)
-
-            # Fetch the payment details
-            payment = razorpay_client.payment.fetch(razorpay_payment_id)
+            # Retrieve the property based on the order ID
             order = razorpay_client.order.fetch(razorpay_order_id)
+            property_id = int(order['receipt'][len('order_rcptid_'):])
+            property = Property.objects.get(pk=property_id)
 
-            # If the payment is successful, save the details to the database
-            if payment['status'] == 'captured':
-                user = request.user
-                amount = order['amount']
-                currency = order['currency']
+            # Get the user profile of the logged-in user
+            user_profile = request.user.profile
 
-                with transaction.atomic():
-                    Payment.objects.create(
-                        razorpay_payment_id=razorpay_payment_id,
-                        razorpay_order_id=razorpay_order_id,
-                        amount=amount,
-                        currency=currency,
-                        user=user,
-                    )
+            # Create a Payment record with the associated user profile
+            payment = Payment.objects.create(
+                razorpay_payment_id=razorpay_payment_id,
+                razorpay_order_id=razorpay_order_id,
+                property=property,
+                user_profile=user_profile,
+                # Add other fields as needed
+            )
 
-                messages.success(request, 'Payment successful. Thank you!')
-                return redirect('tenantpg')
-            else:
-                messages.error(request, 'Payment failed. Please try again.')
-                return redirect('tenantpg')
-        except SignatureVerificationError as e:
-            messages.error(request, f'Razorpay signature verification failed: {e}')
-            return redirect('tenantpg')
+            # Update any status or details in your Property model if needed
+            property.payment_status = 'Paid'
+            property.save()
+
+            return JsonResponse({'status': 'success'})
+        except BadRequestError as e:
+            # Handle Razorpay API errors
+            print(f"Razorpay API error: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Razorpay API error'})
+        except Property.DoesNotExist:
+            # Handle property not found error
+            print(f"Property not found for ID: {property_id}")
+            return JsonResponse({'status': 'error', 'message': 'Property not found'})
         except Exception as e:
-            messages.error(request, f'Error processing payment: {e}')
-            return redirect('tenantpg')
+            # Handle other unexpected errors
+            print(f"Unexpected error: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Unexpected error'})
     else:
-        return redirect('tenantpg')
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
 
 
 
@@ -1027,17 +1037,16 @@ def reject_profile(request, profile_id):
 
 
 def serproviderdash(request):
+    # Move this line to the beginning of the function
+    provider_profile = ServiceProviderProfile.objects.get(user=request.user)
 
-     if request.method == 'POST':
+    if request.method == 'POST':
         service_name = request.POST.get('service_name')
         service_category = request.POST.get('service_category')
         property_type = request.POST.get('property_type')
         service_description = request.POST.get('service_description')
         service_price = request.POST.get('service_price')
         location = request.POST.get('location')
-
-        # Assuming the user is logged in
-        provider_profile = ServiceProviderProfile.objects.get(user=request.user)
 
         # Save the service to the database
         Service.objects.create(
@@ -1050,9 +1059,46 @@ def serproviderdash(request):
             location=location
         )
 
-        # return redirect('serproviderpage')  # Redirect to the service provider page after successful submission
+    provider_services = Service.objects.filter(service_provider_profile=provider_profile)
 
-     return render(request, "serproviderdash.html")
+    context = {
+        'provider_profile': provider_profile,
+        'provider_services': provider_services,
+    }
+
+    return render(request, "serproviderdash.html", context)
+
+
+def edit_service(request, service_id):
+    service = get_object_or_404(Service, id=service_id)
+
+    if request.method == 'POST':
+        # Handle form submission and update the service details
+        service.service_name = request.POST.get('edit_service_name')
+        service.service_category=request.POST.get('edit_service_category')
+        service.property_type=request.POST.get('edit_property_type')
+        service.service_description=request.POST.get('edit_service_description')
+        service.service_price=request.POST.get('edit_service_price')
+        service.location=request.POST.get('edit_location')
+
+
+
+        # Update other fields as needed
+        service.save()
+        return redirect('serproviderdash')  # Redirect to the dashboard after editing
+
+
+    context = {
+        'service': service,
+
+    }
+
+    return render(request, "serproviderdash.html", context)
+
+def delete_service(request, service_id):
+    service = get_object_or_404(Service, id=service_id)
+    service.delete()
+    return redirect('serproviderdash')
 
 
     

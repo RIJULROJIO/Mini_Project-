@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,6 +110,8 @@
             display: none;
         }
     </style>
+        <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
 </head>
 <body>
     
@@ -116,6 +120,8 @@
         <nav>
             <a href="{% url 'serproviderpage' %}">Home</a>
             <a href="#" id="listServicesLink">List Your Services</a>
+            <a href="#" id="yourServicesLink"> Your Services</a>
+
             <!-- <a href="#" >Service Requests</a> -->
 
         </nav>
@@ -124,7 +130,7 @@
     <section>
         <div class="container form-container"  id="serviceForm">
             <h2>List Your Services</h2>
-            <form action="#" method="post">
+            <form action="{% url 'serproviderdash' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="service_name">Service Name:</label>
@@ -176,8 +182,141 @@
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
-        </div>
+        
+    <!-- Existing HTML code -->
+
+
+       
+    </div>
     </section>
+   <!-- Existing HTML code -->
+
+<section>
+    <div class="container form-container" id="serviceFormm">
+        <h2>Your Services</h2>
+        {% if provider_services %}
+            <ul>
+                {% for service in provider_services %}
+                    <li>
+                        <strong>Service Name: {{ service.service_name }}</strong><br>
+                        <strong>Service Category: {{ service.service_category }}</strong><br>
+                        <strong>Specialized Property: {{ service.property_type }}</strong><br>
+                        <strong>About Service: {{ service.service_description }}</strong><br>
+
+
+                        <strong>Pricing: {{ service.service_price }}</strong><br>
+                        <strong>Service Location: {{ service.location }}</strong><br>
+
+                        <!-- Edit button triggers a modal with an edit form -->
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editServiceModal{{ service.id }}">
+                            Edit
+                        </button>
+
+                        <!-- Modal for editing the service -->
+                      <!-- Modal for editing the service -->
+<div class="modal fade" id="editServiceModal{{ service.id }}" tabindex="-1" role="dialog" aria-labelledby="editServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editServiceModalLabel">Edit Service</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Edit service form with pre-filled values -->
+                <form action="{% url 'edit_service' service.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="edit_service_name">Service Name:</label>
+                        <input type="text" id="edit_service_name" name="edit_service_name" class="form-control" value="{{ service.service_name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_service_category">Service Category:</label>
+                        <select id="edit_service_category" name="edit_service_category" class="form-control" required>
+                            <option value="" disabled>Select Your Service</option>
+                            <option value="Cleaning Services" {% if service.service_category == 'Cleaning Services' %}selected{% endif %}>Cleaning Services</option>
+                            <option value="Electrical Services" {% if service.service_category == 'Electrical Services' %}selected{% endif %}>Electrical Services</option>
+                            <option value="Pest Control" {% if service.service_category == 'Pest Control' %}selected{% endif %}>Pest Control</option>
+                            <option value="Moving and Storage" {% if service.service_category == 'Moving and Storage' %}selected{% endif %}>Moving and Storage</option>
+                            <option value="Roofing Services" {% if service.service_category == 'Roofing Services' %}selected{% endif %}>Roofing Services</option>
+                            <!-- Add more categories as needed -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_property_type">Property Type:</label>
+                        <select id="edit_property_type" name="edit_property_type" class="form-control" required>
+                            <option value="" disabled>Select Your Specialized Property</option>
+                            <option value="apartment" {% if service.property_type == 'apartment' %}selected{% endif %}>Apartment</option>
+                            <option value="house" {% if service.property_type == 'house' %}selected{% endif %}>House</option>
+                            <!-- Add more property types as needed -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_service_description">Service Description:</label>
+                        <textarea id="edit_service_description" name="edit_service_description" class="form-control" rows="4" required>{{ service.service_description }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_service_price">Service Price:</label>
+                        <input type="number" id="edit_service_price" name="edit_service_price" class="form-control" value="{{ service.service_price }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_location">Location:</label>
+                        <input type="text" id="edit_location" name="edit_location" class="form-control" value="{{ service.location }}" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    </li><br>
+                    <!-- Inside the loop for listing services -->
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteServiceModal{{ service.id }}">
+    Delete
+</button>
+
+<!-- Modal for confirming service deletion -->
+<div class="modal fade" id="deleteServiceModal{{ service.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteServiceModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the service: <strong>{{ service.service_name }}</strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a href="{% url 'delete_service' service.id %}" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No services listed yet.</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Existing HTML code -->
+
+
+<!-- Existing HTML code -->
+
 
     <footer>
         <p>&copy; 2023 Service Provider Dashboard</p>
@@ -192,6 +331,11 @@
         $(document).ready(function() {
             $("#listServicesLink").click(function() {
                 $("#serviceForm").toggle();
+            });
+        });
+        $(document).ready(function() {
+            $("#yourServicesLink").click(function() {
+                $("#serviceFormm").toggle();
             });
         });
     </script>

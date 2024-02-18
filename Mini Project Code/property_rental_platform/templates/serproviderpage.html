@@ -252,11 +252,11 @@
         </form>
         {% if user_profile.approved is not None %}
         {% if user_profile.approved %}
-            <form method="post" action="{% url 'serproviderdash' %}">
-                {% csrf_token %}
+            <!-- <form method="post" action="{% url 'serproviderdash' %}"> -->
+                <!-- {% csrf_token %} -->
 
-                <button type="submit" class="dashboard-btn">Dashboard</button>
-            </form>
+                <button onclick="redirectToDashboard()" class="dashboard-btn">Dashboard</button>
+            <!-- </form> -->
         {% else %}
             <p style="color: #f00;">Your profile has been rejected. Please contact support for more information.</p>
         {% endif %}
@@ -282,6 +282,10 @@
 
         // Call the showMessageBox function when the page loads
         window.addEventListener("load", showMessageBox);
+        function redirectToDashboard() {
+            // Redirect to the 'serproviderdash' URL
+            window.location.href = "{% url 'serproviderdash' %}";
+        }
     </script>
 </body>
 </html>

@@ -430,6 +430,50 @@
         {% endif %}
     {% endfor %}
 </div>
+<!-- ... (existing code) ... -->
+
+<!-- Current Rentals section -->
+<div class="section">
+    <h3>Current Rentals</h3>
+    <ul class="property-list">
+        {% for rented_property in rented_properties %}
+            <li class="property-card">
+                <div class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for image in rented_property.propertyimage_set.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ image.image.url }}" alt="{{ rented_property.property_name }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="property-details">
+                    <h4>{{ rented_property.property_name }}</h4>
+                    <p><strong>Property type:</strong> {{ rented_property.property_type }}</p><br>
+                    <p><strong>Address:</strong> {{ rented_property.address }}</p><br>
+                    <p><strong>Monthly Rent:</strong> Rs{{ rented_property.monthly_rent }}</p><br>
+                    <!-- <p><strong>Security Amount:</strong> Rs {{ rented_property.security_deposit }}</p><br> -->
+                    <!-- <p><strong>Next Rent Payment:</strong> {{ rented_property.upcoming_payment_date|date:"F d, Y" }}</p><br> -->
+                    <a href="{% url 'property_detail' rented_property.id %}" class="btn btn-info">
+                        <i class="fas fa-info-circle"></i> More Info
+                    </a>
+                    <a href="{% url 'ownerinfo' rented_property.id %}" class="btn btn-info" style="margin-right: 10px;">
+                        <i class="fas fa-info-circle"></i> Owner Info
+                    </a>
+                    <!-- Add more buttons or details if needed -->
+                </div>
+            </li>
+        {% endfor %}
+
+        <!-- Display a message if no current rentals -->
+        {% if rented_properties.count == 0 %}
+            <p>No current rentals found.</p>
+        {% endif %}
+    </ul>
+</div>
+
+<!-- ... (existing code) ... -->
+
 
 
 
@@ -443,49 +487,7 @@
 <!-- ... Your existing HTML code ... -->
 
 <script>
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     var propertyCards = document.querySelectorAll(".property-card");
-
-    //     // Iterate through each property card
-    //     propertyCards.forEach(function (card) {
-    //         // Check if the card has a popup message
-    //         var popupMessage = card.querySelector(".popup-message");
-
-    //         if (popupMessage) {
-    //             // Show the popup if the rental request is not accepted
-    //             if (!card.classList.contains("rental-request-accepted")) {
-    //                 popupMessage.style.display = "block";
-    //             }
-    //         }
-
-    //         // Check if the "Pay Now" button was clicked before
-    //         var payNowButton = card.querySelector(".btn-primary");
-
-    //         // Use sessionStorage to persist the information
-    //         var paymentStatus = sessionStorage.getItem("paymentStatus");
-
-    //         if (paymentStatus === "paid") {
-    //             // If payment is done, hide "Pay Now" button permanently
-    //             payNowButton.style.display = "none";
-
-    //             // Show a new button in its place
-    //             var newButton = document.createElement("button");
-    //             newButton.className = "btn btn-success";
-    //             newButton.textContent = "Rented";
-    //             card.appendChild(newButton);
-    //         } else {
-    //             // If payment is not done, add click event listener
-    //             payNowButton.addEventListener("click", function () {
-    //                 // Hide "Pay Now" button permanently
-    //                 payNowButton.style.display = "none";
-
-    //                 // Set payment status to "paid" in sessionStorage
-    //                 sessionStorage.setItem("paymentStatus", "paid");
-    //             });
-    //         }
-
-    //         // Check if the "Rented" button is present
-    //         var rentedButton = card.querySelector(".btn-success");
+   
 
             // Conditionally show/hide the "Generate PDF" button
             var generatePdfButton = card.querySelector(".btn-generate-pdf"); // Update this class
@@ -493,8 +495,7 @@
             if (generatePdfButton) {
                 generatePdfButton.style.display = rentedButton ? "block" : "none";
             }
-    //     });
-    // });
+   
 </script>
 
  

@@ -70,6 +70,10 @@ urlpatterns = [
     path('serproviderpage/', views.serproviderpage, name='serproviderpage'),
     path('adminserpropage/', views.adminserpropage, name='adminserpropage'),
     path('serproviderdash/',views.serproviderdash,name='serproviderdash'),
+    path('edit-service/<int:service_id>/', views.edit_service, name='edit_service'),
+        path('delete_service/<int:service_id>/', views.delete_service, name='delete_service'),
+
+
     path('admin-approve-profile/<int:profile_id>/', views.approve_profile, name='approve_profile'),
     path('admin-reject-profile/<int:profile_id>/', views.reject_profile, name='reject_profile'),
 

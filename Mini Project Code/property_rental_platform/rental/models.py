@@ -173,18 +173,13 @@ class ServiceProviderProfile(models.Model):
 
 
 class Payment(models.Model):
-    razorpay_payment_id = models.CharField(max_length=255, verbose_name='Razorpay Payment ID')
-    razorpay_order_id = models.CharField(max_length=255, verbose_name='Razorpay Order ID')  # New field
-
-    amount = models.PositiveIntegerField(verbose_name='Amount')
-    currency = models.CharField(max_length=3, verbose_name='Currency')
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='User')
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, verbose_name='Property')
-
-    payment_date = models.DateTimeField(auto_now_add=True, verbose_name='Payment Date')
+    razorpay_payment_id = models.CharField(max_length=255)
+    razorpay_order_id = models.CharField(max_length=255)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    user_profile = models.ForeignKey(Profile, on_delete=models.CASCADE)  # Add this line
 
     def __str__(self):
-        return f'{self.user.username} - {self.amount} {self.currency}'
+        return f"Payment for Property {self.property.id} by {self.user_profile.user.username}"
 
 
 
