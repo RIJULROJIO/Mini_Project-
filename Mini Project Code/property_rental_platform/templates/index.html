@@ -416,8 +416,11 @@
                     {% if property.is_rental_request_accepted %}
                         <p class="status not-available">Property Not Available at the moment</p><br>
                     {% else %}
-                        <a href="{% url 'signup' %}" class="btn btn-info">
+                        <a href="{% url 'property_detail' property.id %}" class="btn btn-info">
                             <i class="fas fa-info-circle"></i> More Info
+                        </a>
+                        <a href="{% url 'login' %}" class="btn btn-info">
+                            <i class="fas fa-thumbs-up"></i> Rent Now
                         </a>
                     {% endif %}
                 </div>

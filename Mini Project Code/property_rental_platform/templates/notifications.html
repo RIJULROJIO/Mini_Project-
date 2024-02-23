@@ -1,36 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications</title>
     <style>
-        .notification-box {
-            padding: 10px;
-            margin-bottom: 10px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ecf0f1;
+            color: #333;
+            margin: 0;
+            padding: 0;
         }
 
-        .info { background-color: #3498db; }
-        .success { background-color: #2ecc71; }
-        .warning { background-color: #e67e22; }
-        .error { background-color: #e74c3c; }
+        h1 {
+            color: #3498db;
+        }
+
+        .notification-box {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .info {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .success {
+            background-color: #2ecc71;
+            color: #fff;
+        }
+
+        .warning {
+            background-color: #e67e22;
+            color: #fff;
+        }
+
+        .error {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+
+        small {
+            color: #777;
+        }
+
+        a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #1d6fa5;
+        }
     </style>
 </head>
+
 <body>
     {% if notifications %}
-        <h1>Notifications</h1>
-        {% for notification in notifications %}
-            <div class="notification-box {% if notification.notification_type|default:'' == 'info' %}info{% elif notification.notification_type|default:'' == 'success' %}success{% elif notification.notification_type|default:'' == 'warning' %}warning{% elif notification.notification_type|default:'' == 'error' %}error{% endif %}">
-                <strong>{{ notification.notification_type|title }}</strong>: {{ notification.message }}
-                <br>
-                <small>{{ notification.timestamp }}</small>
-                {% if not notification.is_read %}
-                    <a href="{% url 'mark_as_read' notification.id %}">Mark as Read</a>
-                {% endif %}
-            </div>
-        {% endfor %}
+    <h1>Notifications</h1>
+    {% for notification in notifications %}
+    <div class="notification-box {% if notification.notification_type|default:'' == 'info' %}info{% elif notification.notification_type|default:'' == 'success' %}success{% elif notification.notification_type|default:'' == 'warning' %}warning{% elif notification.notification_type|default:'' == 'error' %}error{% endif %}">
+        <strong>{{ notification.notification_type|title }}</strong>: {{ notification.message }}
+        <br>
+        <small>{{ notification.timestamp }}</small>
+        {% if not notification.is_read %}
+        <a href="{% url 'mark_as_read' notification.id %}">Mark as Read</a>
+        {% endif %}
+    </div>
+    {% endfor %}
     {% else %}
-        <p>No notifications available.</p>
+    <p>No notifications available.</p>
     {% endif %}
 </body>
+
 </html>

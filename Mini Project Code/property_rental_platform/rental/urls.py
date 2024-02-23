@@ -80,6 +80,11 @@ urlpatterns = [
     path('clear_rental_requests/<int:property_id>/', views.clear_rental_requests, name='clear_rental_requests'),
     path('view_locations/',views.view_locations,name='view_locations'),
 
+    path('adminpay', views.admin_dashboard, name='adminpay'),
+
+
+    
+
 
 ]
 

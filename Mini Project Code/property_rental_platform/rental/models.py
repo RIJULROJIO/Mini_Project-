@@ -177,6 +177,8 @@ class Payment(models.Model):
     razorpay_order_id = models.CharField(max_length=255)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     user_profile = models.ForeignKey(Profile, on_delete=models.CASCADE)  # Add this line
+    amount = models.IntegerField(null=True)  # Add this line to store the amount
+
 
     def __str__(self):
         return f"Payment for Property {self.property.id} by {self.user_profile.user.username}"

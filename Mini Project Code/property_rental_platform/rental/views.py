@@ -1,4 +1,6 @@
 import datetime
+from decimal import Decimal
+from io import BytesIO
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
 import razorpay
@@ -448,10 +450,14 @@ def tenantpg(request):
                 property.upcoming_payment_date = upcoming_payment_date
                 rented_properties.append(property)  # Append the property to rented_properties list
 
+        # Check if the payment for a rented property has been made
+        payment_made = Payment.objects.filter(property__in=rented_properties, user_profile=user_profile).exists()
+
         context = {
             'user_profile': user_profile,
             'properties': filtered_properties,
             'rented_properties': rented_properties,
+            'payment_made': payment_made,
         }
 
         response = render(request, 'tenantpg.html', context)
@@ -461,7 +467,6 @@ def tenantpg(request):
         return redirect('index')
 
     
-
 
 
 
@@ -482,7 +487,8 @@ def manageprop(request):
 
         # Get the user's profile
         try:
-            user_profile = UserProfile.objects.get(user__username=username)
+            # Ensure we retrieve the user profile correctly
+            user_profile = get_object_or_404(UserProfile, user__username=username)
         except UserProfile.DoesNotExist:
             user_profile = None
 
@@ -491,6 +497,10 @@ def manageprop(request):
             # Get non-deleted properties associated with the property owner
             properties = Property.objects.filter(property_owner=user_profile.user, deleted=False)
 
+            # Check if payment is made for each property
+            for property in properties:
+                property.payment_made = Payment.objects.filter(property=property).exists()
+
             context = {
                 'user_profile': user_profile,
                 'properties': properties,  # Add properties to the context
@@ -498,8 +508,8 @@ def manageprop(request):
 
             return render(request, 'manageprop.html', context)
         else:
-            # Handle the case where the user profile is not found
-            return redirect('index')
+            # Handle the case where the user profile is not found more gracefully
+            return render(request, 'manageprop.html', {'error_message': 'User profile not found.'})
     else:
         return redirect('index')
     
@@ -523,7 +533,7 @@ def clear_rental_requests(request, property_id):
 
 
 
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponseBadRequest, JsonResponse
 
 def propimgup(request, property_id):
     try:
@@ -737,44 +747,43 @@ razorpay_client = Client(auth=(razorpay_api_key, razorpay_secret_key))
 
 @csrf_exempt
 def rentnxt(request, property_id):
-    # Retrieve the Property object
-    property = Property.objects.get(pk=property_id)
+    try:
+        # Retrieve the Property object
+        property = Property.objects.get(pk=property_id)
 
-    # Get the user profile of the logged-in user
-    user_profile = request.user.profile
+        # Get the user profile of the logged-in user
+        user_profile = request.user.profile
 
-    # Calculate the amount based on the monthly rent
-    amount = int((property.monthly_rent + property.security_deposit) * 100)
+        # Calculate the amount based on the monthly rent
+        amount = int((property.monthly_rent + property.security_deposit) * 100)
 
-    # Create a Razorpay order
-    order_data = {
-        'amount': amount,
-        'currency': 'INR',
-        'receipt': f'order_rcptid_{property.id}',
-        'payment_capture': '1',  # Auto-capture payment
-    }
+        # Create a Razorpay order
+        order_data = {
+            'amount': amount,
+            'currency': 'INR',
+            'receipt': f'order_rcptid_{property.id}',
+            'payment_capture': '1',  # Auto-capture payment
+        }
 
-    # Create an order
-    order_response = razorpay_client.order.create(data=order_data)
-    order = order_response
+        # Create an order
+        order_response = razorpay_client.order.create(data=order_data)
+        order = order_response
 
-    # Create a Payment record with the associated user profile
-    payment = Payment.objects.create(
-        razorpay_payment_id='',
-        razorpay_order_id='',
-        property=property,
-        user_profile=user_profile,
-        # Add other fields as needed
-    )
+        # Store the order details in the session to retrieve later
+        request.session['razorpay_order_id'] = order['id']
+        request.session['property_id'] = property_id
 
-    context = {
-        'razorpay_api_key': razorpay_api_key,
-        'amount': order_data['amount'],
-        'currency': order_data['currency'],
-        'order_id': order['id'],
-    }
+        context = {
+            'razorpay_api_key': razorpay_api_key,
+            'amount': amount,
+            'currency': order_data['currency'],
+            'order_id': order['id'],
+        }
 
-    return render(request, 'payment.html', context)
+        return render(request, 'payment.html', context)
+
+    except Property.DoesNotExist:
+        return HttpResponseBadRequest('Invalid Property ID')
 
 
 
@@ -800,12 +809,16 @@ def handle_payment(request):
             # Get the user profile of the logged-in user
             user_profile = request.user.profile
 
+            amount_in_rupees = Decimal(order['amount']) / 100
+
+
             # Create a Payment record with the associated user profile
             payment = Payment.objects.create(
                 razorpay_payment_id=razorpay_payment_id,
                 razorpay_order_id=razorpay_order_id,
                 property=property,
                 user_profile=user_profile,
+                amount=amount_in_rupees,
                 # Add other fields as needed
             )
 
@@ -828,7 +841,6 @@ def handle_payment(request):
             return JsonResponse({'status': 'error', 'message': 'Unexpected error'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-
 
 
 
@@ -896,33 +908,110 @@ def update_property_view(request, property_id):
 
 
 from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def generate_property_pdf(request, property_id):
     # Get the property object
     property = get_object_or_404(Property, id=property_id)
 
-    # Add logic to check if the property is rented (use your own conditions)
-    # if property.is_rented:
-    #     return HttpResponse("This property is not rented.")  # or redirect to an error page
+    
+
+    # Get the tenant (user who brought the property) and property owner
+    tenant_profile = request.user.profile  # Accessing the profile of the logged-in user
+    owner_profile = property.property_owner.userprofile
 
     # Create a PDF response
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'filename="{property.property_type}_invoice.pdf"'
 
-    # Create the PDF content
-    p = canvas.Canvas(response)
-    p.drawString(100, 800, f"Property Invoice for {property.property_type}")
+    # Create the PDF content using ReportLab
+    buffer = BytesIO()
+    pdf = SimpleDocTemplate(buffer, pagesize=letter)
 
-    # Add more property details to the PDF
-    p.drawString(100, 780, f"Property Type: {property.property_type}")
-    p.drawString(100, 760, f"Address: {property.address}")
-    p.drawString(100, 740, f"Monthly Rent: Rs{property.monthly_rent}")
-    # Add more details as needed
+    # Define styles for the PDF
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'Title',
+        parent=styles['Title'],
+        textColor=colors.blue,
+        fontSize=18,
+        spaceAfter=12
+    )
+    normal_style = styles['BodyText']
 
-    # Save the PDF content
-    p.showPage()
-    p.save()
+    # Build the PDF content
+    content = []
+
+    # Add title to the PDF
+    title_text = f"<u>Property Invoice for {property.property_type}</u>"
+    content.append(Paragraph(title_text, title_style))
+    content.append(Paragraph("<br/>", normal_style))
+
+    # Add property details to the PDF
+    details = [
+        f"<b>Property Type:</b> {property.property_type}",
+        f"<b>Address:</b> {property.address}",
+        f"<b>Monthly Rent:</b> Rs {property.monthly_rent}",
+        f"<b>Security Deposit:</b> Rs {property.security_deposit}",
+        f"<b>Lease Duration:</b> {property.lease_duration}",
+        f"<b>Availability Date:</b> {property.availability_date}",
+        # Add more details as needed
+    ]
+
+    for detail in details:
+        content.append(Paragraph(detail, normal_style))
+        content.append(Paragraph("<br/>", normal_style))
+
+    # Add tenant details to the PDF
+    content.append(Paragraph("<u>Tenant Information</u>", title_style))
+    tenant_details = [
+        f"<b>Name:</b> {tenant_profile.full_name}",
+        f"<b>Date of Birth:</b> {tenant_profile.date_of_birth}",
+        f"<b>Phone Number:</b> {tenant_profile.phone_number}",
+        f"<b>Current Address:</b> {tenant_profile.current_address}",
+        # Add more details as needed
+    ]
+
+    for detail in tenant_details:
+        content.append(Paragraph(detail, normal_style))
+        content.append(Paragraph("<br/>", normal_style))
+
+    # Add owner details to the PDF
+    content.append(Paragraph("<u>Property Owner Information</u>", title_style))
+    owner_details = [
+        f"<b>Name:</b> {owner_profile.full_name}",
+        f"<b>Date of Birth:</b> {owner_profile.date_of_birth}",
+        f"<b>Phone Number:</b> {owner_profile.phone_number}",
+        f"<b>Current Address:</b> {owner_profile.current_address}",
+        # Add more details as needed
+    ]
+
+    for detail in owner_details:
+        content.append(Paragraph(detail, normal_style))
+        content.append(Paragraph("<br/>", normal_style))
+
+    # Add a stylish message for first payment
+    content.append(Paragraph("<u>First Payment Information</u>", title_style))
+    content.append(Paragraph("<b>First Payment:</b> <i>Done</i>", normal_style))
+    content.append(Paragraph("<br/>", normal_style))
+
+    # Build the PDF
+    pdf.build(content)
+
+    # Get the value of the BytesIO buffer and write it to the response
+    pdf_data = buffer.getvalue()
+    buffer.close()
+    response.write(pdf_data)
 
     return response
+
+
 
 
 def view_notifications(request):
@@ -1123,3 +1212,10 @@ def view_locations(request):
 
     
 
+def admin_dashboard(request):
+    # Retrieve all properties, profiles, and payments
+    properties = Property.objects.all()
+    profiles = Profile.objects.all()
+    payments = Payment.objects.all()
+
+    return render(request, 'adminpay.html', {'properties': properties, 'profiles': profiles, 'payments': payments})

@@ -5,7 +5,7 @@
     <title>Update Property Details</title>
     <!-- Add your CSS links or styles here -->
     <style>
-        body {
+         body {
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
             margin: 0;
@@ -61,13 +61,17 @@
             text-decoration: none;
             color: blueviolet;
         }
+        /* ... Your existing CSS styles ... */
+        .error {
+            color: red;
+        }
     </style>
 </head>
 
 <body>
     <h2>Update Property Details</h2>
 
-    <form method="post">
+    <form method="post" id="propertyForm">
         {% csrf_token %}
         <label for="property_type">Property Type:</label>
         <select name="property_type" id="property_type" required>
@@ -77,29 +81,34 @@
             <option value="Officespace">Officespace</option>
             <option value="Warehouse">Warehouse</option>
             <option value="Land">Land</option>
-            
             <!-- Add more options as needed -->
         </select>
 
         <label for="address">Address:</label>
         <input type="text" name="address" id="address" required value="{{ property.address }}">
+        <span id="addressError" class="error"></span>
 
         <label for="monthly_rent">Monthly Rent:</label>
         <input type="number" name="monthly_rent" id="monthly_rent" required value="{{ property.monthly_rent }}">
+        <span id="monthlyRentError" class="error"></span>
 
         <label for="security_deposit">Security Deposit:</label>
         <input type="number" name="security_deposit" id="security_deposit" required value="{{ property.security_deposit }}">
+        <span id="securityDepositError" class="error"></span>
 
         <br>
         <label for="lease_duration">Lease Duration:</label>
         <select name="lease_duration" id="lease_duration" required>
+            <option value="">--Please select--</option>
             <option value="1 year">1 year</option>
             <option value="Month-to-month">Month-to-month</option>
         </select>
+        <span id="leaseDurationError" class="error"></span>
         <br>
 
         <label for="availability_date">Availability Date:</label>
         <input type="date" name="availability_date" id="availability_date" required value="{{ property.availability_date }}">
+        <span id="availabilityDateError" class="error"></span>
 
         <!-- Add more fields as needed -->
 
@@ -107,6 +116,97 @@
     </form>
 
     <a href="{% url 'manageprop' %}">Back to Manage Properties</a>
+
+    <script>
+        // Real-time validation
+        document.getElementById('property_type').addEventListener('change', validatePropertyType);
+        document.getElementById('address').addEventListener('input', validateAddress);
+        document.getElementById('monthly_rent').addEventListener('input', validateMonthlyRent);
+        document.getElementById('security_deposit').addEventListener('input', validateSecurityDeposit);
+        document.getElementById('lease_duration').addEventListener('change', validateLeaseDuration);
+        document.getElementById('availability_date').addEventListener('input', validateAvailabilityDate);
+
+        function validatePropertyType() {
+            var propertyType = document.getElementById('property_type').value;
+            if (!propertyType) {
+                document.getElementById('addressError').innerText = 'Please select a property type.';
+            } else {
+                document.getElementById('addressError').innerText = '';
+            }
+        }
+
+        function validateAddress() {
+            var address = document.getElementById('address').value;
+            if (!address) {
+                document.getElementById('addressError').innerText = 'Address is required.';
+            } else {
+                document.getElementById('addressError').innerText = '';
+            }
+        }
+
+        function validateMonthlyRent() {
+            var monthlyRent = document.getElementById('monthly_rent').value;
+            if (monthlyRent <= 0 || isNaN(monthlyRent)) {
+                document.getElementById('monthlyRentError').innerText = 'Monthly rent must be a positive number.';
+            } else {
+                document.getElementById('monthlyRentError').innerText = '';
+            }
+        }
+
+        function validateSecurityDeposit() {
+            var securityDeposit = document.getElementById('security_deposit').value;
+            if (securityDeposit < 0 || isNaN(securityDeposit)) {
+                document.getElementById('securityDepositError').innerText = 'Security deposit must be a non-negative number.';
+            } else {
+                document.getElementById('securityDepositError').innerText = '';
+            }
+        }
+
+        function validateLeaseDuration() {
+            var leaseDuration = document.getElementById('lease_duration').value;
+            if (!leaseDuration) {
+                document.getElementById('leaseDurationError').innerText = 'Please select a lease duration.';
+            } else {
+                document.getElementById('leaseDurationError').innerText = '';
+            }
+        }
+
+        function validateAvailabilityDate() {
+            var availabilityDate = document.getElementById('availability_date').value;
+            if (!availabilityDate) {
+                document.getElementById('availabilityDateError').innerText = 'Availability date is required.';
+            } else {
+                document.getElementById('availabilityDateError').innerText = '';
+            }
+        }
+
+        // Form submission and server-side validation
+        document.getElementById('propertyForm').addEventListener('submit', function (event) {
+            if (!validateForm()) {
+                event.preventDefault();
+            }
+        });
+
+        function validateForm() {
+            // Add client-side validation logic
+            var propertyType = document.getElementById('property_type').value;
+            var address = document.getElementById('address').value;
+            var monthlyRent = document.getElementById('monthly_rent').value;
+            var securityDeposit = document.getElementById('security_deposit').value;
+            var leaseDuration = document.getElementById('lease_duration').value;
+            var availabilityDate = document.getElementById('availability_date').value;
+
+            // You can add more validations as needed
+
+            if (!propertyType || !address || monthlyRent <= 0 || isNaN(monthlyRent) || securityDeposit < 0 || isNaN(securityDeposit) || !leaseDuration || !availabilityDate) {
+                // Form is not valid
+                return false;
+            } else {
+                // Form is valid
+                return true;
+            }
+        }
+    </script>
 </body>
 
 </html>

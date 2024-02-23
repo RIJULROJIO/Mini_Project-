@@ -41,6 +41,8 @@
             padding: 10px;
             margin-bottom: 15px;
             box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
         input[type="file"] {
@@ -155,34 +157,11 @@
             width: 100%;
             z-index: 999; /* Ensure the footer is above other elements */
         }
-        /* .large-message-box {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            z-index: 9999;
+
+        .error {
+            color: #ff0000;
         }
 
-/* CSS for Message Box Content */
-.message-content {
-    font-size: 18px;
-    text-align: center;
-}
-
-/* CSS for Close Button */
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    color: #333;
-} */
     </style>
     <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="">
 </head>
@@ -227,29 +206,36 @@
         <form method="post" enctype="multipart/form-data" action="{% url 'serproviderpage' %}">
             {% csrf_token %}
             <label for="name">Name:</label>
-            <input type="text" id="name" name="name" value="{{ user_profile.name }}" required>
+            <input type="text" id="name" name="name" value="{{ user_profile.name }}" required oninput="validateName()">
+            <span class="error" id="nameError"></span>
 
             <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" value="{{ user_profile.phone }}" required>
+            <input type="tel" id="phone" name="phone" value="{{ user_profile.phone }}" required oninput="validatePhoneNumber()">
+            <span class="error" id="phoneError"></span>
 
             <label for="business_name">Business Name:</label>
-            <input type="text" id="business_name" name="business_name" value="{{ user_profile.business_name }}" required>
+            <input type="text" id="business_name" name="business_name" value="{{ user_profile.business_name }}" required oninput="validateBusinessName()">
+            <span class="error" id="businessNameError"></span>
 
             <label for="experience">Experience (in years):</label>
-            <input type="number" id="experience" name="experience" value="{{ user_profile.experience }}" required>
+            <input type="number" id="experience" name="experience" value="{{ user_profile.experience }}" required oninput="validateExperience()">
+            <span class="error" id="experienceError"></span>
 
             <label for="certification">License/Certification:</label>
-            <input type="file" id="certification" name="certification_file" accept=".pdf, .doc, .docx">
+            <input type="file" id="certification" name="certification_file" accept=".pdf, .doc, .docx" onchange="validateCertificationFile()">
+            <span class="error" id="certificationFileError"></span>
             {% if user_profile.certification_file %}
                 <p>Current Certification File: <a href="{{ user_profile.certification_file.url }}" target="_blank" style="text-decoration: underline;">{{ user_profile.certification_file.name }}</a></p>
                 <p>File Size: {{ user_profile.certification_file.size|filesizeformat }}</p>
             {% endif %}
 
             <label for="address">Address:</label>
-            <input type="text" id="address" name="address" value="{{ user_profile.address }}" required>
+            <input type="text" id="address" name="address" value="{{ user_profile.address }}" required oninput="validateAddress()">
+            <span class="error" id="addressError"></span>
 
-            <button type="submit">Update Profile</button>
+            <button type="submit" onclick="return validateForm()">Update Details</button>
         </form>
+
         {% if user_profile.approved is not None %}
         {% if user_profile.approved %}
             <!-- <form method="post" action="{% url 'serproviderdash' %}"> -->
@@ -263,7 +249,7 @@
     {% else %}
         <p style="color: #f00;">Your profile is pending approval. Please wait for approval.</p>
     {% endif %}
-</div>
+    </div>
 
     <!-- <footer>
         <p>&copy; 2023 Property Rentals ServiceProvider Profile</p>
@@ -285,6 +271,127 @@
         function redirectToDashboard() {
             // Redirect to the 'serproviderdash' URL
             window.location.href = "{% url 'serproviderdash' %}";
+        }
+
+        function validateForm() {
+            return (
+                validateName() &&
+                validatePhoneNumber() &&
+                validateBusinessName() &&
+                validateExperience() &&
+                validateCertificationFile() &&
+                validateAddress()
+            );
+        }
+
+        function validateName() {
+            const nameInput = document.getElementById('name');
+            const nameError = document.getElementById('nameError');
+            nameError.innerText = '';
+
+            if (!nameInput.value.trim()) {
+                nameError.innerText = 'Name is required.';
+                nameInput.style.border = '1px solid #ff0000';
+                return false;
+            } else {
+                nameInput.style.border = '1px solid #ccc';
+            }
+
+            return true;
+        }
+
+        function validatePhoneNumber() {
+            const phoneInput = document.getElementById('phone');
+            const phoneError = document.getElementById('phoneError');
+            phoneError.innerText = '';
+
+            const phoneRegex = /^\d{10}$/;
+
+            if (!phoneRegex.test(phoneInput.value.trim())) {
+                phoneError.innerText = 'Invalid phone number.';
+                phoneInput.style.border = '1px solid #ff0000';
+                return false;
+            } else {
+                phoneInput.style.border = '1px solid #ccc';
+            }
+
+            return true;
+        }
+
+        function validateBusinessName() {
+            const businessNameInput = document.getElementById('business_name');
+            const businessNameError = document.getElementById('businessNameError');
+            businessNameError.innerText = '';
+
+            if (!businessNameInput.value.trim()) {
+                businessNameError.innerText = 'Business name is required.';
+                businessNameInput.style.border = '1px solid #ff0000';
+                return false;
+            } else {
+                businessNameInput.style.border = '1px solid #ccc';
+            }
+
+            return true;
+        }
+
+        function validateExperience() {
+            const experienceInput = document.getElementById('experience');
+            const experienceError = document.getElementById('experienceError');
+            experienceError.innerText = '';
+
+            const experienceValue = parseInt(experienceInput.value.trim());
+
+            if (isNaN(experienceValue) || experienceValue < 0) {
+                experienceError.innerText = 'Invalid experience value.';
+                experienceInput.style.border = '1px solid #ff0000';
+                return false;
+            } else {
+                experienceInput.style.border = '1px solid #ccc';
+            }
+
+            return true;
+        }
+
+        function validateCertificationFile() {
+            const certificationFileInput = document.getElementById('certification');
+            const certificationFileError = document.getElementById('certificationFileError');
+            certificationFileError.innerText = '';
+
+            const allowedExtensions = ['.pdf', '.doc', '.docx'];
+            const fileName = certificationFileInput.value.trim();
+
+            const isValidExtension = allowedExtensions.some(ext => fileName.toLowerCase().endsWith(ext));
+
+            if (fileName && !isValidExtension) {
+                certificationFileError.innerText = 'Invalid file format. Allowed formats: PDF, DOC, DOCX';
+                certificationFileInput.style.border = '1px solid #ff0000';
+                return false;
+            } else {
+                certificationFileInput.style.border = '1px solid #ccc';
+            }
+
+            return true;
+        }
+
+        function validateAddress() {
+            const addressInput = document.getElementById('address');
+            const addressError = document.getElementById('addressError');
+            addressError.innerText = '';
+
+            if (!addressInput.value.trim()) {
+                addressError.innerText = 'Address is required.';
+                addressInput.style.border = '1px solid #ff0000';
+                return false;
+            } else {
+                addressInput.style.border = '1px solid #ccc';
+            }
+
+            return true;
+        }
+
+        function closeMessageBox() {
+            const messageBox = document.querySelector(".large-message-box");
+            messageBox.style.display = "none";
         }
     </script>
 </body>
