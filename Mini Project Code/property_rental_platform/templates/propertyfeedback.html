@@ -1,0 +1,161 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Feedback</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+
+        h2, h3 {
+            color: #17a2b8;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .existing-feedback {
+            margin-top: 20px;
+        }
+
+        .existing-feedback li {
+            list-style-type: none;
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        .existing-feedback strong {
+            color: #17a2b8;
+        }
+
+        .rating {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            cursor: pointer;
+            font-size: 28px;
+            color: #ccc;
+            margin-right: 5px;
+        }
+
+        .rating label:hover,
+        .rating label:hover ~ label,
+        .rating input:checked ~ label {
+            color: #FFD700;
+        }
+    </style>
+        <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
+</head>
+
+<body>
+
+    <a href="{% url 'tenantpg' %}" style="float:left; margin-right: 10px;">Dashboard</a><br>
+
+    <h2>{{ property.property_type }} Feedback</h2>
+
+    <!-- Display existing feedback -->
+    {% if feedback_list %}
+        <h3 class="existing-feedback">Existing Feedback</h3>
+        <ul class="existing-feedback">
+            {% for feedback in feedback_list %}
+                <li>
+                    <strong>{{ feedback.user.username }}:</strong>
+                    Rating: {{ feedback.rating }} / Feedback: {{ feedback.feedback }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="existing-feedback">No feedback yet. Be the first to leave feedback!</p>
+    {% endif %}
+
+    <!-- Form for new feedback -->
+    <h3>Leave Feedback</h3>
+    <form method="post" action="{% url 'propertyfeedback' property.id %}">
+        {% csrf_token %}
+
+        <div class="rating">
+            <input type="radio" id="star5" name="rating" value="5" required />
+            <label for="star5">&#9733;</label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4">&#9733;</label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3">&#9733;</label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2">&#9733;</label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1">&#9733;</label>
+        </div>
+
+        <label for="feedback">Feedback:</label>
+        <textarea name="feedback" rows="6" required></textarea>
+
+        <button type="submit">Submit Feedback</button>
+    </form>
+
+</body>
+
+</html>

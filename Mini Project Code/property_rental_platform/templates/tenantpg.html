@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -285,6 +287,7 @@
 }
 
 
+
     </style>
 
     <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="image/x-icon">
@@ -373,6 +376,7 @@
                             <a href="{% url 'admviewdocs' property.id %}" class="btn btn-secondary" style="margin-top: 10px; margin-right: 10px;">
                                 <i class="fas fa-file-alt"></i> View Documents
                             </a>
+                           
 
 
                             {% if property.is_rental_request_accepted %}
@@ -491,6 +495,45 @@
                     <a href="{% url 'ownerinfo' rented_property.id %}" class="btn btn-info" style="margin-right: 10px;">
                         <i class="fas fa-info-circle"></i> Owner Info
                     </a>
+                    <div class="feedback-section">
+                        <!-- <p><strong>Your Rating:</strong> </p>
+                        <p><strong>Your Feedback:</strong> </p> -->
+                        <!-- Add a button with Font Awesome icons for feedback and rating -->
+                        
+                        <a class="btn btn-primary" href="{% url 'propertyfeedback' rented_property.id %}">
+                            <i class="fas fa-star"></i> Rate
+                        </a>
+                        
+                        <a class="btn btn-primary" href="{% url 'propertyfeedback' rented_property.id %}">
+                            <i class="fas fa-comment"></i> Feedback
+                        </a>
+                        
+                    </div>
+                    <br><button class="btn btn-info" data-toggle="modal" data-target="#leaseAgreementModal{{ rented_property.id }}">
+                        Lease Agreement
+                    </button>
+    
+                    <!-- Lease Agreement Modal -->
+                    <div class="modal fade" id="leaseAgreementModal{{ rented_property.id }}" tabindex="-1" role="dialog" aria-labelledby="leaseAgreementModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="leaseAgreementModalLabel">Lease Agreement for {{ rented_property.property_type }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Start Date:</strong> {{ rented_property.lease_agreement.start_date }}</p>
+                                    <p><strong>End Date:</strong> {{ rented_property.lease_agreement.end_date }}</p>
+                                    <p><strong>Rent Amount:</strong> Rs{{ rented_property.lease_agreement.rent_amount }}</p>
+                                    <!-- <p><strong>Security Deposit:</strong> Rs{{ rented_property.lease_agreement.security_deposit }}</p> -->
+                                    <!-- Add more lease agreement details as needed -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+    
                     <!-- Add more buttons or details if needed -->
                 </div>
             </li>

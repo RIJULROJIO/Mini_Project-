@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser,UserProfile,Profile,Property,RentalRequest
+from .models import CustomUser,UserProfile,Profile,Property,RentalRequest,Payment
 
 
 
@@ -48,11 +48,12 @@ class RentalRequestAdmin(admin.ModelAdmin):
     list_filter = ['status']
     search_fields = ['property__property_type', 'tenant__full_name']  # Adjust as needed
 
-# from .models import Service
 
-# class ServiceAdmin(admin.ModelAdmin):
-#     list_display = ('service_name', 'service_category', 'property_type', 'service_price', 'location')
-#     # list_filter = ('service_category', 'property_type', 'location', 'approved')
-#     # search_fields = ('service_name', 'service_category', 'property_type', 'location')
 
-# admin.site.register(Service, ServiceAdmin)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('razorpay_payment_id', 'razorpay_order_id', 'property', 'user_profile', 'amount', 'timestamp')
+    list_filter = ('property', 'user_profile', 'timestamp')
+    search_fields = ('razorpay_payment_id', 'user_profile__user__username', 'property__address')
+    readonly_fields = ('timestamp',)
+
+admin.site.register(Payment, PaymentAdmin)

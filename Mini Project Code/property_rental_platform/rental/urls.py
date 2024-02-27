@@ -82,6 +82,12 @@ urlpatterns = [
 
     path('adminpay', views.admin_dashboard, name='adminpay'),
 
+    path('rentcollect/', views.rent_collection, name='rentcollect'),
+
+    path('propertyfeedback/<int:property_id>/', views.property_feedback, name='propertyfeedback'),
+
+
+
 
     
 

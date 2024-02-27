@@ -21,7 +21,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile,Payment,Service # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile,Payment,Service,PropertyFeedback # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -72,6 +72,9 @@ class EmailThread(threading.Thread):
     def run(self):
         self.email_message.send()
 
+from django.db.models import Avg
+
+
 def index(request):
     filtered_properties = Property.objects.filter(approval_status='Approved')
 
@@ -97,6 +100,8 @@ def index(request):
     for property in filtered_properties:
         # Check if a rental request has been accepted for each property
         property.is_rental_request_accepted = property.rentalrequest_set.filter(status='Accepted').exists()
+        property.latest_rating = PropertyFeedback.objects.filter(property=property).aggregate(Avg('rating'))['rating__avg']
+
 
     context = {
         'properties': filtered_properties,
@@ -448,7 +453,17 @@ def tenantpg(request):
                     upcoming_payment_date = None
 
                 property.upcoming_payment_date = upcoming_payment_date
-                rented_properties.append(property)  # Append the property to rented_properties list
+                rented_properties.append(property) 
+               # Fetch lease agreement details for the rented property
+                lease_agreements = LeaseAgreement.objects.filter(property=property)
+
+                if lease_agreements.exists():
+    # If there are multiple lease agreements, choose the latest one
+                 latest_lease_agreement = lease_agreements.order_by('-created_at').first()
+                 property.lease_agreement = latest_lease_agreement
+            else:
+    # Handle the case where no lease agreement is found
+                property.lease_agreement = None
 
         # Check if the payment for a rented property has been made
         payment_made = Payment.objects.filter(property__in=rented_properties, user_profile=user_profile).exists()
@@ -500,6 +515,9 @@ def manageprop(request):
             # Check if payment is made for each property
             for property in properties:
                 property.payment_made = Payment.objects.filter(property=property).exists()
+            
+            for property in properties:
+                property.feedback = PropertyFeedback.objects.filter(property=property)
 
             context = {
                 'user_profile': user_profile,
@@ -1219,3 +1237,43 @@ def admin_dashboard(request):
     payments = Payment.objects.all()
 
     return render(request, 'adminpay.html', {'properties': properties, 'profiles': profiles, 'payments': payments})
+
+
+@login_required
+def rent_collection(request):
+    # Retrieve properties owned by the logged-in property owner
+    properties = Property.objects.filter(property_owner=request.user)
+
+    # Retrieve rent payments for each property
+    rent_data = []
+    for property in properties:
+        tenants_payments = Payment.objects.filter(property=property)
+        rent_data.append({'property': property, 'tenants_payments': tenants_payments})
+
+    context = {'rent_data': rent_data}
+    return render(request, 'rentcollect.html', context)
+
+
+def property_feedback(request, property_id):
+    property_obj = Property.objects.get(pk=property_id)
+
+    if request.method == 'POST':
+        rating = int(request.POST.get('rating'))
+        feedback = request.POST.get('feedback')
+
+        # Ensure user is authenticated before saving feedback
+        if request.user.is_authenticated:
+            PropertyFeedback.objects.create(
+                property=property_obj,
+                user=request.user,
+                rating=rating,
+                feedback=feedback
+            )
+            # You can add a success message here if needed
+        else:
+            # You can add an error message here if needed
+            pass
+
+    feedback_list = PropertyFeedback.objects.filter(property=property_obj)
+
+    return render(request, 'propertyfeedback.html', {'property': property_obj, 'feedback_list': feedback_list})

@@ -181,6 +181,7 @@
         .clear-button:hover {
             background-color: #c9302c; /* Darker red on hover */
         }
+
         .on-rent-label {
             background-color: #28a745; /* Green color for "On Rent" label */
             color: #fff;
@@ -218,99 +219,126 @@
             <h2>Your Properties</h2>
             <div class="row">
                 {% for property in properties %}
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <p class="card-title">{{ property.property_type }}</p>
-                            <p class="card-text"><strong>Address:</strong> {{ property.address }}</p>
-                            <p class="card-text"><strong>Monthly Rent:</strong> Rs{{ property.monthly_rent }}</p>
-                            <p class="card-text"><strong>Security Amount:</strong>Rs {{ property.security_deposit }}</p>
-                            <p class="card-text"><strong>Availability Date:</strong> {{ property.availability_date }}</p>
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <p class="card-title">{{ property.property_type }}</p>
+                                <p class="card-text"><strong>Address:</strong> {{ property.address }}</p>
+                                <p class="card-text"><strong>Monthly Rent:</strong> Rs{{ property.monthly_rent }}</p>
+                                <p class="card-text"><strong>Security Amount:</strong>Rs {{ property.security_deposit }}</p>
+                                <p class="card-text"><strong>Availability Date:</strong> {{ property.availability_date }}</p>
 
-                            <!-- Property Images Carousel/Slider -->
-                            <div id="propertyImageCarousel{{ property.id }}" class="carousel slide" data-ride="carousel">
-                                <ol class="carousel-indicators">
-                                    {% for image in property.propertyimage_set.all %}
-                                    <li data-target="#propertyImageCarousel{{ property.id }}" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
-                                    {% endfor %}
-                                </ol>
-                                <div class="carousel-inner">
-                                    {% for image in property.propertyimage_set.all %}
-                                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                        <img src="{{ image.image.url }}" alt="{{ property.property_type }} Image" class="img-fluid">
+                                <!-- Property Images Carousel/Slider -->
+                                <div id="propertyImageCarousel{{ property.id }}" class="carousel slide" data-ride="carousel">
+                                    <ol class="carousel-indicators">
+                                        {% for image in property.propertyimage_set.all %}
+                                            <li data-target="#propertyImageCarousel{{ property.id }}" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+                                        {% endfor %}
+                                    </ol>
+                                    <div class="carousel-inner">
+                                        {% for image in property.propertyimage_set.all %}
+                                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                                <img src="{{ image.image.url }}" alt="{{ property.property_type }} Image" class="img-fluid">
+                                            </div>
+                                        {% empty %}
+                                            <div class="carousel-item active">
+                                                <div class="image-placeholder"></div>
+                                            </div>
+                                        {% endfor %}
                                     </div>
-                                    {% empty %}
-                                    <div class="carousel-item active">
-                                        <div class="image-placeholder"></div>
-                                    </div>
-                                    {% endfor %}
+                                    <a class="carousel-control-prev" href="#propertyImageCarousel{{ property.id }}" role="button" data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#propertyImageCarousel{{ property.id }}" role="button" data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
                                 </div>
-                                <a class="carousel-control-prev" href="#propertyImageCarousel{{ property.id }}" role="button"
-                                    data-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                                <a class="carousel-control-next" href="#propertyImageCarousel{{ property.id }}" role="button"
-                                    data-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </div>
 
-                            <p class="card-text"><a href="{% url 'propimgup' property.id %}">Upload Property Images</a></p>
-                            <p class="card-text"><a href="{% url 'propdocs' property.id %}">Upload Property Documents</a></p>
-                            <p class="card-text"><a href="{% url 'propamenity' property.id %}">Add Property Amenities</a></p>
+                                <p class="card-text"><a href="{% url 'propimgup' property.id %}">Upload Property Images</a></p>
+                                <p class="card-text"><a href="{% url 'propdocs' property.id %}">Upload Property Documents</a></p>
+                                <p class="card-text"><a href="{% url 'propamenity' property.id %}">Add Property Amenities</a></p>
 
-                            <!-- Inside the loop for properties -->
-                            <p class="card-text"><strong>Approval Status:</strong> {{ property.approval_status }}</p>
-                            <!-- Display Rental Requests for the particular property -->
-                            <div class="card-text">
-                                <strong>Rental Requests:</strong> {{ property.rentalrequest_set.count }}
-                                <ul class="list-unstyled">
-                                    {% for request in property.rentalrequest_set.all %}
+                                <!-- Inside the loop for properties -->
+                                <p class="card-text"><strong>Approval Status:</strong> {{ property.approval_status }}</p>
+                                <!-- Display Rental Requests for the particular property -->
+                                <div class="card-text">
+                                    <strong>Rental Requests:</strong> {{ property.rentalrequest_set.count }}
+                                    <ul class="list-unstyled">
+                                        {% for request in property.rentalrequest_set.all %}
+                                            <li>
+                                                <strong>Tenant:</strong> {{ request.tenant.full_name }} |
+                                                <strong>Contact no:</strong>{{ request.tenant.phone_number }} |
+                                                <strong>Created at:</strong> {{ request.created_at }}
+                                                {% if request.status == 'Accepted' %}
+                                                    <button class="btn btn-success" disabled>Accepted</button>
+                                                    <!-- Show an icon to create a lease agreement -->
+                                                    <a href="{% url 'lease' property.id %}">
+                                                        <i class="fas fa-file-contract"></i>
+                                                    </a>
+                                                {% else %}
+                                                    <form method="post" action="{% url 'accept_rental_request' request.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-primary">Accept Request</button>
+                                                    </form>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                        <!-- Clear Rental Requests Button -->
                                         <li>
-                                            <strong>Tenant:</strong> {{ request.tenant.full_name }} |
-                                            <strong>Contact no:</strong>{{ request.tenant.phone_number }} |
-                                            <strong>Created at:</strong> {{ request.created_at }}
-                                            {% if request.status == 'Accepted' %}
-                                                <button class="btn btn-success" disabled>Accepted</button>
-                                                <!-- Show an icon to create a lease agreement -->
-                                                <a href="{% url 'lease' property.id %}">
-                                                    <i class="fas fa-file-contract"></i>
-                                                </a>
-                                            {% else %}
-                                                <form method="post" action="{% url 'accept_rental_request' request.id %}">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-primary">Accept Request</button>
-                                                </form>
-                                            {% endif %}
+                                            <form method="post" action="{% url 'clear_rental_requests' property.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="clear-button"><i class="fas fa-trash"></i></button>
+                                            </form>
                                         </li>
-                                    {% endfor %}
-                                    <!-- Clear Rental Requests Button -->
-                                    <li>
-                                        <form method="post" action="{% url 'clear_rental_requests' property.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="clear-button"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="{% url 'update_property' property.id %}" class="btn btn-warning update-button">Update Details</a>
+                                    </ul>
+                                </div>
+                                <a href="{% url 'update_property' property.id %}" class="btn btn-warning update-button">Update Details</a>
 
-                            <!-- Add other details as needed -->
+                                <!-- Add other details as needed -->
+                                {% if not property.payment_made %}
+                                    <form method="post" onsubmit="return confirm('Are you sure you want to delete this property?');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="property_id_to_delete" value="{{ property.id }}">
+                                        <br><button type="submit" class="btn btn-danger">Delete Property</button>
+                                    </form>
+                                {% endif %}
 
-                            <form method="post" onsubmit="return confirm('Are you sure you want to delete this property?');">
-                                {% csrf_token %}
-                                <input type="hidden" name="property_id_to_delete" value="{{ property.id }}">
-                                <button type="submit" class="btn btn-danger">Delete Property</button>
                                 {% if property.payment_made and property.rentalrequest_set.count > 0 %}
-                                <div class="on-rent-label">On Rent</div>
-                            {% endif %}
-                            </form>
-
+                                    <div class="on-rent-label">On Rent</div>
+                                {% endif %}
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#feedbackModal{{ property.id }}">
+                                    View Feedbacks
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Feedback Modal -->
+                    <div class="modal fade" id="feedbackModal{{ property.id }}" tabindex="-1" role="dialog" aria-labelledby="feedbackModalLabel{{ property.id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="feedbackModalLabel{{ property.id }}">Feedback for {{ property.property_type }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Display Feedback for the Property -->
+                                    {% for feedback in property.propertyfeedback_set.all %}
+                                        <p>{{ feedback.feedback }} - {{ feedback.timestamp }}</p>
+                                    {% empty %}
+                                        <p>No feedbacks available for this property.</p>
+                                    {% endfor %}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
         </section>
@@ -318,50 +346,46 @@
 
     <!-- Modals for Property Images -->
     {% for property in properties %}
-    <div class="modal fade" id="propertyImageModal{{ property.id }}" tabindex="-1" role="dialog"
-        aria-labelledby="propertyImageModalLabel{{ property.id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="propertyImageModalLabel{{ property.id }}">Property Images</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="propertyImageCarousel{{ property.id }}" class="carousel slide" data-ride="carousel">
-                        <ol class="carousel-indicators">
-                            {% for image in property.propertyimage_set.all %}
-                            <li data-target="#propertyImageCarousel{{ property.id }}" data-slide-to="{{ forloop.counter0 }}"
-                                {% if forloop.first %}class="active"{% endif %}></li>
-                            {% endfor %}
-                        </ol>
-                        <div class="carousel-inner">
-                            {% for image in property.propertyimage_set.all %}
-                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                <img src="{{ image.image.url }}" alt="{{ property.property_type }} Image" class="img-fluid">
+        <div class="modal fade" id="propertyImageModal{{ property.id }}" tabindex="-1" role="dialog" aria-labelledby="propertyImageModalLabel{{ property.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="propertyImageModalLabel{{ property.id }}">Property Images</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="propertyImageCarousel{{ property.id }}" class="carousel slide" data-ride="carousel">
+                            <ol class="carousel-indicators">
+                                {% for image in property.propertyimage_set.all %}
+                                    <li data-target="#propertyImageCarousel{{ property.id }}" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+                                {% endfor %}
+                            </ol>
+                            <div class="carousel-inner">
+                                {% for image in property.propertyimage_set.all %}
+                                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                        <img src="{{ image.image.url }}" alt="{{ property.property_type }} Image" class="img-fluid">
+                                    </div>
+                                {% empty %}
+                                    <div class="carousel-item active">
+                                        <div class="image-placeholder"></div>
+                                    </div>
+                                {% endfor %}
                             </div>
-                            {% empty %}
-                            <div class="carousel-item active">
-                                <div class="image-placeholder"></div>
-                            </div>
-                            {% endfor %}
+                            <a class="carousel-control-prev" href="#propertyImageCarousel{{ property.id }}" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#propertyImageCarousel{{ property.id }}" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
                         </div>
-                        <a class="carousel-control-prev" href="#propertyImageCarousel{{ property.id }}" role="button"
-                            data-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#propertyImageCarousel{{ property.id }}" role="button"
-                            data-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     {% endfor %}
 
     <!-- Add Bootstrap JS and jQuery for enhanced functionality (optional) -->

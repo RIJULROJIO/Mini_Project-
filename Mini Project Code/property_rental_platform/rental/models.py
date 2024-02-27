@@ -69,6 +69,7 @@ class Property(models.Model):
 
 
 
+
     def __str__(self):
         return self.address
    
@@ -171,17 +172,16 @@ class ServiceProviderProfile(models.Model):
 
 
 
-
 class Payment(models.Model):
     razorpay_payment_id = models.CharField(max_length=255)
     razorpay_order_id = models.CharField(max_length=255)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
-    user_profile = models.ForeignKey(Profile, on_delete=models.CASCADE)  # Add this line
-    amount = models.IntegerField(null=True)  # Add this line to store the amount
-
+    user_profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    amount = models.IntegerField(null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)  # Add this line for the timestamp
 
     def __str__(self):
-        return f"Payment for Property {self.property.id} by {self.user_profile.user.username}"
+        return f"Payment for Property {self.property.id} by {self.user_profile.user.username} at {self.timestamp}"
 
 
 
@@ -201,5 +201,13 @@ class Service(models.Model):
         return self.service_name
 
 
+class PropertyFeedback(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    feedback = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Feedback for {self.property.property_name} by {self.user.username}"
 

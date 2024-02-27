@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Collection</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add other stylesheets if needed -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #56f3e3;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+            padding: 15px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .list-group-item {
+            border: 0;
+            padding: 15px;
+        }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .property-type {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .tenant-info {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+    </style>
+                <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mb-4">Rent Collection </h2>
+
+        {% for property_data in rent_data %}
+            {% if property_data.tenants_payments %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="property-type">Property:{{ property_data.property.property_type }}</h3>
+                        <h3 class="property-type">Payments Duration:{{ property_data.property.lease_duration}}</h3>
+
+                        <!-- <p>{{ property_data.property.address }}</p> -->
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for payment in property_data.tenants_payments %}
+                                <li class="list-group-item">
+                                    <div class="tenant-info"> First Payment for the property by {{ payment.user_profile.user.username }}</div>
+                                    <div> Total Amount: INR {{ payment.amount }}</div>
+                                    <div>Paid Date : {{ payment.timestamp|date:"F d, Y" }}</div>
+                                    <!-- <div>Lease Duration: {{ property_data.property.lease_duration }}</div> -->
+                                    <!-- <div>Availability Date: {{ property_data.property.availability_date|date:"F d, Y" }}</div> -->
+                                    <!-- Add other details as needed -->
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Add your JavaScript and other scripts here -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
