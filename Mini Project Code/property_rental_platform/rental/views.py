@@ -21,7 +21,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile,Payment,Service,PropertyFeedback # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile,Payment,Service,PropertyFeedback,ServiceRequest,ScheduledService # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -213,7 +213,7 @@ def tenant(request):
         messages.success(request, "Profile updated successfully.")
         return redirect("tenantpg")
 
-    user_profile = Profile.objects.get(user=request.user)
+    user_profile = get_object_or_404(Profile, user=request.user)
     context = {"user_profile": user_profile}
 
     if 'username' in request.session:
@@ -467,6 +467,7 @@ def tenantpg(request):
 
         # Check if the payment for a rented property has been made
         payment_made = Payment.objects.filter(property__in=rented_properties, user_profile=user_profile).exists()
+
 
         context = {
             'user_profile': user_profile,
@@ -1143,8 +1144,8 @@ def reject_profile(request, profile_id):
     return redirect('adminserpropage')
 
 
+@login_required
 def serproviderdash(request):
-    # Move this line to the beginning of the function
     provider_profile = ServiceProviderProfile.objects.get(user=request.user)
 
     if request.method == 'POST':
@@ -1156,7 +1157,7 @@ def serproviderdash(request):
         location = request.POST.get('location')
 
         # Save the service to the database
-        Service.objects.create(
+        service = Service.objects.create(
             service_provider_profile=provider_profile,
             service_name=service_name,
             service_category=service_category,
@@ -1165,15 +1166,68 @@ def serproviderdash(request):
             service_price=service_price,
             location=location
         )
+       
 
     provider_services = Service.objects.filter(service_provider_profile=provider_profile)
+    service_requests = ServiceRequest.objects.filter(service__in=provider_services)
 
     context = {
         'provider_profile': provider_profile,
         'provider_services': provider_services,
+        'service_requests': service_requests,
     }
 
     return render(request, "serproviderdash.html", context)
+
+def schedule_service(request):
+    if request.method == 'POST' and 'schedule_date' in request.POST and 'schedule_time' in request.POST:
+        schedule_date = request.POST['schedule_date']
+        schedule_time = request.POST['schedule_time']
+        selected_service_id = request.POST['selected_service']
+
+        try:
+            selected_service_request = ServiceRequest.objects.get(id=selected_service_id)
+
+            ScheduledService.objects.create(
+                service_request=selected_service_request,
+                scheduled_date=schedule_date,
+                scheduled_time=schedule_time
+            )
+
+            # You may want to add a success message or redirect to a success page
+            return redirect('serproviderdash')  # Change 'success_page' to the actual URL name or path
+
+        except ServiceRequest.DoesNotExist:
+            # Handle the case where the selected service request does not exist
+            # You may want to add an error message or redirect to an error page
+            return redirect('serproviderpage')  # Change 'error_page' to the actual URL name or path
+
+    # Handle the case where the request method is not POST or if 'schedule_date' and 'schedule_time' are not in request.POST
+    # You may want to add an error message or redirect to an error page
+    return redirect('serproviderpage') 
+
+def edit_schedule(request, schedule_id):
+    if request.method == 'POST':
+        edit_schedule_date = request.POST.get('edit_schedule_date')
+        edit_schedule_time = request.POST.get('edit_schedule_time')
+
+        try:
+            schedule = ScheduledService.objects.get(id=schedule_id)
+            schedule.scheduled_date = edit_schedule_date
+            schedule.scheduled_time = edit_schedule_time
+            schedule.save()
+
+            # You may want to add a success message or redirect to a success page
+            return redirect('serproviderdash')  # Change 'success_page' to the actual URL name or path
+
+        except ScheduledService.DoesNotExist:
+            # Handle the case where the schedule does not exist
+            # You may want to add an error message or redirect to an error page
+            return redirect('serproviderpage')  # Change 'error_page' to the actual URL name or path
+
+    # Handle the case where the request method is not POST
+    # You may want to add an error message or redirect to an error page
+    return redirect('serproviderpage')
 
 
 def edit_service(request, service_id):
@@ -1277,3 +1331,36 @@ def property_feedback(request, property_id):
     feedback_list = PropertyFeedback.objects.filter(property=property_obj)
 
     return render(request, 'propertyfeedback.html', {'property': property_obj, 'feedback_list': feedback_list})
+
+def view_services(request, property_type=None):
+    # Retrieve all services from the database, prefetching related ServiceRequest and ScheduledService instances
+    services = Service.objects.prefetch_related('servicerequest_set__scheduledservice_set').all()
+
+    # Filter services based on property_type
+    if property_type:
+        services = services.filter(property_type=property_type)
+
+    return render(request, 'services.html', {'services': services})
+
+
+@login_required
+def request_service(request, service_id):
+    # Get the service instance
+    service = get_object_or_404(Service, id=service_id)
+
+    if request.method == 'POST':
+        message = request.POST.get('message')
+
+        # Create a service request
+        ServiceRequest.objects.create(service=service, user=request.user.userprofile, message=message)
+        # Ensure you use request.user.userprofile to get the UserProfile associated with the user
+
+        # Redirect to a confirmation page or to the same page
+        return redirect('manageprop')  # Update with the appropriate URL name
+
+    # If the request is not POST, handle it accordingly
+    # You might want to display a form to input the request message
+    # or provide a button to trigger the request form
+    # ...
+
+    return render(request, 'services.html')  # Update with the appropriate template

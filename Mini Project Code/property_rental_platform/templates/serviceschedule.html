@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h1 {
+            background-color: #7f9600;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: lightblue;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #009688;
+        }
+
+        .service-details {
+            margin-bottom: 20px;
+            background-color: cornsilk;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+
+        .service-details p {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .service-details strong {
+            font-weight: bold;
+        }
+
+        .no-schedule {
+            text-align: center;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 576px) {
+            .service-details {
+                padding: 15px;
+            }
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.8;
+        }
+    </style>
+    <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="image/x-icon">
+</head>
+
+<body>
+    <h6 style="color: crimson; font-size: 15px;"><a href="{% url 'manageprop' %}">Back to Dashboard</a></h6>
+
+    <h1>Service Request Schedule</h1>
+
+    <div class="container">
+        <h2>Service Request Information</h2>
+        <div class="service-details">
+            <p><strong>Service:</strong> {{ service_request.service.service_name }}</p>
+            <p><strong>User:</strong> {{ service_request.user.username }}</p>
+            <p><strong>Message:</strong> {{ service_request.message }}</p>
+            <p><strong>Timestamp:</strong> {{ service_request.timestamp }}</p>
+        </div>
+
+        {% if scheduled_service %}
+        <p>Scheduled Date: {{ scheduled_service.scheduled_date }}</p>
+        <p>Scheduled Time: {{ scheduled_service.scheduled_time }}</p>
+    {% else %}
+        <p>No schedule available</p>
+    {% endif %}
+    
+
+        <a href="{% url 'services' %}" class="btn-primary">Back to Services</a>
+    </div>
+</body>
+
+</html>

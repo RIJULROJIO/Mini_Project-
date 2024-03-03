@@ -384,6 +384,8 @@
                         {% if property.payment_set.exists %}
                             <!-- Display "Rented" if payment exists -->
                             <span class="badge badge-success">Rented</span>
+                        
+
 
                             <form method="post" action="{% url 'generate_property_pdf' property.id %}">
                                 {% csrf_token %}
@@ -400,6 +402,7 @@
                                 </button>
                             </form>
                         {% endif %}
+                  
                     {% else %}
                         <!-- Display "Rent Now" button -->
                         <form method="post" action="{% url 'submit_rental_request' property.id %}">
@@ -510,7 +513,7 @@
                         
                     </div>
                     <br><button class="btn btn-info" data-toggle="modal" data-target="#leaseAgreementModal{{ rented_property.id }}">
-                        Lease Agreement
+                       Rental Details
                     </button>
     
                     <!-- Lease Agreement Modal -->

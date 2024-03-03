@@ -86,6 +86,13 @@ urlpatterns = [
 
     path('propertyfeedback/<int:property_id>/', views.property_feedback, name='propertyfeedback'),
 
+    path('services/<str:property_type>/', views.view_services, name='services'),
+    path('request_service/<int:service_id>/', views.request_service, name='request_service'),
+    path('schedule_service/', views.schedule_service, name='schedule_service'),
+    path('edit_schedule/<int:schedule_id>/', views.edit_schedule, name='edit_schedule'),
+
+
+
 
 
 

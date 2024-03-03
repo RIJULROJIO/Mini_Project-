@@ -8,6 +8,7 @@
     <!-- Add Bootstrap CSS link for international styling -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <style>
         /* Custom CSS */
@@ -190,6 +191,22 @@
             border-radius: 5px;
             margin-bottom: 5px;
         }
+        /* Circular button styles */
+        .btn-circle {
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            padding: 5px;
+            text-align: center;
+            line-height: 20px;
+        }
+
+        .services-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
     </style>
     <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="">
 </head>
@@ -219,8 +236,8 @@
             <h2>Your Properties</h2>
             <div class="row">
                 {% for property in properties %}
-                    <div class="col-md-4">
-                        <div class="card mb-4">
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
                             <div class="card-body">
                                 <p class="card-title">{{ property.property_type }}</p>
                                 <p class="card-text"><strong>Address:</strong> {{ property.address }}</p>
@@ -262,12 +279,13 @@
 
                                 <!-- Inside the loop for properties -->
                                 <p class="card-text"><strong>Approval Status:</strong> {{ property.approval_status }}</p>
+
                                 <!-- Display Rental Requests for the particular property -->
                                 <div class="card-text">
                                     <strong>Rental Requests:</strong> {{ property.rentalrequest_set.count }}
                                     <ul class="list-unstyled">
                                         {% for request in property.rentalrequest_set.all %}
-                                            <li>
+                                            <li class="mb-2">
                                                 <strong>Tenant:</strong> {{ request.tenant.full_name }} |
                                                 <strong>Contact no:</strong>{{ request.tenant.phone_number }} |
                                                 <strong>Created at:</strong> {{ request.created_at }}
@@ -275,12 +293,12 @@
                                                     <button class="btn btn-success" disabled>Accepted</button>
                                                     <!-- Show an icon to create a lease agreement -->
                                                     <a href="{% url 'lease' property.id %}">
-                                                        <i class="fas fa-file-contract"></i>
+                                                        <i class="fas fa-file-contract ml-2"></i>
                                                     </a>
                                                 {% else %}
                                                     <form method="post" action="{% url 'accept_rental_request' request.id %}">
                                                         {% csrf_token %}
-                                                        <button type="submit" class="btn btn-primary">Accept Request</button>
+                                                        <button type="submit" class="btn btn-primary ml-2">Accept Request</button>
                                                     </form>
                                                 {% endif %}
                                             </li>
@@ -294,23 +312,27 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <a href="{% url 'update_property' property.id %}" class="btn btn-warning update-button">Update Details</a>
 
-                                <!-- Add other details as needed -->
-                                {% if not property.payment_made %}
-                                    <form method="post" onsubmit="return confirm('Are you sure you want to delete this property?');">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="property_id_to_delete" value="{{ property.id }}">
-                                        <br><button type="submit" class="btn btn-danger">Delete Property</button>
-                                    </form>
-                                {% endif %}
-
-                                {% if property.payment_made and property.rentalrequest_set.count > 0 %}
-                                    <div class="on-rent-label">On Rent</div>
-                                {% endif %}
-                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#feedbackModal{{ property.id }}">
-                                    View Feedbacks
-                                </button>
+                                <div class="button-group mt-3">
+                                    <a href="{% url 'update_property' property.id %}" class="btn btn-warning update-button">Update Details</a>
+                                    {% if not property.payment_made %}
+                                        <form method="post" onsubmit="return confirm('Are you sure you want to delete this property?');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="property_id_to_delete" value="{{ property.id }}">
+                                            <button type="submit" class="btn btn-danger ml-2">Delete Property</button>
+                                        </form>
+                                    {% endif %}
+                                    {% if property.payment_made and property.rentalrequest_set.count > 0 %}
+                                        <div class="on-rent-label ml-2">On Rent</div>
+                                    {% endif %}
+                                    <button type="button" class="btn btn-info ml-2" data-toggle="modal" data-target="#feedbackModal{{ property.id }}">View Feedbacks</button>
+                                    <!-- Circular button for services available -->
+                                    {% if property.payment_made and property.rentalrequest_set.count > 0 %}
+                                        <a href="{% url 'services' property.property_type %}" class="btn btn-circle btn-info ml-2" data-toggle="tooltip" data-placement="top" title="Services Available">
+                                            <i class="fas fa-arrow-alt-circle-right"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
