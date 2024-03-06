@@ -53,10 +53,15 @@
             font-weight: bold;
             margin-bottom: 5px;
         }
+
+        .total-earnings {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
         
     </style>
-                <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
-
+    <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
 </head>
 <body>
     <div class="container">
@@ -68,18 +73,14 @@
                     <div class="card-header">
                         <h3 class="property-type">Property:{{ property_data.property.property_type }}</h3>
                         <h3 class="property-type">Payments Duration:{{ property_data.property.lease_duration}}</h3>
-
-                        <!-- <p>{{ property_data.property.address }}</p> -->
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
                             {% for payment in property_data.tenants_payments %}
                                 <li class="list-group-item">
-                                    <div class="tenant-info"> First Payment for the property by {{ payment.user_profile.user.username }}</div>
+                                    <div class="tenant-info">  Payment for the property by {{ payment.user_profile.user.username }}</div>
                                     <div> Total Amount: INR {{ payment.amount }}</div>
                                     <div>Paid Date : {{ payment.timestamp|date:"F d, Y" }}</div>
-                                    <!-- <div>Lease Duration: {{ property_data.property.lease_duration }}</div> -->
-                                    <!-- <div>Availability Date: {{ property_data.property.availability_date|date:"F d, Y" }}</div> -->
                                     <!-- Add other details as needed -->
                                 </li>
                             {% endfor %}
@@ -88,6 +89,13 @@
                 </div>
             {% endif %}
         {% endfor %}
+
+        <!-- Total Earnings Section -->
+        {% if total_earnings %}
+        <div class="total-earnings">
+            Total Earnings: INR {{ total_earnings }}
+        </div>
+    {% endif %}
     </div>
 
     <!-- Add your JavaScript and other scripts here -->

@@ -29,6 +29,8 @@ urlpatterns = [
         path('handle_payment/', views.handle_payment, name='handle_payment'),
 
     path('payment/<int:property_id>/', views.rentnxt, name='payment'),
+    path('paymentnxt/<int:property_id>/', views.rentnxtt, name='paymentnxt'),
+
     path('generate_property_pdf/<int:property_id>/', views.generate_property_pdf, name='generate_property_pdf'),
     path('notifications/', views.view_notifications, name='view_notifications'),
     path('notifications/mark_as_read/<int:notification_id>/', views.mark_as_read, name='mark_as_read'),
@@ -88,8 +90,13 @@ urlpatterns = [
 
     path('services/<str:property_type>/', views.view_services, name='services'),
     path('request_service/<int:service_id>/', views.request_service, name='request_service'),
-    path('schedule_service/', views.schedule_service, name='schedule_service'),
-    path('edit_schedule/<int:schedule_id>/', views.edit_schedule, name='edit_schedule'),
+    path('schedule-service/<int:request_id>/', views.schedule_service, name='schedule_service'),
+    path('mark_as_done/<int:request_id>/', views.mark_as_done, name='mark_as_done'),
+
+    
+
+
+    
 
 
 

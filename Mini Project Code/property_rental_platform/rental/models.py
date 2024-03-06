@@ -222,6 +222,9 @@ class ScheduledService(models.Model):
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
     scheduled_date = models.DateField()
     scheduled_time = models.TimeField()
+    is_done = models.BooleanField(default=False)  # New field to track service status
+
+
      
 
     

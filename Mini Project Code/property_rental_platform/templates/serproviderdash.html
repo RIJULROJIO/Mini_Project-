@@ -171,6 +171,8 @@
                     <option value="" selected disabled>Select Your Specialized Property</option>
                     <option value="apartment">Apartment</option>
                     <option value="house">House</option>
+                    <option value="Land">Land</option>
+
                 </select>
             </div>
 
@@ -315,83 +317,60 @@
     </div>
 </section>
 
-<!-- New section for scheduling a service -->
-<section>
-    <div class="container form-container" id="scheduleService">
-        <h2>Schedule a Service</h2>
-        <p>If you would like to schedule a service, click the button below:</p>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#scheduleServiceModal">
-            Schedule Service
-        </button>
-    </div>
-</section>
 
-<!-- Modal for scheduling a service -->
-<!-- Modal for scheduling a service for this specific request -->
 <section>
     <div class="container form-container" id="serviceRequests">
         <h2>Service Requests</h2>
         {% if service_requests %}
             <ul>
-                {% for request in service_requests %}
-                    <li class="highlight">
-                        <strong>Service Type:</strong> {{ request.service.service_category }}<br>
-                        <strong>Property Owner:</strong> {{ request.user.full_name }}<br>
-                        <strong>Contact:</strong> {{ request.user.phone_number }}<br>
-                        <strong>Message:</strong> {{ request.message }}<br>
-                        <strong> RequestedOn:</strong> {{ request.timestamp|date:"F d, Y H:i A" }}<br>
-
-                        {% if request.scheduledservice_set.exists %}
-                            <!-- Service is scheduled, display relevant information -->
-                            <div class="highlight">
-                                <strong style="color: crimson;">Scheduled Date and Time:</strong> {{ request.scheduledservice_set.last.scheduled_date|date:"F d, Y" }} at {{ request.scheduledservice_set.last.scheduled_time|time:"H:i A" }}<br>
-                                <!-- Add Edit Schedule button -->
-                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editScheduleModal{{ request.scheduledservice_set.last.id }}">
-                                    Edit Schedule
-                                </button>
-                            </div>
-                        {% else %}
-                            <!-- Service is not scheduled, show scheduling button -->
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#scheduleServiceModal{{ request.service.id }}">
-                                Schedule Service
-                            </button>
-                        {% endif %}
-
-                        <!-- ... Other details as before ... -->
-                    </li><br>
-
-                    <!-- Modal for editing the schedule -->
-                    <div class="modal fade" id="editScheduleModal{{ request.scheduledservice_set.last.id }}" tabindex="-1" role="dialog" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="editScheduleModalLabel">Edit Schedule</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- Edit schedule form with pre-filled values -->
-                                    <form action="{% url 'edit_schedule' request.scheduledservice_set.last.id %}" method="post">
-                                        {% csrf_token %}
-                                        <!-- Add your scheduling form fields (e.g., date, time) -->
-                                        <div class="form-group">
-                                            <label for="edit_schedule_date">Date:</label>
-                                            <input type="date" id="edit_schedule_date" name="edit_schedule_date" class="form-control" value="{{ request.scheduledservice_set.last.scheduled_date }}" required>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="edit_schedule_time">Time:</label>
-                                            <input type="time" id="edit_schedule_time" name="edit_schedule_time" class="form-control" value="{{ request.scheduledservice_set.last.scheduled_time }}" required>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-warning">Save Changes</button>
-                                    </form>
-                                </div>
-                            </div>
+            {% for request in service_requests %}
+                <li class="highlight">
+                    <strong>Service Type:</strong> {{ request.service.service_category }}<br>
+                    <strong>Property Owner:</strong> {{ request.user.full_name }}<br>
+                    <strong>Contact:</strong> {{ request.user.phone_number }}<br>
+                    <strong>Message:</strong> {{ request.message }}<br>
+                    <strong> RequestedOn:</strong> {{ request.timestamp|date:"F d, Y H:i A" }}<br>
+                    <form action="{% url 'schedule_service' request.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="scheduled_date">Schedule Date:</label>
+                            <input type="date" id="scheduled_date" name="scheduled_date" class="form-control" required>
                         </div>
-                    </div>
-                {% endfor %}
+
+                        <div class="form-group">
+                            <label for="scheduled_time">Schedule Time:</label>
+                            <input type="time" id="scheduled_time" name="scheduled_time" class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Schedule Service</button>
+                    </form>
+
+                    <!-- ... (other details) ... -->
+            
+                    {% if request.scheduledservice_set.all %}
+                    {% for scheduled_service in request.scheduledservice_set.all %}
+                        {% if forloop.last %}
+                            <p style="color: crimson;">Already scheduled on: {{ scheduled_service.scheduled_date|date:"F d, Y" }} at {{ scheduled_service.scheduled_time|time:"H:i A" }}</p>
+                            {% if scheduled_service.is_done %}
+                                    <p style="color: green;">Marked as Done</p>
+                            {% else %}
+                               <form action="{% url 'mark_as_done' scheduled_service.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success">Mark as Done</button>
+                             </form>
+                            {% endif %}
+                            
+                            <!-- Modal for editing the schedule -->
+                            <!-- ... (other modal content) ... -->
+                        {% endif %}
+                    {% endfor %}
+                    {% else %}
+                        <!-- If no scheduled services, show Schedule Service form -->
+                       
+                    {% endif %}
+                </li><br>
+            {% endfor %}
+            
             </ul>
         {% else %}
             <p>No service requests yet.</p>
@@ -445,20 +424,9 @@
         });
 
         // Add JavaScript to toggle the visibility of the scheduling section on clicking "Schedule Service"
-        $("#scheduleServiceLink").click(function() {
-            $("#scheduleService").toggle();
-            $("#serviceForm").hide(); // Hide other sections
-            $("#serviceFormm").hide();
-            $("#serviceRequests").hide();
-        });
+       
 
-        // Add JavaScript to toggle the visibility of the scheduling section directly
-        $("#scheduleServiceButton").click(function() {
-            $("#scheduleService").toggle();
-            $("#serviceForm").hide(); // Hide other sections
-            $("#serviceFormm").hide();
-            $("#serviceRequests").hide();
-        });
+        
     });
 </script>
 

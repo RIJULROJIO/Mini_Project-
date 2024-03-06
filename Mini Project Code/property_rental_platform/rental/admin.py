@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser,UserProfile,Profile,Property,RentalRequest,Payment
+from .models import CustomUser,UserProfile,Profile,Property,RentalRequest,Payment,ServiceRequest,ScheduledService
 
 
 
@@ -57,3 +57,17 @@ class PaymentAdmin(admin.ModelAdmin):
     readonly_fields = ('timestamp',)
 
 admin.site.register(Payment, PaymentAdmin)
+
+class ServiceRequestAdmin(admin.ModelAdmin):
+    list_display = ('service', 'user', 'message', 'timestamp')
+    search_fields = ('service__service_name', 'user__full_name', 'message')
+    list_filter = ('service__service_category', 'timestamp')
+
+admin.site.register(ServiceRequest, ServiceRequestAdmin)
+
+class ScheduledServiceAdmin(admin.ModelAdmin):
+    list_display = ('service_request', 'scheduled_date', 'scheduled_time', 'is_done')
+    list_filter = ('is_done', 'scheduled_date')
+    search_fields = ('service_request__service__service_name', 'service_request__user__username')  # Assuming these are the related fields
+
+admin.site.register(ScheduledService, ScheduledServiceAdmin)

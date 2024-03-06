@@ -1146,6 +1146,7 @@ def reject_profile(request, profile_id):
 
 @login_required
 def serproviderdash(request):
+    
     provider_profile = ServiceProviderProfile.objects.get(user=request.user)
 
     if request.method == 'POST':
@@ -1178,56 +1179,33 @@ def serproviderdash(request):
     }
 
     return render(request, "serproviderdash.html", context)
-
-def schedule_service(request):
-    if request.method == 'POST' and 'schedule_date' in request.POST and 'schedule_time' in request.POST:
-        schedule_date = request.POST['schedule_date']
-        schedule_time = request.POST['schedule_time']
-        selected_service_id = request.POST['selected_service']
-
-        try:
-            selected_service_request = ServiceRequest.objects.get(id=selected_service_id)
-
-            ScheduledService.objects.create(
-                service_request=selected_service_request,
-                scheduled_date=schedule_date,
-                scheduled_time=schedule_time
-            )
-
-            # You may want to add a success message or redirect to a success page
-            return redirect('serproviderdash')  # Change 'success_page' to the actual URL name or path
-
-        except ServiceRequest.DoesNotExist:
-            # Handle the case where the selected service request does not exist
-            # You may want to add an error message or redirect to an error page
-            return redirect('serproviderpage')  # Change 'error_page' to the actual URL name or path
-
-    # Handle the case where the request method is not POST or if 'schedule_date' and 'schedule_time' are not in request.POST
-    # You may want to add an error message or redirect to an error page
-    return redirect('serproviderpage') 
-
-def edit_schedule(request, schedule_id):
+def schedule_service(request, request_id):
     if request.method == 'POST':
-        edit_schedule_date = request.POST.get('edit_schedule_date')
-        edit_schedule_time = request.POST.get('edit_schedule_time')
+        scheduled_date = request.POST['scheduled_date']
+        scheduled_time = request.POST['scheduled_time']
 
-        try:
-            schedule = ScheduledService.objects.get(id=schedule_id)
-            schedule.scheduled_date = edit_schedule_date
-            schedule.scheduled_time = edit_schedule_time
-            schedule.save()
+        # Create a ScheduledService instance
+        scheduled_service = ScheduledService.objects.create(
+            service_request_id=request_id,
+            scheduled_date=scheduled_date,
+            scheduled_time=scheduled_time
+        )
 
-            # You may want to add a success message or redirect to a success page
-            return redirect('serproviderdash')  # Change 'success_page' to the actual URL name or path
+        messages.success(request, 'Service scheduled successfully.')
 
-        except ScheduledService.DoesNotExist:
-            # Handle the case where the schedule does not exist
-            # You may want to add an error message or redirect to an error page
-            return redirect('serproviderpage')  # Change 'error_page' to the actual URL name or path
+    return redirect('serproviderdash') 
+def mark_as_done(request, request_id):
+    scheduled_service = get_object_or_404(ScheduledService, pk=request_id)
+    scheduled_service.is_done = True
+    scheduled_service.save()
+    return redirect('serproviderdash')
 
-    # Handle the case where the request method is not POST
-    # You may want to add an error message or redirect to an error page
-    return redirect('serproviderpage')
+
+
+
+
+
+
 
 
 def edit_service(request, service_id):
@@ -1293,19 +1271,23 @@ def admin_dashboard(request):
     return render(request, 'adminpay.html', {'properties': properties, 'profiles': profiles, 'payments': payments})
 
 
+from django.db.models import Sum
+
 @login_required
 def rent_collection(request):
-    # Retrieve properties owned by the logged-in property owner
     properties = Property.objects.filter(property_owner=request.user)
 
-    # Retrieve rent payments for each property
     rent_data = []
+    total_earnings = 0  # Initialize total earnings
+
     for property in properties:
         tenants_payments = Payment.objects.filter(property=property)
         rent_data.append({'property': property, 'tenants_payments': tenants_payments})
+        total_earnings += tenants_payments.aggregate(Sum('amount'))['amount__sum'] or 0  # Sum payments
 
-    context = {'rent_data': rent_data}
+    context = {'rent_data': rent_data, 'total_earnings': total_earnings}
     return render(request, 'rentcollect.html', context)
+
 
 
 def property_feedback(request, property_id):
@@ -1332,6 +1314,7 @@ def property_feedback(request, property_id):
 
     return render(request, 'propertyfeedback.html', {'property': property_obj, 'feedback_list': feedback_list})
 
+@login_required
 def view_services(request, property_type=None):
     # Retrieve all services from the database, prefetching related ServiceRequest and ScheduledService instances
     services = Service.objects.prefetch_related('servicerequest_set__scheduledservice_set').all()
@@ -1341,6 +1324,8 @@ def view_services(request, property_type=None):
         services = services.filter(property_type=property_type)
 
     return render(request, 'services.html', {'services': services})
+
+
 
 
 @login_required
@@ -1364,3 +1349,110 @@ def request_service(request, service_id):
     # ...
 
     return render(request, 'services.html')  # Update with the appropriate template
+
+
+from razorpay import Client
+
+
+razorpay_api_key = settings.RAZORPAY_API_KEY
+razorpay_secret_key = settings.RAZORPAY_API_SECRET
+
+razorpay_client = Client(auth=(razorpay_api_key, razorpay_secret_key))
+
+@csrf_exempt
+def rentnxtt(request, property_id):
+    try:
+        # Retrieve the Property object
+        property = Property.objects.get(pk=property_id)
+
+        # Get the user profile of the logged-in user
+        user_profile = request.user.profile
+
+        # Calculate the amount based on the monthly rent
+        amount = int((property.monthly_rent ) * 100)
+
+        # Create a Razorpay order
+        order_data = {
+            'amount': amount,
+            'currency': 'INR',
+            'receipt': f'order_rcptid_{property.id}',
+            'payment_capture': '1',  # Auto-capture payment
+        }
+
+        # Create an order
+        order_response = razorpay_client.order.create(data=order_data)
+        order = order_response
+
+        # Store the order details in the session to retrieve later
+        request.session['razorpay_order_id'] = order['id']
+        request.session['property_id'] = property_id
+
+        context = {
+            'razorpay_api_key': razorpay_api_key,
+            'amount': amount,
+            'currency': order_data['currency'],
+            'order_id': order['id'],
+        }
+
+        return render(request, 'paymentnxt.html', context)
+
+    except Property.DoesNotExist:
+        return HttpResponseBadRequest('Invalid Property ID')
+
+
+
+
+from razorpay.errors import BadRequestError
+
+@login_required  # Add this decorator to ensure the user is logged in
+@csrf_exempt
+def handle_payment(request):
+    if request.method == 'POST':
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+
+        # Debug information
+        print(f"Received Razorpay Order ID: {razorpay_order_id}")
+
+        try:
+            # Retrieve the property based on the order ID
+            order = razorpay_client.order.fetch(razorpay_order_id)
+            property_id = int(order['receipt'][len('order_rcptid_'):])
+            property = Property.objects.get(pk=property_id)
+
+            # Get the user profile of the logged-in user
+            user_profile = request.user.profile
+
+            amount_in_rupees = Decimal(order['amount']) / 100
+
+
+            # Create a Payment record with the associated user profile
+            payment = Payment.objects.create(
+                razorpay_payment_id=razorpay_payment_id,
+                razorpay_order_id=razorpay_order_id,
+                property=property,
+                user_profile=user_profile,
+                amount=amount_in_rupees,
+                # Add other fields as needed
+            )
+
+            # Update any status or details in your Property model if needed
+            property.payment_status = 'Paid'
+            property.save()
+
+            return JsonResponse({'status': 'success'})
+        except BadRequestError as e:
+            # Handle Razorpay API errors
+            print(f"Razorpay API error: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Razorpay API error'})
+        except Property.DoesNotExist:
+            # Handle property not found error
+            print(f"Property not found for ID: {property_id}")
+            return JsonResponse({'status': 'error', 'message': 'Property not found'})
+        except Exception as e:
+            # Handle other unexpected errors
+            print(f"Unexpected error: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Unexpected error'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+

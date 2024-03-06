@@ -464,6 +464,12 @@
             <div class="property-card">
                 <h4 style="color: #000;">{{ property.property_type }}</h4>
                 <p><strong>Next Rent Payment:</strong> {{ property.upcoming_payment_date|date:"F d, Y" }}</p>
+                <form method="post" action="{% url 'paymentnxt' property.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">
+                        Pay Now
+                    </button>
+                </form>
             </div>
         {% endif %}
     {% endfor %}
@@ -556,7 +562,7 @@
 
 
     <footer>
-        <p>&copy; 2023 Property Owner Dashboard</p>
+        <p>&copy; 2024 Property Rentals Tenant Dashboard</p>
     </footer>
 
     <!-- ... Your existing HTML code ... -->

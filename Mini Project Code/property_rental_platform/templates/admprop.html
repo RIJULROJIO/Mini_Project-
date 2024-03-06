@@ -132,6 +132,8 @@
         <a href="{% url 'adminregusers' %}">User Accounts</a>
         <a href="#">Properties</a>
         <a href="{% url 'adminserpropage' %}">ServiceProviders</a>
+        <a href="{% url 'adminpay' %}">Payments</a>
+
     </div>
     <div class="content">
         <div class="header">
@@ -140,12 +142,13 @@
         <h2>Property Details</h2>
         <table>
             <tr>
-                <th>Property ID</th>
+                <!-- <th>Property ID</th> -->
                 <th>Property Type</th>
                 <th>Address</th>
                 <th>Monthly Rent</th>
-                <th>Images</th>
                 <th>Actions</th>
+
+                <th>Images</th>
                 <th>More Info</th> <!-- New column for More Info button -->
                 <th>OwnerDetails</th>
                 <th>Documents</th>
@@ -153,7 +156,7 @@
             </tr>
             {% for property in properties %}
             <tr>
-                <td>{{ property.id }}</td>
+                <!-- <td>{{ property.id }}</td> -->
                 <td>{{ property.property_type }}</td>
                 <td>{{ property.address }}</td>
                 <td>Rs{{ property.monthly_rent }}</td>
