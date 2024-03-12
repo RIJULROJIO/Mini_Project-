@@ -138,6 +138,8 @@
         <a href="#" id="listServicesLink">List Your Services</a>
         <a href="#" id="yourServicesLink"> Your Services</a>
         <a href="#" id="serviceRequestsLink">Service Requests</a>
+        <a href="#" id="servicePaymentsLink">Service Payments</a>
+
        
         
     </nav>
@@ -378,6 +380,34 @@
     </div>
 </section>
 
+<!-- ... (previous HTML code) ... -->
+
+<section>
+    <div class="container form-container" id="servicePayments">
+        <h2>Service Payments</h2>
+        {% if service_payments %}
+            <ul>
+                {% for payment in service_payments %}
+                    <li class="highlight">
+                        <!-- <strong>Service Name:</strong> {{ payment.service.service_name }}<br> -->
+                        <strong>Service Category:</strong> {{ payment.service.service_category }}<br>
+                        <strong>Payment Amount:</strong> {{ payment.amount }}<br>
+                        <strong>Payment Time:</strong> {{ payment.timestamp|date:"F d, Y H:i A" }}<br>
+                        <strong>Payment by User:</strong> {{ payment.user_profile.user.username }}<br>
+
+                        <!-- Add more payment details as needed -->
+                    </li><br>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No service payments yet.</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ... (remaining HTML code) ... -->
+
+
 
 
 
@@ -391,20 +421,22 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- ... (previous HTML code) ... -->
+
 <script>
     $(document).ready(function() {
         // Hide all sections initially
         $("#serviceForm").hide();
         $("#serviceFormm").hide();
         $("#serviceRequests").hide();
-        $("#scheduleService").hide(); // Hide the scheduling section
+        $("#servicePayments").hide(); // Hide the service payments section
 
         // Add JavaScript to toggle the visibility of the form on clicking "List Your Services"
         $("#listServicesLink").click(function() {
             $("#serviceForm").toggle();
             $("#serviceFormm").hide(); // Hide other sections
             $("#serviceRequests").hide();
-            $("#scheduleService").hide(); // Hide the scheduling section
+            $("#servicePayments").hide(); // Hide the service payments section
         });
 
         // Add JavaScript to toggle the visibility of the services on clicking "Your Services"
@@ -412,7 +444,7 @@
             $("#serviceFormm").toggle();
             $("#serviceForm").hide(); // Hide other sections
             $("#serviceRequests").hide();
-            $("#scheduleService").hide(); // Hide the scheduling section
+            $("#servicePayments").hide(); // Hide the service payments section
         });
 
         // Add JavaScript to toggle the visibility of service requests on clicking "Service Requests"
@@ -420,16 +452,20 @@
             $("#serviceRequests").toggle();
             $("#serviceForm").hide(); // Hide other sections
             $("#serviceFormm").hide();
-            $("#scheduleService").hide(); // Hide the scheduling section
+            $("#servicePayments").hide(); // Hide the service payments section
         });
 
-        // Add JavaScript to toggle the visibility of the scheduling section on clicking "Schedule Service"
-       
-
-        
+        // Add JavaScript to toggle the visibility of the service payments section on clicking "Service Payments"
+        $("#servicePaymentsLink").click(function() {
+            $("#servicePayments").toggle();
+            $("#serviceForm").hide(); // Hide other sections
+            $("#serviceFormm").hide();
+            $("#serviceRequests").hide();
+        });
     });
 </script>
 
+<!-- ... (remaining HTML code) ... -->
 
 </body>
 </html>

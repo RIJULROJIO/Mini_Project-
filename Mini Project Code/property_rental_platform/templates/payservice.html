@@ -1,0 +1,64 @@
+<!-- payment.html -->
+
+<html lang="en">
+<head>
+    <!-- Other head elements -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <button id="pay-button">Proceed to payment</button>
+    <script>
+        var options = {
+    key: '{{ razorpay_api_key }}',
+    amount: '{{ amount }}',
+    currency: '{{ currency }}',
+    name: 'Property Rentals',
+    description: 'Service Amount',
+    image: 'path_to_logo.png',
+    order_id: '{{ order_id }}',
+    prefill: {
+        name: 'Your Name',
+        email: 'your_email@example.com',
+    },
+    theme: {
+        color: '#F37254',
+    },
+    handler: function(response) {
+        console.log(response);
+        var razorpay_payment_id = response.razorpay_payment_id;
+        var razorpay_order_id = response.razorpay_order_id;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{% url "handle_pay" %}', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    window.location.href = '{% url "manageprop" %}';
+                } else {
+                    console.error('Error handling payment:', xhr.responseText);
+                }
+            }
+        };
+
+        var data = 'razorpay_payment_id=' + razorpay_payment_id + '&razorpay_order_id=' + razorpay_order_id + '&amount=' + '{{ amount }}';
+        xhr.send(data);
+    },
+};
+
+var rzp = new Razorpay(options);
+
+document.getElementById('pay-button').onclick = function () {
+    rzp.open();
+};
+
+    
+        var rzp = new Razorpay(options);
+    
+        document.getElementById('pay-button').onclick = function () {
+            rzp.open();
+        };
+    </script>
+    
+</body>
+</html>

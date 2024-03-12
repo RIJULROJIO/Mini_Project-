@@ -27,9 +27,13 @@ urlpatterns = [
 
 
         path('handle_payment/', views.handle_payment, name='handle_payment'),
+        path('handle_pay/', views.handle_pay, name='handle_pay'),
+
 
     path('payment/<int:property_id>/', views.rentnxt, name='payment'),
     path('paymentnxt/<int:property_id>/', views.rentnxtt, name='paymentnxt'),
+    path('payservice/<int:service_id>/', views.serpay, name='payservice'),
+
 
     path('generate_property_pdf/<int:property_id>/', views.generate_property_pdf, name='generate_property_pdf'),
     path('notifications/', views.view_notifications, name='view_notifications'),
@@ -96,8 +100,12 @@ urlpatterns = [
     
 
 
-    
+        path('upload-profile-picture/', views.upload_profile_picture, name='upload_profile_picture'),
+            path('check-face-detection/', views.check_face_detection, name='check_face_detection'),
 
+
+        path('ad_click/', views.ad_click, name='ad_click'),
+        path('financecentre/', views.finance, name='financecentre'),
 
 
 

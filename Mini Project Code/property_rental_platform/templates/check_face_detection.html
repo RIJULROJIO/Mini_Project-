@@ -1,0 +1,73 @@
+<!-- check_face_detection.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Face Detection</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .profile-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .profile-image {
+            max-width: 30%;
+            border-radius: 70%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Face Detection Result:</h3>
+    {% if messages %}
+        <p class="error-message">
+            {% for message in messages %}
+                {{ message|safe }}<br>
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    {% if uploaded_file_url %}
+        <div class="profile-container">
+            <img class="profile-image" src="{{ uploaded_file_url }}" alt="Uploaded Profile Picture">
+        </div>
+    {% endif %}
+
+   <!-- check_face_detection.html -->
+<!-- ... your existing HTML ... -->
+
+{% if captured_photo_url %}
+<div class="profile-container">
+    <img class="profile-image" src="{{ captured_photo_url }}" alt="Captured Profile Picture">
+</div>
+{% endif %}
+
+<!-- ... your existing HTML ... -->
+
+</body>
+</html>

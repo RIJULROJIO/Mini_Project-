@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Profile Picture</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        form {
+            max-width: 400px;
+            width: 100%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #00796B;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f4f4f4;
+        }
+
+        button {
+            background-color: #00796B;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #005550;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+    <!-- Your existing head content... -->
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>Upload Profile Picture</h2>
+        <label for="photoid">Select the file:</label>
+        <input type="file" name="photoid" accept="image/*"  onchange="previewImage(this)">
+        <img id="image-preview" src="#" alt=" Preview" style="max-width: 40%; margin-top: 10px; display: block;">
+
+        <!-- Capture Photo button -->
+        <button type="button" id="capture-btn" onclick="capturePhoto()">Capture Photo</button><br><br>
+        <input type="hidden" name="camera_photo" id="camera-photo-input">
+        <button type="submit">Upload</button>
+        {% if messages %}
+            <div class="error-message">
+                {% for message in messages %}
+                    {{ message|safe }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </form>
+
+    <!-- Your existing script... -->
+
+    <!-- Add this script to your HTML file -->
+    <script>
+        function previewImage(input) {
+            var preview = document.getElementById('image-preview');
+            var file = input.files[0];
+            var reader = new FileReader();
+    
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+            };
+    
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Capture Photo logic
+        async function capturePhoto() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+
+                video.addEventListener('loadeddata', () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    const dataUrl = canvas.toDataURL('image/jpeg');
+                    document.getElementById('image-preview').src = dataUrl;
+
+                    // Set the captured photo data to the hidden input field
+                    document.getElementById('camera-photo-input').value = dataUrl;
+
+                    // Stop the camera stream
+                    stream.getTracks().forEach(track => track.stop());
+                });
+
+                // Display the video for a brief moment to capture the frame
+                document.body.appendChild(video);
+                video.play();
+                setTimeout(() => document.body.removeChild(video), 1000);
+            } catch (error) {
+                console.error('Error accessing the camera:', error);
+            }
+        }
+    </script>
+</body>
+</html>

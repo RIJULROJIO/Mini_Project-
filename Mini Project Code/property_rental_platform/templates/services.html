@@ -197,21 +197,32 @@ li {
                                             <strong>{{ service.service_category }}</strong>
                                         </div>
                                         <ul>
-                                            {% for service_request in service.servicerequest_set.all %}
-                                                {% with latest_scheduled_service=service_request.scheduledservice_set.last %}
-                                                    <li>
-                                                        <strong>Scheduled Date:</strong> {{ latest_scheduled_service.scheduled_date|default:"Not scheduled" }}<br>
-                                                        <strong>Scheduled Time:</strong> {{ latest_scheduled_service.scheduled_time|default:"Not scheduled" }}<br>
-                                                    {% if latest_scheduled_service.is_done %}
-                                                        <span class="done-status">Status: Marked as Done</span><br>
-                                                        <br><button type="submit" class="btn btn-primary">Pay Now</button>
+                                            <!-- Inside the service-card loop -->
+{% for service_request in service.servicerequest_set.all %}
+{% with latest_scheduled_service=service_request.scheduledservice_set.last %}
+    <li>
+        <strong>Scheduled Date:</strong> {{ latest_scheduled_service.scheduled_date|default:"Not scheduled" }}<br>
+        <strong>Scheduled Time:</strong> {{ latest_scheduled_service.scheduled_time|default:"Not scheduled" }}<br>
+        {% if latest_scheduled_service.is_done %}
+            <span class="done-status">Status: Marked as Done</span><br>
+            
+            {% if service.pay_set.exists %}
+                <span class="done-status">Payment: Paid</span><br>
+            {% else %}
+                <form method="post" action="{% url 'payservice' service.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">
+                        Pay Now
+                    </button><br><br>
+                </form>
+            {% endif %}
+        {% else %}
+            <span class="not-done-status">Status: Not Done</span><br>
+        {% endif %}
+    </li>
+{% endwith %}
+{% endfor %}
 
-                                                      {% else %}
-                                                        <span class="not-done-status">Status: Not Done</span><br>
-                                                    {% endif %}
-                                                    </li>
-                                                {% endwith %}
-                                            {% endfor %}
                                         </ul>
                                     </div>
                                 {% endif %}

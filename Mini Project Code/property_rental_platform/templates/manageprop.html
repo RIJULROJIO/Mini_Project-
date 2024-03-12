@@ -69,14 +69,14 @@
             max-height: 600px; /* Set your desired max height */
     overflow-y: auto; /* Hide overflow content if it exceeds the fixed height */
     scrollbar-width: thin;
-    scrollbar-color: #17a2b8 #f8f9fa;/* /* Hide overflow content if it exceeds the fixed height */
+    scrollbar-color: #021215 #f8f9fa;/* /* Hide overflow content if it exceeds the fixed height */
         }
         .card-body::-webkit-scrollbar {
     width: 8px;
 }
 
 .card-body::-webkit-scrollbar-thumb {
-    background-color: #17a2b8; /* Scrollbar thumb color */
+    background-color: #020a0b; /* Scrollbar thumb color */
     border-radius: 4px;
 }
 
@@ -220,6 +220,45 @@
             top: 10px;
             right: 10px;
         }
+        .calculator {
+            max-width: 100px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
 
     </style>
     <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="">
@@ -245,6 +284,12 @@
     <div class="container">
         <div class="user-name">Property Owner: {{ request.session.username }}</div>
 
+        <div class="calculator-header" onclick="openCalculatorModal()">
+            <h2 style="color: crimson;">Property Investment Calculator</h2>
+        </div>
+
+        <!-- Calculator Content -->
+        
         <!-- Property Listing Section -->
         <section>
             <h2>Your Properties</h2>
@@ -380,6 +425,37 @@
         </section>
     </div>
 
+   <!-- Calculator Modal -->
+<div class="modal" id="calculatorModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- <h5 class="modal-title">Property Investment Calculator</h5> -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h2>Property Investment Calculator</h2>
+                <label for="propertyCost">Property Cost (INR):</label>
+                <input type="number" id="propertyCost" required>
+            
+                <label for="monthlyRent">Monthly Rent (INR):</label>
+                <input type="number" id="monthlyRent" required>
+            
+                <label for="annualExpenses">Annual Expenses (INR):</label>
+                <input type="number" id="annualExpenses" required>
+            
+                <button onclick="calculateROI()">Calculate ROI</button>
+            
+                <div id="result"></div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
     <!-- Modals for Property Images -->
     {% for property in properties %}
         <div class="modal fade" id="propertyImageModal{{ property.id }}" tabindex="-1" role="dialog" aria-labelledby="propertyImageModalLabel{{ property.id }}" aria-hidden="true">
@@ -423,9 +499,36 @@
             </div>
         </div>
     {% endfor %}
+    
+
 
     <!-- Add Bootstrap JS and jQuery for enhanced functionality (optional) -->
     <script>
+           function openCalculatorModal() {
+            $('#calculatorModal').modal('show');
+        }
+
+        function calculateROI() {
+    const propertyCostINR = parseFloat(document.getElementById("propertyCost").value);
+    const monthlyRentINR = parseFloat(document.getElementById("monthlyRent").value);
+    const annualExpensesINR = parseFloat(document.getElementById("annualExpenses").value);
+
+    const annualIncomeINR = monthlyRentINR * 12;
+    const netIncomeINR = annualIncomeINR - annualExpensesINR;
+    const roi = (netIncomeINR / propertyCostINR) * 100;
+
+    const resultElement = document.getElementById("result");
+    resultElement.textContent = `Estimated ROI: ${roi.toFixed(2)}% (in INR)`;
+}
+
+        function toggleCalculator() {
+            var calculator = document.getElementById("calculator");
+            if (calculator.style.display === "block") {
+                calculator.style.display = "none";
+            } else {
+                calculator.style.display = "block";
+            }
+        }
         function toggleNotificationPanel() {
             var notificationPanel = document.getElementById("notificationPanel");
             if (notificationPanel.style.display === "block") {

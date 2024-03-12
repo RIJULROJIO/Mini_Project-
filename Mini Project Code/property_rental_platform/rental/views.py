@@ -1,3 +1,4 @@
+import base64
 import datetime
 from decimal import Decimal
 from io import BytesIO
@@ -21,7 +22,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile,Payment,Service,PropertyFeedback,ServiceRequest,ScheduledService # Import your custom user model
+from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile,Payment,Service,PropertyFeedback,ServiceRequest,ScheduledService,Pay,LoanApplication # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -441,33 +442,36 @@ def tenantpg(request):
             property.is_rental_request_accepted = property.rentalrequest_set.filter(tenant=user_profile, status='Accepted').exists()
 
             if property.is_rental_request_accepted:
+                # Calculate the number of payments made for the property
+                num_payments = Payment.objects.filter(property=property, user_profile=user_profile).count()
+
                 # Calculate upcoming rent payment date based on availability date and lease duration
                 availability_date = property.availability_date
                 lease_duration = property.lease_duration
 
                 if lease_duration == '1 year':
-                    upcoming_payment_date = availability_date + relativedelta(years=1)
+                    upcoming_payment_date = availability_date + relativedelta(months=num_payments * 12)
                 elif lease_duration == 'Month-to-month':
-                    upcoming_payment_date = (availability_date + relativedelta(months=1))
+                    upcoming_payment_date = availability_date + relativedelta(months=num_payments)
                 else:
                     upcoming_payment_date = None
 
                 property.upcoming_payment_date = upcoming_payment_date
-                rented_properties.append(property) 
-               # Fetch lease agreement details for the rented property
+                rented_properties.append(property)
+
+                # Fetch lease agreement details for the rented property
                 lease_agreements = LeaseAgreement.objects.filter(property=property)
 
                 if lease_agreements.exists():
-    # If there are multiple lease agreements, choose the latest one
-                 latest_lease_agreement = lease_agreements.order_by('-created_at').first()
-                 property.lease_agreement = latest_lease_agreement
-            else:
-    # Handle the case where no lease agreement is found
-                property.lease_agreement = None
+                    # If there are multiple lease agreements, choose the latest one
+                    latest_lease_agreement = lease_agreements.order_by('-created_at').first()
+                    property.lease_agreement = latest_lease_agreement
+                else:
+                    # Handle the case where no lease agreement is found
+                    property.lease_agreement = None
 
         # Check if the payment for a rented property has been made
         payment_made = Payment.objects.filter(property__in=rented_properties, user_profile=user_profile).exists()
-
 
         context = {
             'user_profile': user_profile,
@@ -1171,11 +1175,15 @@ def serproviderdash(request):
 
     provider_services = Service.objects.filter(service_provider_profile=provider_profile)
     service_requests = ServiceRequest.objects.filter(service__in=provider_services)
+    service_payments = Pay.objects.filter(service__in=provider_services)
+
 
     context = {
         'provider_profile': provider_profile,
         'provider_services': provider_services,
         'service_requests': service_requests,
+        'service_payments': service_payments,
+
     }
 
     return render(request, "serproviderdash.html", context)
@@ -1456,3 +1464,338 @@ def handle_payment(request):
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
+
+
+from razorpay import Client
+
+
+razorpay_api_key = settings.RAZORPAY_API_KEY
+razorpay_secret_key = settings.RAZORPAY_API_SECRET
+
+razorpay_client = Client(auth=(razorpay_api_key, razorpay_secret_key))
+
+@csrf_exempt
+def serpay(request, service_id):
+    try:
+        # Retrieve the Property object
+        service = Service.objects.get(pk=service_id)
+
+        # Get the user profile of the logged-in user
+        user_profile = request.user.userprofile
+
+        # Calculate the amount based on the monthly rent
+        amount = int((service.service_price ) * 100)
+
+        # Create a Razorpay order
+        order_data = {
+            'amount': amount,
+            'currency': 'INR',
+            'receipt': f'order_rcptid_{service.id}',
+            'payment_capture': '1',  # Auto-capture payment
+        }
+
+        # Create an order
+        order_response = razorpay_client.order.create(data=order_data)
+        order = order_response
+
+        # Store the order details in the session to retrieve later
+        request.session['razorpay_order_id'] = order['id']
+        request.session['service_id'] = service_id
+
+        context = {
+            'razorpay_api_key': razorpay_api_key,
+            'amount': amount,
+            'currency': order_data['currency'],
+            'order_id': order['id'],
+        }
+
+        return render(request, 'payservice.html', context)
+
+    except Service.DoesNotExist:
+        return HttpResponseBadRequest('Invalid Service ID')
+
+
+
+
+from razorpay.errors import BadRequestError
+
+@login_required  # Add this decorator to ensure the user is logged in
+@csrf_exempt
+def handle_pay(request):
+    if request.method == 'POST':
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+
+        # Debug information
+        print(f"Received Razorpay Order ID: {razorpay_order_id}")
+
+        try:
+            # Retrieve the property based on the order ID
+            order = razorpay_client.order.fetch(razorpay_order_id)
+            service_id = int(order['receipt'][len('order_rcptid_'):])
+            service = Service.objects.get(pk=service_id)
+
+            # Get the user profile of the logged-in user
+            user_profile = request.user.userprofile
+
+            amount_in_rupees = Decimal(order['amount']) / 100
+
+
+            # Create a Payment record with the associated user profile
+            payment = Pay.objects.create(
+                razorpay_payment_id=razorpay_payment_id,
+                razorpay_order_id=razorpay_order_id,
+                service=service,
+                user_profile=user_profile,
+                amount=amount_in_rupees,
+                # Add other fields as needed
+            )
+
+            # Update any status or details in your Property model if needed
+            Service.payment_status = 'Paid'
+            Service.save()
+
+            return JsonResponse({'status': 'success'})
+        except BadRequestError as e:
+            # Handle Razorpay API errors
+            print(f"Razorpay API error: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Razorpay API error'})
+        except Service.DoesNotExist:
+            # Handle property not found error
+            print(f"Service not found for ID: {service_id}")
+            return JsonResponse({'status': 'error', 'message': 'Service not found'})
+        except Exception as e:
+            # Handle other unexpected errors
+            print(f"Unexpected error: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Unexpected error'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+
+
+
+
+
+
+
+
+
+
+
+# views.py
+
+
+# Your existing code...
+
+
+import cv2
+import numpy as np
+
+
+from django.core.exceptions import ValidationError
+from django.core.files.storage import FileSystemStorage
+
+# Your existing code...
+
+# Update your view function
+from django.core.files.base import ContentFile
+
+# Your other imports...
+
+
+
+def upload_profile_picture(request):
+    if request.method == "POST":
+        photo_id = request.FILES.get('photoid')
+        camera_photo = request.POST.get('camera_photo')
+
+        try:
+            if photo_id:
+                # If a photo is uploaded
+                validate_image(photo_id)
+                messages.success(request, "Face detection successful. Profile picture uploaded.")
+
+                # Store the image temporarily
+                fs = FileSystemStorage()
+                filename = fs.save(photo_id.name, photo_id)
+                uploaded_file_url = fs.url(filename)
+
+            elif camera_photo:
+                # If a photo is captured
+                decoded_photo = np.frombuffer(base64.b64decode(camera_photo.split(',')[1]), dtype=np.uint8)
+                validate_image(decoded_photo)
+                messages.success(request, "Face detection successful. Profile picture captured.")
+
+                # Create a ContentFile from the bytes
+                content_file = ContentFile(decoded_photo.tobytes(), name='captured_photo.jpg')
+
+                # Store the image temporarily (adjust as needed)
+                fs = FileSystemStorage()
+                captured_photo_url = fs.save(content_file.name, content_file)
+
+                # Pass the captured photo URL to the template
+                return render(request, 'check_face_detection.html', {'captured_photo_url': fs.url(captured_photo_url)})
+
+            else:
+                raise ValidationError("Please upload a valid image file or capture a photo.")
+
+            # Pass the uploaded file URL to the template
+            return render(request, 'check_face_detection.html', {'uploaded_file_url': uploaded_file_url})
+
+        except ValidationError as e:
+            messages.error(request, e.messages[0])
+            return redirect('upload_profile_picture')
+
+    return render(request, 'upload_profile_picture.html')
+
+
+
+def validate_image(photo_id):
+    if isinstance(photo_id, np.ndarray):
+        # Case when a photo is captured
+        img = cv2.imdecode(photo_id, cv2.IMREAD_UNCHANGED)
+
+    elif hasattr(photo_id, 'read'):
+        # Case when a file is uploaded
+        img = cv2.imdecode(np.frombuffer(photo_id.read(), np.uint8), cv2.IMREAD_UNCHANGED)
+
+    else:
+        raise ValidationError("Invalid image format.")
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Check for faces using Haarcascades classifier
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+
+    if len(faces) == 0:
+        raise ValidationError("No face detected in the uploaded image.")
+
+    if len(faces) > 1:
+        raise ValidationError("Multiple faces detected. Please upload a photo with only one face.")
+
+    # Check for blurriness
+    if is_blurry(img):
+        raise ValidationError("Image is blurry. Please upload a clear photo.")
+
+def is_blurry(image, threshold=100):
+    # Calculate the variance of Laplacian
+    laplacian_var = cv2.Laplacian(image, cv2.CV_64F).var()
+    return laplacian_var < threshold
+
+# Your existing code...
+def decode_base64(data):
+    if data is None:
+        return None
+
+    img_data = base64.b64decode(data.split(',')[1])
+    return np.frombuffer(img_data, dtype=np.uint8)
+
+def check_face_detection(request):
+    return render(request, 'check_face_detection.html')
+
+
+
+
+# from django.shortcuts import render, redirect
+# from django.core.exceptions import ValidationError
+# from django.contrib import messages
+# import cv2
+# from mtcnn.mtcnn import MTCNN
+# import numpy as np
+
+# def upload_profile_picture(request):
+#     if request.method == "POST":
+#         photo_id = request.FILES.get('photoid')
+
+#         try:
+#             validate_image(photo_id)
+#             messages.success(request, "Face detection successful. Profile picture uploaded.")
+#         except ValidationError as e:
+#             messages.error(request, e.messages[0])
+#             return redirect('upload_profile_picture')
+
+#     return render(request, 'upload_profile_picture.html')
+
+# def validate_image(photo_id):
+#     if not photo_id:
+#         raise ValidationError("Please upload a valid image file.")
+
+#     img = cv2.imdecode(np.frombuffer(photo_id.read(), np.uint8), -1)
+#     # Convert to RGB as MTCNN uses RGB images
+#     rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+#     # Use MTCNN for face detection
+#     detector = MTCNN()
+#     faces = detector.detect_faces(rgb_img)
+
+#     if len(faces) == 0:
+#         raise ValidationError("No face detected in the uploaded image.")
+
+#     if len(faces) > 1:
+#         raise ValidationError("Multiple faces detected. Please upload a photo with only one face.")
+
+# def check_face_detection(request):
+#     return render(request, 'check_face_detection.html')
+
+from django.shortcuts import redirect
+from urllib.parse import unquote
+
+def ad_click(request):
+    url = request.GET.get('url', '/')
+    # Log the click or perform any other necessary action
+    return redirect(unquote(url))
+
+def finance(request):
+    if request.method == 'POST':
+        # Get form data
+        applicant_name = request.POST.get('applicant_name')
+        address = request.POST.get('address')
+        state = request.POST.get('state')
+        district = request.POST.get('district')
+        telephone = request.POST.get('telephone')
+        email = request.POST.get('email')
+        age = request.POST.get('age')
+        occupation = request.POST.get('occupation')
+        loan_amount = request.POST.get('loan_amount')
+        property_address = request.POST.get('property_address')
+        nearest_bank = request.POST.get('nearest_bank')
+        net_monthly_income = request.POST.get('net_monthly_income')
+
+        # Get the Property instance based on the selected property address
+        try:
+            selected_property = Property.objects.get(address=property_address)
+        except Property.DoesNotExist:
+            # Handle the case where the property does not exist
+            # You might want to redirect the user to an error page or display an error message
+            return render(request, 'error.html', {'error_message': 'Selected property does not exist'})
+
+        # Create a Profile instance with the user's details and the selected property
+        
+        # Create a LoanApplication instance with the form data and associated property
+        loan_application = LoanApplication.objects.create(
+            user=request.user,
+            applicant_name=applicant_name,
+            address=address,
+            state=state,
+            district=district,
+            telephone=telephone,
+            email=email,
+            age=age,
+            occupation=occupation,
+            loan_amount=loan_amount,
+            property_address=property_address,
+            nearest_bank=nearest_bank,
+            net_monthly_income=net_monthly_income,
+            property=selected_property  # Associate the selected property with the loan application
+        )
+
+        # Do other processing or redirect the user as needed
+        return redirect('tenantpg')  # Redirect to a success page or another view
+
+    # If it's a GET request, render the finance page with the property data
+    properties = Property.objects.all()
+    user_loan_application = LoanApplication.objects.filter(user=request.user).first()
+
+    return render(request, 'financecentre.html', {'properties': properties, 'user_loan_application': user_loan_application})
