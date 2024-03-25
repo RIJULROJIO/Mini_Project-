@@ -1,0 +1,83 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Custom CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .message {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+        }
+        .message:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .message .sender {
+            font-weight: bold;
+        }
+        .message .timestamp {
+            color: #999;
+            font-size: 0.9em;
+        }
+        .message .body {
+            color: #333;
+            margin-top: 10px;
+        }
+        .message .subject {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .mark-read {
+            cursor: pointer;
+            color: #007bff;
+        }
+        .actions {
+            margin-top: 10px;
+        }
+        .actions a {
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    </style>
+            <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Inbox</h1>
+        {% for message in received_messages %}
+        <div class="message">
+            <p class="sender">{{ message.sender }}</p>
+            <p class="timestamp">{{ message.timestamp }}</p>
+            <p class="body">{{ message.body }}</p>
+            <p class="subject">Subject: {{ message.subject }}</p>
+            <div class="actions">
+                {% if not message.is_read %}
+                    <a href="{% url 'mark_as_read' message.id %}" class="mark-read">Mark as Read</a>
+                {% endif %}
+            </div>        </div>
+        {% endfor %}
+    </div>
+   
+</body>
+</html>

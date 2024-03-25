@@ -16,6 +16,9 @@ urlpatterns = [
     path('tenantpg/',views.tenantpg,name='tenantpg'),
     path('manageprop/',views.manageprop,name='manageprop'),
     path('propimgup/<int:property_id>/', views.propimgup, name='propimgup'),
+        path('propsellimgup/<int:property_id>/', views.propsellimgup, name='propsellimgup'),
+
+    
     path('propdocs/<int:property_id>/', views.propdocs, name='propdocs'),
     path('submit_rental_request/<int:property_id>/', views.submit_rental_request, name='submit_rental_request'),
 
@@ -106,6 +109,25 @@ urlpatterns = [
 
         path('ad_click/', views.ad_click, name='ad_click'),
         path('financecentre/', views.finance, name='financecentre'),
+        path('sellproperty/', views.sellprop, name='sellproperty'),
+            path('my-properties/', views.view_properties, name='view_properties'),
+                        path('buyprop/', views.view_property, name='buyprop'),
+
+
+                         path('inbox/', views.inbox, name='inbox'),
+    path('compose/', views.compose_message, name='compose_message'),
+    path('mark_as_read/<int:message_id>/', views.mark_as_read, name='mark_as_read'),
+    path('delete_message/<int:message_id>/', views.delete_message, name='delete_message'),
+
+        path('verify_property/<int:property_id>/', views.verify_property, name='verify_property'),
+
+            path('validate-username/', views.validate_username, name='validate_username'),  # Add this line
+
+
+
+
+
+
 
 
 

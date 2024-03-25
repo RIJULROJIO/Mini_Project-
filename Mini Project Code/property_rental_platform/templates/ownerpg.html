@@ -261,7 +261,7 @@ nav a {
         
         
         <h1>Property Owner Dashboard</h1>
-        <div class="user-name">Welcome!, {{ request.session.username }}</div>
+        <div class="user-name"> {{ request.session.username }}</div>
         <div class="profile-picture-large">
             <img src="{{ user_profile.photo_id.url }}" alt="Profile Picture" class="profile-image">
         </div>
@@ -272,13 +272,15 @@ nav a {
     <nav>
         <ul>
             <li><a href="{% url 'manageprop' %}">Manage Properties</a></li>
-            <li><a href="javascript:void(0);" onclick="toggleAddPropertyForm()">Post Property</a></li>
+            <li><a href="javascript:void(0);" onclick="toggleAddPropertyForm()">Post Property for Rental</a></li>
+            <li><a href="{% url 'sellproperty' %}">Post Property for Sale</a></li>
+
             <li><a href="{% url 'view_notifications' %}">Notifications</a></li>
             <li><a href="{% url 'rentcollect' %}">Rent Collection</a></li>
 
             <nav>
                 <ul>
-                    <li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}" style="color: black;">Log out</a></li>
+                    <br><br><li style="float: right; margin-left: 10px;"><a href="{% url 'logout' %}" style="color: black;">Log out</a></li>
                 </ul>
             </nav>
         </ul>

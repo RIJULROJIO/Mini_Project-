@@ -1,0 +1,215 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Properties for Sale</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Add your custom CSS styles for property card design here */
+        .property-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .property-card-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .property-card-body {
+            padding: 20px;
+        }
+        .property-card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .property-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .verified-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #28a745;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    .unverified-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #dc3545; /* Red color */
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    .schedule-visit-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #007bff;
+            color: #fff;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .schedule-visit-btn:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+            <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">My Properties for Sale</h2>
+        <div class="row">
+            {% for property in properties %}
+            <div class="col-md-4">
+                <div class="property-card">
+                    <div class="property-card-header">
+                        {{ property.property_type }}
+                    </div>
+                    <div class="property-card-body">
+                        <h3 class="property-card-title">{{ property.address }}</h3>
+                        <img src="{{ property.property_images.url }}" alt="Property Image" class="property-card-image">
+                        <p class="card-text"><a href="{% url 'propsellimgup' property.id %}">Change Property Image</a></p>
+
+                        <p><strong>Sale Price:</strong> ₹ {{ property.sale_price }}</p>
+                        <p><strong>Description:</strong> {{ property.description }}</p>
+
+                        {% if property.verification_status == 'verified' %}
+                        <div class="verified-badge">
+                            <i class="fas fa-check-circle"></i> Platform Verified Property
+                        </div>
+                        <!-- Schedule Visit Button -->
+                        <button class="schedule-visit-btn" data-toggle="modal" data-target="#scheduleVisitModal">Schedule Visit</button>
+                        {% else %}
+                        <div class="unverified-badge">
+                            <i class="fas fa-exclamation-circle"></i> Property verification Pending
+                        </div>
+                        {% endif %}
+
+                        <!-- Add more property details as needed -->
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Add this modal to the HTML -->
+    <div class="modal fade" id="scheduleVisitModal" tabindex="-1" role="dialog" aria-labelledby="scheduleVisitModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scheduleVisitModalLabel">Schedule Property Visit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="scheduleVisitForm" method="POST" action="{% url 'view_properties' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="tenant">Select Person:</label>
+                            <select class="form-control" id="tenant" name="tenant">
+                                {% for tenant in available_tenants %}
+                                <option value="{{ tenant.id }}">{{ tenant.username }}</option>
+                                {% endfor %}                    
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="property">Select Property:</label>
+                            <select class="form-control" id="property" name="property">
+                                {% for property in properties %}
+                                <option value="{{ property.id }}">{{ property.address }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="visit_date">Visit Date:</label>
+                            <input type="date" class="form-control" id="visit_date" name="visit_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="visit_time">Visit Time:</label>
+                            <input type="time" class="form-control" id="visit_time" name="visit_time">
+                        </div>
+                        <div class="form-group">
+                            <label for="note">Note:</label>
+                            <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="scheduleVisitBtn">Schedule</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+//         $(document).ready(function() {
+//         $('.schedule-visit-btn').click(function() {
+//             // Clear the tenant options
+//             $('#tenant').empty();
+            
+//             // Fetch available tenants via AJAX
+//             $.ajax({
+//                 url: '/get_available_tenants/',
+
+//                 type: 'GET',
+//                 success: function(response) {
+//     console.log(response); // Check the response in the browser console
+//     // Populate the tenant select options
+//     response.forEach(function(tenant) {
+//         console.log(tenant); // Check each tenant object
+//         $('#tenant').append($('<option>', {
+//             value: tenant.id,
+//             text: tenant.username
+//         }));
+//     });
+// },
+
+//                 error: function(xhr, status, error) {
+//                     console.error(error);
+//                 }
+//             });
+//         });
+
+//         // Handle schedule visit button click
+//         $('#scheduleVisitBtn').click(function() {
+//             var tenantId = $('#tenant').val();
+//             var propertyId = $('#property').val();
+            
+//             // Perform further actions such as sending the schedule visit request
+//             // using AJAX
+//         });
+//     });
+    </script>
+</body>
+</html>

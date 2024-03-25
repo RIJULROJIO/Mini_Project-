@@ -259,3 +259,63 @@ class LoanApplication(models.Model):
 
     def __str__(self):
         return f"{self.applicant_name}'s Loan Application"
+
+class Propertysell(models.Model):
+    PROPERTY_TYPES = [
+        ('house', 'House'),
+        ('apartment', 'Apartment'),
+        # Add more property types as needed
+    ]
+    VERIFICATION_CHOICES = [
+        ('pending', 'Pending'),
+        ('verified', 'Verified'),
+        ('rejected', 'Rejected'),
+    ]
+
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
+    address = models.CharField(max_length=255)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField()
+    amenities = models.TextField()
+    contact_information = models.CharField(max_length=100)
+    property_images = models.ImageField(upload_to='property_images/')
+    ownership = models.CharField(max_length=20)
+    plot_area = models.CharField(max_length=20)
+    constructed_year = models.IntegerField()
+    ready_to_move = models.BooleanField(default=False)
+    state = models.CharField(max_length=100)
+    district = models.CharField(max_length=100)
+    town = models.CharField(max_length=100)
+    locality = models.CharField(max_length=100)
+    street = models.CharField(max_length=100)
+    verification_status = models.CharField(max_length=20, choices=VERIFICATION_CHOICES, default='pending')
+
+
+
+
+
+User = get_user_model()
+
+class Message(models.Model):
+    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
+    recipient = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
+    subject = models.CharField(max_length=100)
+    body = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    is_reply = models.BooleanField(default=False)  # Add this field
+
+    def __str__(self):
+        return f"{self.subject} - {self.sender} to {self.recipient}"
+
+
+class Schedule(models.Model):
+    tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='scheduled_visits')
+    property = models.ForeignKey('Propertysell', on_delete=models.CASCADE)
+    visit_date = models.DateField()
+    visit_time = models.TimeField()
+    note = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Visit for {self.property.address} by {self.tenant.username} on {self.visit_date} at {self.visit_time}"

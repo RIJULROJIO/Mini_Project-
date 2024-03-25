@@ -22,7 +22,7 @@ from django.db.models import Q  # Import Q for complex queries
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .models import CustomUser,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile,Payment,Service,PropertyFeedback,ServiceRequest,ScheduledService,Pay,LoanApplication # Import your custom user model
+from .models import CustomUser, User,UserProfile,Profile,Property,PropertyImage,Amenity,PropertyDocument,RentalRequest,LeaseAgreement,Notification,ServiceProviderProfile,Payment,Service,PropertyFeedback,ServiceRequest,ScheduledService,Pay,LoanApplication # Import your custom user model
 
 from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView,PasswordResetDoneView,PasswordResetCompleteView
 from .utils import TokenGenerator,generate_token
@@ -78,6 +78,8 @@ from django.db.models import Avg
 
 def index(request):
     filtered_properties = Property.objects.filter(approval_status='Approved')
+    properties_for_sale = Propertysell.objects.all()
+
 
     property_type = request.GET.get('property_type')
     min_rent = request.GET.get('min_rent')
@@ -106,6 +108,8 @@ def index(request):
 
     context = {
         'properties': filtered_properties,
+        'properties_for_sale': properties_for_sale,
+
     }
 
     return render(request, 'index.html', context)
@@ -579,18 +583,57 @@ def propimgup(request, property_id):
     }
 
     return render(request, 'propimgup.html', context)
+
+def propsellimgup(request, property_id):
+    try:
+        property = Propertysell.objects.get(pk=property_id)
+    except Propertysell.DoesNotExist:
+        raise Http404("Property does not exist")
+
+    if request.method == 'POST':
+        images = request.FILES.getlist('image')
+
+        for image in images:
+            property.property_images = image  # Assign the uploaded image to the property
+
+        property.save()  # Save the property to store the uploaded images
+
+        messages.success(request, "Images added successfully")
+        return redirect('manageprop')
+
+    context = {
+        'property': property,
+    }
+
+    return render(request, 'propimgup.html', context)
+
 def property_images(request, property_id):
     property = Property.objects.get(pk=property_id)
     images = PropertyImage.objects.filter(property=property)
 
     return render(request, 'property_images.html', {'property': property, 'images': images})
 
+
+
     
 def admprop(request):
-    # Retrieve all properties
-    properties = Property.objects.all()
+    # Retrieve all properties from both models
+    rental_properties = Property.objects.all()
+    sale_properties = Propertysell.objects.all()
 
-    return render(request, 'admprop.html', {'properties': properties})
+    return render(request, 'admprop.html', {'rental_properties': rental_properties, 'sale_properties': sale_properties})
+
+
+def verify_property(request, property_id):
+    # Retrieve the property with the given ID
+    property = get_object_or_404(Propertysell, pk=property_id)
+    
+    # Perform verification logic here, for example, updating the verification status
+    property.verification_status = 'verified'
+    property.save()
+    
+    # Redirect back to the property list page
+    return redirect('admprop')
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -1765,8 +1808,8 @@ def finance(request):
 
         # Get the Property instance based on the selected property address
         try:
-            selected_property = Property.objects.get(address=property_address)
-        except Property.DoesNotExist:
+            selected_property = Propertysell.objects.get(address=address)
+        except Propertysell.DoesNotExist:
             # Handle the case where the property does not exist
             # You might want to redirect the user to an error page or display an error message
             return render(request, 'error.html', {'error_message': 'Selected property does not exist'})
@@ -1795,7 +1838,166 @@ def finance(request):
         return redirect('tenantpg')  # Redirect to a success page or another view
 
     # If it's a GET request, render the finance page with the property data
-    properties = Property.objects.all()
+    properties = Propertysell.objects.all()
     user_loan_application = LoanApplication.objects.filter(user=request.user).first()
 
     return render(request, 'financecentre.html', {'properties': properties, 'user_loan_application': user_loan_application})
+
+
+from .models import Propertysell
+
+def sellprop(request):
+    if request.method == 'POST':
+        # Assuming you have a UserProfile object associated with the logged-in user
+        user_profile = UserProfile.objects.get(user=request.user)
+        
+        # Create a Property object and populate it with the form data
+        property_obj = Propertysell(
+            user_profile=user_profile,
+            property_type=request.POST.get('propertyType'),
+            address=request.POST.get('address'),
+            sale_price=request.POST.get('salePrice'),
+            description=request.POST.get('description'),
+            amenities=request.POST.get('amenities'),
+            contact_information=request.POST.get('contact'),
+            property_images=request.FILES.get('propertyImages'),  # Assuming only one image is uploaded
+            ownership=request.POST.get('ownership'),
+            plot_area=request.POST.get('plotArea'),
+            constructed_year=request.POST.get('constructedYear'),
+            ready_to_move=bool(request.POST.get('readyToMove')),
+            state=request.POST.get('state'),
+            district=request.POST.get('district'),
+            town=request.POST.get('town'),
+            locality=request.POST.get('locality'),
+            street=request.POST.get('street')
+        )
+        property_obj.save()
+        
+        # Redirect to a success page or do something else
+        return redirect('ownerpage')
+
+    else:
+        # Render the form for GET requests
+        return render(request, 'sellproperty.html')
+    
+from .models import Propertysell, Schedule
+
+def view_properties(request):
+    if request.method == 'POST':
+        tenant_id = request.POST.get('tenant')
+        property_id = request.POST.get('property')
+        visit_date = request.POST.get('visit_date')
+        visit_time = request.POST.get('visit_time')
+        note = request.POST.get('note')
+        
+        tenant = User.objects.get(pk=tenant_id)
+        property = Propertysell.objects.get(pk=property_id)
+        
+        # Create a new Schedule instance and save it
+        schedule = Schedule.objects.create(tenant=tenant, property=property, visit_date=visit_date, visit_time=visit_time, note=note)
+        schedule.save()
+
+        # Redirect or render success page
+        return render(request, 'view_properties.html')
+
+    else:
+        user_properties = Propertysell.objects.filter(user_profile__user=request.user)
+        available_tenants = User.objects.filter(role='tenant')
+
+        return render(request, 'view_properties.html', {'properties': user_properties, 'available_tenants': available_tenants})
+
+def view_property(request):
+    # Retrieve all properties
+    properties = Propertysell.objects.all()
+
+    # Filter properties based on user preferences if any
+    if request.method == 'GET':
+        property_type = request.GET.get('property_type')
+        min_price = request.GET.get('min_price')
+        max_price = request.GET.get('max_price')
+        state = request.GET.get('state')
+        district = request.GET.get('district')
+        verification_status = request.GET.get('verification_status')
+
+        if property_type:
+            properties = properties.filter(property_type=property_type)
+
+        if min_price:
+            properties = properties.filter(sale_price__gte=min_price)
+
+        if max_price:
+            properties = properties.filter(sale_price__lte=max_price)
+
+        if state:
+            properties = properties.filter(state__icontains=state)
+
+        if district:
+            properties = properties.filter(district__icontains=district)
+
+        if verification_status:
+            properties = properties.filter(verification_status=verification_status)
+
+    return render(request, 'buyprop.html', {'properties': properties})
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Message
+
+@login_required
+def inbox(request):
+    user = request.user
+    received_messages = Message.objects.filter(recipient=user).order_by('-timestamp')
+    sent_messages = Message.objects.filter(sender=user).order_by('-timestamp')
+    return render(request, 'inbox.html', {'received_messages': received_messages, 'sent_messages': sent_messages})
+
+@login_required
+def compose_message(request):
+    if request.method == 'POST':
+        sender = request.user
+        recipient_username = request.POST.get('recipient')
+        recipient = CustomUser.objects.get(username=recipient_username)
+        subject = request.POST.get('subject')
+        body = request.POST.get('body')
+        is_reply = request.POST.get('is_reply', False) == 'True'  # Convert string to boolean
+        Message.objects.create(sender=sender, recipient=recipient, subject=subject, body=body, is_reply=is_reply)
+        messages.success(request, 'Message sent successfully')  # Add success message
+
+        # return redirect('tenantpg')
+    return render(request, 'compose_message.html', {'users': CustomUser.objects.all()})
+
+@login_required
+def mark_as_read(request, message_id):
+    message = get_object_or_404(Message, pk=message_id)
+    message.is_read = True
+    message.save()
+    message.delete()  # Delete the message after marking it as read
+    return redirect('inbox')
+
+@login_required
+def delete_message(request, message_id):
+    message = Message.objects.get(id=message_id)
+    message.delete()
+    return redirect('inbox')
+
+
+# views.py
+
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+
+def validate_username(request):
+    if request.method == 'GET':
+        username = request.GET.get('username')
+        User = get_user_model()
+        try:
+            User.objects.get(username=username)
+            # Username exists, return False
+            data = {'available': False}
+        except User.DoesNotExist:
+            # Username does not exist, return True
+            data = {'available': True}
+        return JsonResponse(data)
+    # If the request is not a GET request, return 404
+    return JsonResponse({}, status=404)
+
+

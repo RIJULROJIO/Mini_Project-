@@ -128,10 +128,75 @@
 # if __name__ == "__main__":
 #     unittest.main()
 
+# import time
+# import unittest
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+
+# class LoginTest(unittest.TestCase):
+
+#     def setUp(self):
+#         self.driver = webdriver.Chrome()
+
+#     def test_successful_login(self):
+#         self.driver.get('http://127.0.0.1:8000/login')
+#         username_input = self.driver.find_element(By.ID, 'username')
+#         password_input = self.driver.find_element(By.ID, 'password')
+
+#         # Replace 'valid_username' and 'valid_password' with actual credentials
+#         username_input.send_keys('rijulrojio')
+#         password_input.send_keys('rR@12345')
+
+#         login_button = self.driver.find_element(By.ID, 'login')
+#         login_button.click()
+
+#         time.sleep(2)  # Adjust the time as needed
+
+#         # Check if redirected to the ownerpage
+#         self.assertIn('http://127.0.0.1:8000/ownerpage', self.driver.current_url.lower())
+
+#         # Click on the "Dashboard" link
+#         dashboard_link = self.driver.find_element(By.LINK_TEXT, 'Dashboard')
+#         dashboard_link.click()
+
+#         time.sleep(2)  # Adjust the time as needed
+
+#         # Check if redirected to the ownerpg
+#         self.assertIn('http://127.0.0.1:8000/ownerpg', self.driver.current_url.lower())
+
+#         # Click on the "Manage Properties" link
+#         manage_properties_link = self.driver.find_element(By.LINK_TEXT, 'Manage Properties')
+#         manage_properties_link.click()
+
+#         time.sleep(2)  # Adjust the time as needed
+
+#         # Check if redirected to the manageprop
+#         self.assertIn('http://127.0.0.1:8000/manageprop', self.driver.current_url.lower())
+
+#         # Click on the "Accept Request" button
+#         accept_request_button = self.driver.find_element(By.CSS_SELECTOR, 'form button.btn-primary')
+#         accept_request_button.click()
+
+#         time.sleep(2)  # Adjust the time as needed
+
+#         # Now you can add assertions to check if the acceptance was successful
+#         # For example, check for success messages or changes in the UI
+
+#     def tearDown(self):
+#         self.driver.quit()
+
+# if __name__ == "__main__":
+#     unittest.main()
+
+
+#mainproject 
+    
+#1
 import time
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 class LoginTest(unittest.TestCase):
 
@@ -144,8 +209,8 @@ class LoginTest(unittest.TestCase):
         password_input = self.driver.find_element(By.ID, 'password')
 
         # Replace 'valid_username' and 'valid_password' with actual credentials
-        username_input.send_keys('rijulrojio')
-        password_input.send_keys('rR@12345')
+        username_input.send_keys('george')
+        password_input.send_keys('gG@12345')
 
         login_button = self.driver.find_element(By.ID, 'login')
         login_button.click()
@@ -153,37 +218,52 @@ class LoginTest(unittest.TestCase):
         time.sleep(2)  # Adjust the time as needed
 
         # Check if redirected to the ownerpage
-        self.assertIn('http://127.0.0.1:8000/ownerpage', self.driver.current_url.lower())
+        self.assertIn('http://127.0.0.1:8000/serproviderpage', self.driver.current_url.lower())
 
-        # Click on the "Dashboard" link
-        dashboard_link = self.driver.find_element(By.LINK_TEXT, 'Dashboard')
-        dashboard_link.click()
-
-        time.sleep(2)  # Adjust the time as needed
-
-        # Check if redirected to the ownerpg
-        self.assertIn('http://127.0.0.1:8000/ownerpg', self.driver.current_url.lower())
-
-        # Click on the "Manage Properties" link
-        manage_properties_link = self.driver.find_element(By.LINK_TEXT, 'Manage Properties')
-        manage_properties_link.click()
+        # Click on the dashboard link
+        dashboard_button = self.driver.find_element(By.CLASS_NAME, 'dashboard-btn')
+        dashboard_button.click()
 
         time.sleep(2)  # Adjust the time as needed
 
-        # Check if redirected to the manageprop
-        self.assertIn('http://127.0.0.1:8000/manageprop', self.driver.current_url.lower())
+        # Check if redirected to the serproviderdash page
+        self.assertIn('http://127.0.0.1:8000/serproviderdash/', self.driver.current_url.lower())
 
-        # Click on the "Accept Request" button
-        accept_request_button = self.driver.find_element(By.CSS_SELECTOR, 'form button.btn-primary')
-        accept_request_button.click()
+        # Find and click on the "Service Requests" link
+        service_requests_link = self.driver.find_element(By.ID, 'serviceRequestsLink')
+        service_requests_link.click()
 
         time.sleep(2)  # Adjust the time as needed
 
-        # Now you can add assertions to check if the acceptance was successful
-        # For example, check for success messages or changes in the UI
+        # Scroll to the "Schedule Service" button
+        schedule_service_button = self.driver.find_element(By.XPATH, "//button[contains(text(), 'Schedule Service')]")
+        self.driver.execute_script("arguments[0].scrollIntoView();", schedule_service_button)
+
+        time.sleep(2)  # Adjust the time as needed
+
+        # Click the "Schedule Service" button
+        schedule_service_button.click()
+
+        time.sleep(2)  # Adjust the time as needed
+
+        # Fill the scheduled date
+        scheduled_date_input = self.driver.find_element(By.ID, 'scheduled_date')
+        scheduled_date_input.send_keys('20-03-2024')
+
+        # Fill the scheduled time
+        scheduled_time_input = self.driver.find_element(By.ID, 'scheduled_time')
+        scheduled_time_input.send_keys('10:00')
+
+        # Click the "Schedule Service" button within the form
+        schedule_service_button_in_form = self.driver.find_element(By.XPATH, "//form//button[contains(text(), 'Schedule Service')]")
+        schedule_service_button_in_form.click()
+
+        time.sleep(2)  # Adjust the time as needed
 
     def tearDown(self):
         self.driver.quit()
 
 if __name__ == "__main__":
     unittest.main()
+
+#2

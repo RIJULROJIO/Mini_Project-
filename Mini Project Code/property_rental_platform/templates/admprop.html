@@ -9,6 +9,7 @@
             background-color: #f2f2f2;
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif; /* Use your preferred font family */
         }
 
         .sidebar {
@@ -114,16 +115,94 @@
             width: 100% !important;
             height: auto !important;
         }
+        
         a {
-            
             text-decoration: none; /* Remove underline */
             color: blueviolet; /* Use the default text color of the parent element */
         }
+        
         a:hover {
             color: blueviolet; /* Set the color for the link when hovered */
         }
+
+        .property-details-container {
+            margin-top: 10px;
+            padding: 1px;
+            border: 1px solid #ddd;
+            border-radius: 1px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .property-card {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .property-card-header {
+            padding: 1px;
+            background-color: #99f6ed;
+            color: #fff;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-align: center;
+        }
+
+        .property-card-body {
+            padding: 20px;
+        }
+
+        .property-card-footer {
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            text-align: center;
+        }
+
+        .property-details {
+            margin-bottom: 10px;
+        }
+
+        .property-image {
+            width: 40%;
+            height: auto;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        
+        .fa-icon {
+            margin-right: 5px;
+        }
+        /* styles.css */
+.btn-more-info {
+    margin-right: 10px;
+}
+
+.btn-verify {
+    margin-left: 10px;
+}
+.verified-button {
+    padding: 8px 16px;
+    background-color: #28a745; /* Green color */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: not-allowed; /* Cursor indicates the button is not clickable */
+}
+
+
     </style>
     <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
 </head>
 
 <body>
@@ -139,7 +218,7 @@
         <div class="header">
             <h1>Welcome to the Admin Dashboard</h1>
         </div>
-        <h2>Property Details</h2>
+        <h2> Rental Property Details</h2>
         <table>
             <tr>
                 <!-- <th>Property ID</th> -->
@@ -154,12 +233,12 @@
                 <th>Documents</th>
                 <th>Approval Status</th>
             </tr>
-            {% for property in properties %}
+            {% for property in rental_properties %}
             <tr>
                 <!-- <td>{{ property.id }}</td> -->
                 <td>{{ property.property_type }}</td>
                 <td>{{ property.address }}</td>
-                <td>Rs{{ property.monthly_rent }}</td>
+                <td>₹{{ property.monthly_rent }}</td>
                 <td>{{ property.approval_status }}</td>
                 <td>
                     <a href="{% url 'property_images' property.id %}">View Images</a>
@@ -189,6 +268,71 @@
             </tr>
             {% endfor %}
         </table>
+
+
+        <h2>Sale Property Details</h2>
+        {% for property in sale_properties %}
+            <div class="property-card">
+
+                <img class="property-image" src="{{ property.property_images.url }}" alt="Property Image">
+                <div class="property-details">
+                    <p><strong>Address:</strong> {{ property.address }}</p>
+                    <p><strong>Sale Price:</strong> ₹{{ property.sale_price }}</p>
+                    <p><strong>Description:</strong> {{ property.description }}</p>
+                    <!-- Add more details as needed -->
+                </div>
+                <!-- Property card content -->
+                <div class="property-card-footer">
+                    <!-- Render "Verify" or "Verified" button based on verification status -->
+                    {% if property.verification_status == 'pending' %}
+                        <form method="post" action="{% url 'verify_property' property.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-verify">Verify</button>
+                        </form>
+                    {% else %}
+                        <button class="verified-button" disabled>Verified</button>
+                    {% endif %}
+                    <!-- Add more actions if needed -->
+                <!-- </div> -->
+                <div class="property-card-footer">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#propertyModal{{ property.id }}">
+                        <i class="fas fa-info-circle"></i> More Info
+                    </button>
+                   
+                </div>
+            </div>
+            <!-- Property Modal -->
+            <div class="modal fade" id="propertyModal{{ property.id }}" tabindex="-1" role="dialog" aria-labelledby="propertyModalLabel{{ property.id }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="propertyModalLabel{{ property.id }}">{{ property.property_type }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Property details here -->
+                            <p><strong>Amenities:</strong> {{ property.amenities }}</p>
+                            <p><strong>Contact Information:</strong> {{ property.contact_information }}</p>
+                            <p><strong>Ownership:</strong> {{ property.ownership }}</p>
+                            <p><strong>Plot Area:</strong> {{ property.plot_area }}</p>
+                            <p><strong>Constructed Year:</strong> {{ property.constructed_year }}</p>
+                            <p><strong>Ready to Move:</strong> {% if property.ready_to_move %}Yes{% else %}No{% endif %}</p>
+                            <p><strong>State:</strong> {{ property.state }}</p>
+                            <p><strong>District:</strong> {{ property.district }}</p>
+                            <p><strong>Town:</strong> {{ property.town }}</p>
+                            <p><strong>Locality:</strong> {{ property.locality }}</p>
+                            <p><strong>Street:</strong> {{ property.street }}</p>
+                            <!-- Add more details as needed -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
 
         <!-- Additional Analytics Section -->
         <div class="analytics-section">
@@ -242,6 +386,9 @@
             data: approvalStatusData,
         });
     </script>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>

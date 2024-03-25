@@ -306,10 +306,23 @@
     {% endif %}
    
     <header>
+        <div class="container">
+            <div class="inbox-links">
+                <h6><a href="{% url 'inbox' %}"><i class="fas fa-inbox"></i> Inbox</a></h6>
+                <h6><a href="{% url 'compose_message' %}"><i class="fas fa-comments"></i> Chat</a></h6>
+            </div>
+        </div>
+        
         <nav>
             <a href="{% url 'logout' %}" style="color: black; float: left; margin-left: 10px;">Log out</a>
             <a href="{% url 'tenantpage' %}" style="color: black; float:left; margin-right: 10px;">Back</a>
+           
             <a href="{% url 'financecentre' %}" style="color: black; float:left; margin-right: 10px;">Finance Centre</a>
+            <a href="{% url 'buyprop' %}" style="color: black; float:left; margin-right: 10px;">Buy Property</a>
+           
+
+
+
 
         </nav>
         <h1>Tenant Dashboard</h1>
@@ -336,8 +349,8 @@
                     <option value="Land">Land</option>
                 </select>
                 <label for="min_rent">Enter the range for rent:</label>
-                <input type="number" name="min_rent" placeholder=" Monthly Rent">
-                <input type="number" name="max_rent" placeholder=" Monthly Rent">
+                <input type="number" name="min_rent" placeholder=" ₹minimum">
+                <input type="number" name="max_rent" placeholder=" ₹maximum">
 
                 <!-- Add checkboxes and input fields for other filters (stories, acrescent, rent space, number of rooms, parking space, purpose) -->
 
@@ -365,8 +378,8 @@
                             <h4>{{ property.property_name }}</h4>
                             <p><strong>Property type:</strong> {{ property.property_type }}</p><br>
                             <p><strong>Address:</strong> {{ property.address }}</p><br>
-                            <p><strong>Monthly Rent:</strong> Rs{{ property.monthly_rent }}</p><br>
-                            <p><strong>Security Amount:</strong> Rs {{ property.security_deposit }}</p><br>
+                            <p><strong>Monthly Rent:</strong> ₹{{ property.monthly_rent }}</p><br>
+                            <p><strong>Security Amount:</strong> ₹ {{ property.security_deposit }}</p><br>
                             <p><strong>Availability Date:</strong> {{ property.availability_date }}</p><br>
                             <a href="{% url 'property_detail' property.id %}" class="btn btn-info">
                                 <i class="fas fa-info-circle"></i> More Info
@@ -492,7 +505,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Payment ID</th>
+                            <!-- <th scope="col">Payment ID</th> -->
                             <th scope="col">Amount</th>
                             <th scope="col">Timestamp</th>
                         </tr>
@@ -500,8 +513,8 @@
                     <tbody>
                         {% for payment in property.payment_set.all %}
                             <tr>
-                                <td>{{ payment.id }}</td>
-                                <td>Rs{{ payment.amount }}</td>
+                                <!-- <td>{{ payment.id }}</td> -->
+                                <td>₹{{ payment.amount }}</td>
                                 <td>{{ payment.timestamp|date:"F d, Y H:i:s" }}</td>
                             </tr>
                         {% endfor %}
@@ -541,7 +554,7 @@
                     <h4>{{ rented_property.property_name }}</h4>
                     <p><strong>Property type:</strong> {{ rented_property.property_type }}</p><br>
                     <p><strong>Address:</strong> {{ rented_property.address }}</p><br>
-                    <p><strong>Monthly Rent:</strong> Rs{{ rented_property.monthly_rent }}</p><br>
+                    <p><strong>Monthly Rent:</strong> ₹{{ rented_property.monthly_rent }}</p><br>
                     <!-- <p><strong>Security Amount:</strong> Rs {{ rented_property.security_deposit }}</p><br> -->
                     <!-- <p><strong>Next Rent Payment:</strong> {{ rented_property.upcoming_payment_date|date:"F d, Y" }}</p><br> -->
                     <a href="{% url 'property_detail' rented_property.id %}" class="btn btn-info">
@@ -569,26 +582,33 @@
                     </button>
     
                     <!-- Lease Agreement Modal -->
-                    <div class="modal fade" id="leaseAgreementModal{{ rented_property.id }}" tabindex="-1" role="dialog" aria-labelledby="leaseAgreementModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="leaseAgreementModalLabel">Lease Agreement for {{ rented_property.property_type }}</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <p><strong>Start Date:</strong> {{ rented_property.lease_agreement.start_date }}</p>
-                                    <p><strong>End Date:</strong> {{ rented_property.lease_agreement.end_date }}</p>
-                                    <p><strong>Rent Amount:</strong> Rs{{ rented_property.lease_agreement.rent_amount }}</p>
-                                    <!-- <p><strong>Security Deposit:</strong> Rs{{ rented_property.lease_agreement.security_deposit }}</p> -->
-                                    <!-- Add more lease agreement details as needed -->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </div>
-    
+                    <!-- Lease Agreement Modal -->
+<div class="modal fade" id="leaseAgreementModal{{ rented_property.id }}" tabindex="-1" role="dialog" aria-labelledby="leaseAgreementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="leaseAgreementModalLabel">Rental Agreement for {{ rented_property.property_type }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3>RENTAL AGREEMENT</h3>
+                <p>This Rental Agreement ("Agreement") is made and entered into on [{{ rented_property.lease_agreement.start_date }}] by and between [Property Owner Name], hereinafter referred to as "Landlord," and [Tenant Name], hereinafter referred to as "Tenant."</p>
+                <!-- Add more details of the rental agreement as needed -->
+                <p><strong>Start Date:</strong> {{ rented_property.lease_agreement.start_date }}</p>
+                <p><strong>End Date:</strong> {{ rented_property.lease_agreement.end_date }}</p>
+                <p><strong>Rent Amount:</strong> ₹{{ rented_property.lease_agreement.rent_amount }}</p>
+                <p><strong>Security Amount:</strong> ₹{{ rented_property.lease_agreement.security_deposit }}</p>
+                <!-- Add more lease agreement details as needed -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
                     <!-- Add more buttons or details if needed -->
                 </div>
             </li>

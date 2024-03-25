@@ -79,7 +79,7 @@
                             {% for payment in property_data.tenants_payments %}
                                 <li class="list-group-item">
                                     <div class="tenant-info">  Payment for the property by {{ payment.user_profile.user.username }}</div>
-                                    <div> Total Amount: INR {{ payment.amount }}</div>
+                                    <div> Total Amount: ₹ {{ payment.amount }}</div>
                                     <div>Paid Date : {{ payment.timestamp|date:"F d, Y" }}</div>
                                     <!-- Add other details as needed -->
                                 </li>
@@ -93,7 +93,7 @@
         <!-- Total Earnings Section -->
         {% if total_earnings %}
         <div class="total-earnings">
-            Total Earnings: INR {{ total_earnings }}
+            Total Earnings: ₹ {{ total_earnings }}
         </div>
     {% endif %}
     </div>

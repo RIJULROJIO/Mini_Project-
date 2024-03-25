@@ -71,3 +71,27 @@ class ScheduledServiceAdmin(admin.ModelAdmin):
     search_fields = ('service_request__service__service_name', 'service_request__user__username')  # Assuming these are the related fields
 
 admin.site.register(ScheduledService, ScheduledServiceAdmin)
+
+
+
+from .models import Propertysell
+
+@admin.register(Propertysell)
+class PropertyAdmin(admin.ModelAdmin):
+    list_display = ('user_profile', 'property_type', 'address', 'sale_price')
+    search_fields = ('user_profile__full_name', 'address', 'sale_price')
+    list_filter = ('property_type', 'state', 'district', 'town')
+
+from .models import LoanApplication
+
+@admin.register(LoanApplication)
+class LoanApplicationAdmin(admin.ModelAdmin):
+    list_display = ('applicant_name', 'property', 'loan_amount', 'occupation', 'email')
+    list_filter = ('occupation',)
+    search_fields = ('applicant_name', 'email', 'property__address')
+
+
+from django.contrib import admin
+from .models import Message
+
+admin.site.register(Message)

@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,12 +19,17 @@
         }
 
         h1 {
-            background-color: #7f9600;
+            background-color: #ebde9e;
             color: #fff;
             text-align: center;
             padding: 10px;
             font-size: 24px;
+            text-decoration: none;
+
         }
+        h1 a {
+        text-decoration: none;
+    }
 
         .container {
             max-width: 1200px;
@@ -67,26 +71,28 @@
 
         .card-body {
             max-height: 600px; /* Set your desired max height */
-    overflow-y: auto; /* Hide overflow content if it exceeds the fixed height */
-    scrollbar-width: thin;
-    scrollbar-color: #021215 #f8f9fa;/* /* Hide overflow content if it exceeds the fixed height */
+            overflow-y: auto; /* Hide overflow content if it exceeds the fixed height */
+            scrollbar-width: thin;
+            scrollbar-color: #f3f2f3 #f8f9fa;/* /* Hide overflow content if it exceeds the fixed height */
         }
         .card-body::-webkit-scrollbar {
-    width: 8px;
-}
+            width: 8px;
+        }
 
-.card-body::-webkit-scrollbar-thumb {
-    background-color: #020a0b; /* Scrollbar thumb color */
-    border-radius: 4px;
-}
+        .card-body::-webkit-scrollbar-thumb {
+            background-color: #8abcc2; /* Scrollbar thumb color */
+            border-radius: 4px;
+        }
 
-.card-body::-webkit-scrollbar-track {
-    background-color: #f8f9fa; /* Scrollbar track color */
-}
+        .card-body::-webkit-scrollbar-track {
+            background-color: #f8f9fa; /* Scrollbar track color */
+        }
 
         .card-title {
             font-size: 20px;
             color: #009688;
+            display: flex;
+            align-items: center;
         }
 
         .card-text {
@@ -171,30 +177,37 @@
             justify-content: space-between;
         }
 
+        .update-button,
+        .delete-button,
+        .services-button,
+        .feedback-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 5px;
+            color: #fff;
+        }
+
         .update-button {
-            color: #fff;
-            background-color: #17a2b8; /* Choose a color for the update button */
-            border-color: #17a2b8;
+            background-color: #ff9900; /* Update button color */
+            border: 1px solid #ff9900;
         }
 
-        .update-button:hover {
-            background-color: #117a8b; /* Adjust the hover color as needed */
-            border-color: #117a8b;
+        .delete-button {
+            background-color: #cc0000; /* Delete button color */
+            border: 1px solid #cc0000;
         }
 
-        .clear-button {
-            background-color: #d9534f; /* Red color for the clear button */
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            transition: background-color 0.3s;
+        .services-button {
+            background-color: #007bff; /* Services button color */
+            border: 1px solid #007bff;
         }
 
-        .clear-button:hover {
-            background-color: #c9302c; /* Darker red on hover */
+        .feedback-button {
+            background-color: #28a745; /* Feedback button color */
+            border: 1px solid #28a745;
         }
 
         .on-rent-label {
@@ -259,6 +272,10 @@
             font-weight: bold;
             margin-top: 20px;
         }
+        h2 a {
+        text-decoration: none;
+        color: peru;
+    }
 
     </style>
     <link rel="shortcut icon" href="{% static 'images/Key.png' %}" type="">
@@ -268,18 +285,21 @@
     <h1>Manage Your Properties</h1>
 
     <h6><a href="{% url 'ownerpg' %}">Back to Home</a></h6>
+    <div class="container">
+        <div class="inbox-links">
+            <h6><a href="{% url 'inbox' %}"><i class="fas fa-inbox"></i> Inbox</a></h6>
+            <h6><a href="{% url 'compose_message' %}"><i class="fas fa-comments"></i> Chat</a></h6>
+        </div>
+    </div>
+    
+
+
     <!-- Notification Bell Button -->
     <div class="notification-btn" id="notificationBtn" onclick="toggleNotificationPanel()">
         <i class="fas fa-bell"></i>
     </div>
 
     <!-- Notification Panel -->
-    <div class="notification-panel" id="notificationPanel">
-        <!-- Your notifications go here -->
-        <p>Notification 1</p>
-        <p>Notification 2</p>
-        <!-- Add more notifications as needed -->
-    </div>
 
     <div class="container">
         <div class="user-name">Property Owner: {{ request.session.username }}</div>
@@ -292,7 +312,9 @@
         
         <!-- Property Listing Section -->
         <section>
-            <h2>Your Properties</h2>
+            <h2 style="color: chartreuse;"><a href="{% url 'view_properties' %}" style="text-decoration: none;">Your Properties for Sell --></a></h2>
+
+            <h2>Your Properties for Rent</h2>
             <div class="row">
                 {% for property in properties %}
                     <div class="col-md-4 mb-4">
@@ -300,8 +322,8 @@
                             <div class="card-body">
                                 <p class="card-title">{{ property.property_type }}</p>
                                 <p class="card-text"><strong>Address:</strong> {{ property.address }}</p>
-                                <p class="card-text"><strong>Monthly Rent:</strong> Rs{{ property.monthly_rent }}</p>
-                                <p class="card-text"><strong>Security Amount:</strong>Rs {{ property.security_deposit }}</p>
+                                <p class="card-text"><strong>Monthly Rent:</strong> ₹{{ property.monthly_rent }}</p>
+                                <p class="card-text"><strong>Security Amount:</strong>₹ {{ property.security_deposit }}</p>
                                 <p class="card-text"><strong>Availability Date:</strong> {{ property.availability_date }}</p>
 
                                 <!-- Property Images Carousel/Slider -->

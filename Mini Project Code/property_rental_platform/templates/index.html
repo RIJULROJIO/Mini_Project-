@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Rentals - Find Your Dream Home</title>
+    <title>Property Rentals - Find Your Dream Property</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 
@@ -403,6 +403,79 @@
     background-color: #00796B; /* Darker shade on hover */
 }
 
+/* Property Card Styles */
+/* Property listing based on search results */
+/* Property listing based on search results */
+/* Property listing based on search results */
+.section {
+    margin-bottom: 40px;
+}
+.property-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Ensure equal spacing between cards */
+    margin: 0 -10px; /* Negative margin to counteract the margin set for each card */
+}
+
+.property-card {
+    flex: 0 1 calc(33.33% - 20px); /* Adjust width for three cards in a row */
+    max-width: calc(33.33% - 20px); /* Adjust max-width for responsiveness */
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    margin: 0 10px; /* Add margin to create space between cards */
+}
+
+/* Add media query for responsiveness */
+@media (max-width: 992px) {
+    .property-card {
+        flex: 0 1 calc(50% - 20px); /* Adjust width for two cards in a row on smaller screens */
+        max-width: calc(50% - 20px); /* Adjust max-width for responsiveness */
+    }
+}
+
+/* Hover effect */
+.property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.property-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px 10px 0 0;
+}
+
+.property-details {
+    padding: 20px;
+}
+
+.property-details h4 {
+    font-size: 20px;
+    color: #009688;
+    margin-bottom: 10px;
+}
+
+.property-details p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.property-details p i {
+    margin-right: 10px;
+}
+
+/* Font Awesome Icons */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+
 
 
 
@@ -448,15 +521,15 @@
             <select name="property_type" id="property_type">
                 <option value="">Any</option>
                 <option value="apartment">Apartment</option>
-                <option value="house">House</option>
-                <option value="office">Office</option>
+                <option value="House">House</option>
+                <!-- <option value="office">Office</option> -->
                 <option value="Officespace">Officespace</option>
                 <option value="Warehouse">Warehouse</option>
                 <option value="Land">Land</option>
             </select>
             <label for="min_rent">Enter the range for rent:</label>
-            <input type="number" name="min_rent" placeholder=" Monthly Rent">
-            <input type="number" name="max_rent" placeholder=" Monthly Rent"><br><br>
+            <input type="number" name="min_rent" placeholder=" ₹minimum">
+            <input type="number" name="max_rent" placeholder=" ₹maximum"><br><br>
 
             <!-- Add checkboxes and input fields for other filters (stories, acrescent, rent space, number of rooms, parking space, purpose) -->
 
@@ -471,12 +544,12 @@
 <!-- ... (existing code) ... -->
 
 <!-- Property listing based on search results -->
+<!-- Section for Properties for Rent -->
 <div class="section">
-    <h3>Available Properties</h3>
-    <ul class="property-list">
+    <h3>Properties for Rent</h3>
+    <div class="property-list">
         {% for property in properties %}
-            <li class="property-card">
-                <!-- Add a Bootstrap carousel for property images -->
+            <div class="property-card">
                 <div class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner">
                         {% for image in property.propertyimage_set.all %}
@@ -487,11 +560,14 @@
                     </div>
                 </div>
                 <div class="property-details">
-                    <h4>{{ property.property_name }}</h4>
-                    <p><strong>Property type:</strong> {{ property.property_type }}</p><br>
-                    <p><strong>Address:</strong> {{ property.address }}</p><br>
-                    <p><strong>Monthly Rent:</strong> Rs{{ property.monthly_rent }}</p><br>
-                    <p><strong>Security Amount:</strong> Rs {{ property.security_deposit }}</p><br>
+                    <h4>{{ property.property_type }}</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ property.address }}</p>
+                    <p><i class="fas fa-coins"></i> Monthly Rent: ₹{{ property.monthly_rent }}</p>
+                    <p><i class="fas fa-lock"></i> Security Deposit: ₹{{ property.security_deposit }}</p>
+                    <!-- <p><i class="fas fa-bed"></i> Bedrooms: {{ property.bedrooms }}</p>
+                    <p><i class="fas fa-bath"></i> Bathrooms: {{ property.bathrooms }}</p> -->
+                    <!-- Add more property details as needed -->
+
                     <div class="property-rating">
                         {% if property.latest_rating %}
                             {% for i in 1|ljust:property.latest_rating %}
@@ -503,25 +579,58 @@
                     </div>
 
                     {% if property.is_rental_request_accepted %}
-                        <p class="status not-available">Property Not Available at the moment</p><br>
-                    {% else %}
-                        <a href="{% url 'property_detail' property.id %}" class="btn btn-info">
-                            <i class="fas fa-info-circle"></i> More Info
-                        </a>
-                       <br><br> <a href="{% url 'login' %}" class="btn btn-info">
-                            <i class="fas fa-thumbs-up"></i> Rent Now
-                        </a>
-                    {% endif %}
+                    <p class="status not-available">Property Not Available at the moment</p><br>
+                {% else %}
+                    <a href="{% url 'property_detail' property.id %}" class="btn btn-info">
+                        <i class="fas fa-info-circle"></i> More Info
+                    </a>
+                   <br><br> <a href="{% url 'login' %}" class="btn btn-info">
+                        <i class="fas fa-thumbs-up"></i> Rent Now
+                    </a>
+                {% endif %}
                 </div>
-            </li>
+            </div>
         {% endfor %}
-
-        <!-- Display a message if no results are found -->
-        {% if properties.count == 0 %}
-            <p>No properties found matching your search criteria.</p>
+        <!-- Display a message if no properties are available for rent -->
+        {% if properties_for_rent.count == 0 %}
+            <p>No properties available for rent at the moment.</p>
         {% endif %}
-    </ul>
+    </div>
 </div>
+
+
+
+<!-- Section for Properties for Sale -->
+<div class="section">
+    <h3> Properties for Sale</h3>
+    <div class="property-list">
+        {% for property in properties_for_sale %}
+            <div class="property-card">
+                <div class="property-image">
+                    <img src="{{ property.property_images.url }}" alt="Property Image">
+                </div>
+                <div class="property-details">
+                    <h4>{{ property.property_type }}</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ property.address }}</p>
+                    <p><i class="fas fa-coins"></i> Price: ₹{{ property.sale_price }}</p>
+                    <p><i class="fas fa-ruler-combined"></i> Plot Area: {{ property.plot_area }}</p>
+                    <p><i class="fas fa-calendar-alt"></i> Constructed Year: {{ property.constructed_year }}</p>
+                    <p><i class="fas fa-info-circle"></i> Description: {{ property.description }}</p>
+
+                    <a href="{% url 'login' %}" class="btn btn-info">
+                        <i class="fas fa-info-circle"></i> Contact Details
+                    </a>
+                    <!-- Add more property details as needed -->
+                </div>
+            </div>
+        {% endfor %}
+        <!-- Display a message if no properties are available for sale -->
+        {% if properties_for_sale.count == 0 %}
+            <p>No properties available for sale at the moment.</p>
+        {% endif %}
+    </div>
+</div>
+
 
 <!-- Existing content -->
 
@@ -536,6 +645,8 @@
         <p class="ad-description" style="color: darkmagenta;">Discover your dream property with our partners. Click to explore!</p>
     </div>
 </section>
+
+
 
 <!-- Existing content continues -->
 

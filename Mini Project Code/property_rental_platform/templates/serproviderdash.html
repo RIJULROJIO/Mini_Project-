@@ -209,7 +209,7 @@
                         <strong>Service Category: {{ service.service_category }}</strong><br>
                         <strong>Specialized Property: {{ service.property_type }}</strong><br>
                         <strong>About Service: {{ service.service_description }}</strong><br>
-                        <strong>Pricing: {{ service.service_price }}</strong><br>
+                        <strong>Pricing: ₹{{ service.service_price }}</strong><br>
                         <strong>Service Location: {{ service.location }}</strong><br>
                         <!-- Edit button triggers a modal with an edit form -->
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editServiceModal{{ service.id }}">
@@ -391,7 +391,7 @@
                     <li class="highlight">
                         <!-- <strong>Service Name:</strong> {{ payment.service.service_name }}<br> -->
                         <strong>Service Category:</strong> {{ payment.service.service_category }}<br>
-                        <strong>Payment Amount:</strong> {{ payment.amount }}<br>
+                        <strong>Payment Amount:</strong> ₹{{ payment.amount }}<br>
                         <strong>Payment Time:</strong> {{ payment.timestamp|date:"F d, Y H:i A" }}<br>
                         <strong>Payment by User:</strong> {{ payment.user_profile.user.username }}<br>
 

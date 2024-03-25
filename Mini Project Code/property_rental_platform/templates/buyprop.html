@@ -1,0 +1,188 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Properties for Sale</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom CSS for property card design */
+        .property-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .property-card-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .property-card-body {
+            padding: 20px;
+        }
+        .property-card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .property-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .property-info-item {
+            margin-bottom: 10px;
+        }
+        .property-info-item i {
+            margin-right: 10px;
+        }
+        /* Custom CSS for filter form */
+        .filter-form {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        h2 a {
+            text-decoration: none !important;
+             /* Remove underline */
+        }
+        .verified-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #28a745;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .unverified-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #dc3545; /* Red color */
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+        
+    </style>
+            <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
+
+</head>
+<body>
+    <div class="container mt-5">
+        <center>
+        <h2 class="mb-4" ><a href="{% url 'buyprop' %}">Properties for Sale</a></h2></center>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="filter-form">
+                    <h4>Filter Properties</h4>
+                    <form method="GET" action="{% url 'buyprop' %}">
+                        <div class="form-group">
+                            <label for="property_type">Property Type</label>
+                            <select class="form-control" id="property_type" name="property_type">
+                                <option value="">All</option>
+                                <option value="house">House</option>
+                                <option value="apartment">Apartment</option>
+                                <!-- Add more property types as needed -->
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="min_price">Minimum Price</label>
+                                <input type="number" class="form-control" id="min_price" name="min_price">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="max_price">Maximum Price</label>
+                                <input type="number" class="form-control" id="max_price" name="max_price">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" class="form-control" id="state" name="state">
+                        </div>
+                        <div class="form-group">
+                            <label for="district">District</label>
+                            <input type="text" class="form-control" id="district" name="district">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    {% for property in properties %}
+                    <div class="col-md-6">
+                        <div class="property-card">
+                            <h6 style="color: brown;"><a href="{% url 'financecentre' %}">require a loan?</a></h6>
+                            {% if property.verification_status == 'verified' %}
+                            <div class="verified-badge">
+                                <i class="fas fa-check-circle"></i> Platform Verified 
+                            </div>
+                            {% else %}
+                            <div class="unverified-badge">
+                                <i class="fas fa-exclamation-circle"></i> Property Unverified
+                            </div>
+                            {% endif %}
+
+                    <div class="property-card-header">
+                        {{ property.property_type }}
+
+                    </div>
+                    <div class="property-card-body">
+                        <h3 class="property-card-title">{{ property.address }}</h3>
+                        <img src="{{ property.property_images.url }}" alt="Property Image" class="property-card-image">
+                        <div class="property-info-item">
+                            <i class="fas fa-coins"></i> Sale Price: ₹ {{ property.sale_price }}
+                        </div>
+                        <div class="property-info-item">
+                            <i class="fas fa-info-circle"></i> Description: {{ property.description }}
+                        </div>
+                        <div class="property-info-item">
+                            <i class="fas fa-key"></i> Ownership: {{ property.ownership }}
+                        </div>
+                        <div class="property-info-item">
+                            <i class="fas fa-ruler-combined"></i> Plot Area: {{ property.plot_area }}
+                        </div>
+                        <div class="property-info-item">
+                            <i class="fas fa-calendar-alt"></i> Constructed Year: {{ property.constructed_year }}
+                        </div>
+                        <div class="property-info-item">
+                            <i class="fas fa-check"></i> Ready To Move: {% if property.ready_to_move %} Yes {% else %} No {% endif %}
+                        </div>
+                        <div class="property-info-item">
+                            <i class="fas fa-map-marker-alt"></i> Location: {{ property.state }}, {{ property.district }}, {{ property.town }}, {{ property.locality }}, {{ property.street }}
+                        </div>
+                        <div class="property-info-item">
+                            <i class="fas fa-phone-alt"></i> Contact Information: {{ property.contact_information }}
+                        </div>
+                        <!-- Add more property details as needed -->
+                    </div>
+                            <!-- Property card content goes here -->
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
