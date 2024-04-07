@@ -239,26 +239,7 @@ class Pay(models.Model):
         return f"Payment for Property {self.service.id} by {self.user_profile.user.username} at {self.timestamp}"
 
 
-class LoanApplication(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    applicant_name = models.CharField(max_length=255)
-    address = models.TextField()
-    state = models.CharField(max_length=255)
-    district = models.CharField(max_length=255)
-    telephone = models.CharField(max_length=15)
-    email = models.EmailField()
-    age = models.IntegerField()
-    occupation = models.CharField(max_length=20, choices=[('Employed', 'Employed'), ('Self-employed', 'Self-employed'), ('Retired', 'Retired')])
-    loan_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    property_address = models.TextField()
-    nearest_bank = models.CharField(max_length=255)
-    net_monthly_income = models.DecimalField(max_digits=10, decimal_places=2)
-    
-    # Foreign key to Property model
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='loan_applications')
 
-    def __str__(self):
-        return f"{self.applicant_name}'s Loan Application"
 
 class Propertysell(models.Model):
     PROPERTY_TYPES = [
@@ -319,3 +300,26 @@ class Schedule(models.Model):
 
     def __str__(self):
         return f"Visit for {self.property.address} by {self.tenant.username} on {self.visit_date} at {self.visit_time}"
+    
+
+
+class LoanApplication(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    applicant_name = models.CharField(max_length=255)
+    address = models.TextField()
+    state = models.CharField(max_length=255)
+    district = models.CharField(max_length=255)
+    telephone = models.CharField(max_length=15)
+    email = models.EmailField()
+    age = models.IntegerField()
+    occupation = models.CharField(max_length=20, choices=[('Employed', 'Employed'), ('Self-employed', 'Self-employed'), ('Retired', 'Retired')])
+    loan_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    property_address = models.TextField()
+    nearest_bank = models.CharField(max_length=255)
+    net_monthly_income = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Foreign key to Propertysell model
+    property_sell = models.ForeignKey(Propertysell, on_delete=models.CASCADE, related_name='loan_applications')
+
+    def __str__(self):
+        return f"{self.applicant_name}'s Loan Application"

@@ -34,7 +34,7 @@
             background-color: #64a4a4; /* Dark blue header background */
             color: #ffffff; /* White text color */
             text-align: center;
-            padding: 20px;
+            padding: 10px;
         }
 
         header h1 {
@@ -472,6 +472,8 @@
     margin-right: 10px;
 }
 
+
+
 /* Font Awesome Icons */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
@@ -494,15 +496,25 @@
     <!-- Updated Header -->
 
 <header>
+    
         <h1 ><a  href="{% url 'index' %}">PROPERTY RENTALS</a></h1>
    
     <nav>
         <ul>
             <li><a href="{% url 'signup' %}">Sign up</a></li>
             <li><a href="{% url 'login' %}">Log in</a></li>
+           
         </ul>
+      
+        
+
+        
     </nav>
+    
+
+
 </header>
+
 
 <!-- Updated Main Content -->
 <main>
@@ -512,6 +524,11 @@
     <!-- Updated Search Form -->
     <div class="search-form">
         <a href="{% url 'view_locations' %}" class="mapview-button">MapView</a>
+        <!-- <div style="text-align: right;">
+            <span>Select Language: </span>
+            <div id="google_translate_element"></div>
+        </div> -->
+        
 
         <h3>Search for Properties</h3>
 
@@ -536,6 +553,7 @@
             <button class="search-button" type="submit">Search</button>
         </form>
     </div>
+    
 
     <!-- Property listing based on search results -->
     <!-- ... (existing code) ... -->
@@ -684,6 +702,16 @@
         <p>&copy; 2024 Property Rentals</p>
     </div>
 </footer>
+
+
+
+<script type="text/javascript"> 
+    function googleTranslateElementInit() {
+new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
 </html>

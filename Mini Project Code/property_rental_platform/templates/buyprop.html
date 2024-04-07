@@ -172,6 +172,45 @@
                         </div>
                         <!-- Add more property details as needed -->
                     </div>
+
+               
+
+                    <button type="button" class="btn btn-sm {% if property.has_scheduled_visits %} btn-warning {% else %} btn-primary {% endif %}" data-toggle="modal" data-target="#propertyModal{{ property.id }}">
+                        Scheduled Visits
+                    </button>
+                
+
+                 
+            
+                    <!-- Modal -->
+                    <div class="modal fade" id="propertyModal{{ property.id }}" tabindex="-1" role="dialog" aria-labelledby="propertyModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="propertyModalLabel">Scheduled Visits for {{ property.address }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    {% for visit in scheduled_visits %}
+                                    {% if visit.property == property %}
+
+                                    <div class="property-schedule">
+                                        <h5>{{ visit.tenant.email }}</h5>
+                                        <p>Date: {{ visit.visit_date }}</p>
+                                        <p>Time: {{ visit.visit_time }}</p>
+                                        <p>Note: {{ visit.note }}</p>
+                                    </div>
+                                 
+                                    {% endif %}
+
+                                    {% endfor %}
+                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                             <!-- Property card content goes here -->
                         </div>
                     </div>

@@ -84,11 +84,12 @@ class PropertyAdmin(admin.ModelAdmin):
 
 from .models import LoanApplication
 
-@admin.register(LoanApplication)
-class LoanApplicationAdmin(admin.ModelAdmin):
-    list_display = ('applicant_name', 'property', 'loan_amount', 'occupation', 'email')
-    list_filter = ('occupation',)
-    search_fields = ('applicant_name', 'email', 'property__address')
+# @admin.register(LoanApplication)
+# class LoanApplicationAdmin(admin.ModelAdmin):
+#     list_display = ('applicant_name', 'property', 'loan_amount', 'occupation', 'email')
+#     list_filter = ('occupation',)
+#     search_fields = ('applicant_name', 'email', 'property__address')
+
 
 
 from django.contrib import admin

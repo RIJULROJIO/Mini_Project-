@@ -312,8 +312,12 @@
         
         <!-- Property Listing Section -->
         <section>
-            <h2 style="color: chartreuse;"><a href="{% url 'view_properties' %}" style="text-decoration: none;">Your Properties for Sell --></a></h2>
-
+            <h2 style="color: #4CAF50; font-size: 24px; font-weight: bold; text-transform: uppercase; margin-bottom: 20px;">
+                <a href="{% url 'view_properties' %}" style="text-decoration: none; color: #4CAF50;">
+                    Your Properties for Sale <span style="font-size: 18px;">&rarr;</span>
+                </a>
+            </h2>
+            
             <h2>Your Properties for Rent</h2>
             <div class="row">
                 {% for property in properties %}

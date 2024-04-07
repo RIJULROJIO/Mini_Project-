@@ -182,6 +182,21 @@
 }
 
 
+/* Add this CSS code to the <style> section in the head of your HTML document or in an external stylesheet */
+
+  .form-group input[type="file"] {
+  display: block;
+  margin-top: 5px;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 5px;
+  color: #888;
+}
+
+
+
     
   </style>
   <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
@@ -385,6 +400,14 @@
 
       <span class="submitted">Application Submitted</span>
     </div>
+
+          <!-- Add this section inside the form-container div -->
+                <div class="form-group">
+                            <label for="documents">Upload Documents</label>
+                                  <input type="file" id="documents" name="documents" multiple accept=".pdf,.doc,.docx,.jpg,.png">
+                                    <small>Allowed file types: .pdf, .doc, .docx, .jpg, .png</small>
+                </div>
+
 
 
       

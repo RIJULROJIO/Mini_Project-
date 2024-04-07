@@ -191,79 +191,224 @@
 
 #mainproject 
     
-#1
-import time
-import unittest
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+# 1
+# import time
+# import unittest
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.common.keys import Keys
 
-class LoginTest(unittest.TestCase):
+# class LoginTest(unittest.TestCase):
 
-    def setUp(self):
-        self.driver = webdriver.Chrome()
+#     def setUp(self):
+#         self.driver = webdriver.Chrome()
 
-    def test_successful_login(self):
-        self.driver.get('http://127.0.0.1:8000/login')
-        username_input = self.driver.find_element(By.ID, 'username')
-        password_input = self.driver.find_element(By.ID, 'password')
+#     def test_successful_login(self):
+#         self.driver.get('http://127.0.0.1:8000/login')
+#         username_input = self.driver.find_element(By.ID, 'username')
+#         password_input = self.driver.find_element(By.ID, 'password')
 
-        # Replace 'valid_username' and 'valid_password' with actual credentials
-        username_input.send_keys('george')
-        password_input.send_keys('gG@12345')
+#         # Replace 'valid_username' and 'valid_password' with actual credentials
+#         username_input.send_keys('george')
+#         password_input.send_keys('gG@12345')
 
-        login_button = self.driver.find_element(By.ID, 'login')
-        login_button.click()
+#         login_button = self.driver.find_element(By.ID, 'login')
+#         login_button.click()
 
-        time.sleep(2)  # Adjust the time as needed
+#         time.sleep(2)  # Adjust the time as needed
 
-        # Check if redirected to the ownerpage
-        self.assertIn('http://127.0.0.1:8000/serproviderpage', self.driver.current_url.lower())
+#         # Check if redirected to the ownerpage
+#         self.assertIn('http://127.0.0.1:8000/serproviderpage', self.driver.current_url.lower())
 
-        # Click on the dashboard link
-        dashboard_button = self.driver.find_element(By.CLASS_NAME, 'dashboard-btn')
-        dashboard_button.click()
+#         # Click on the dashboard link
+#         dashboard_button = self.driver.find_element(By.CLASS_NAME, 'dashboard-btn')
+#         dashboard_button.click()
 
-        time.sleep(2)  # Adjust the time as needed
+#         time.sleep(2)  # Adjust the time as needed
 
-        # Check if redirected to the serproviderdash page
-        self.assertIn('http://127.0.0.1:8000/serproviderdash/', self.driver.current_url.lower())
+#         # Check if redirected to the serproviderdash page
+#         self.assertIn('http://127.0.0.1:8000/serproviderdash/', self.driver.current_url.lower())
 
-        # Find and click on the "Service Requests" link
-        service_requests_link = self.driver.find_element(By.ID, 'serviceRequestsLink')
-        service_requests_link.click()
+#         # Find and click on the "Service Requests" link
+#         service_requests_link = self.driver.find_element(By.ID, 'serviceRequestsLink')
+#         service_requests_link.click()
 
-        time.sleep(2)  # Adjust the time as needed
+#         time.sleep(2)  # Adjust the time as needed
 
-        # Scroll to the "Schedule Service" button
-        schedule_service_button = self.driver.find_element(By.XPATH, "//button[contains(text(), 'Schedule Service')]")
-        self.driver.execute_script("arguments[0].scrollIntoView();", schedule_service_button)
+#         # Scroll to the "Schedule Service" button
+#         schedule_service_button = self.driver.find_element(By.XPATH, "//button[contains(text(), 'Schedule Service')]")
+#         self.driver.execute_script("arguments[0].scrollIntoView();", schedule_service_button)
 
-        time.sleep(2)  # Adjust the time as needed
+#         time.sleep(2)  # Adjust the time as needed
 
-        # Click the "Schedule Service" button
-        schedule_service_button.click()
+#         # Click the "Schedule Service" button
+#         schedule_service_button.click()
 
-        time.sleep(2)  # Adjust the time as needed
+#         time.sleep(2)  # Adjust the time as needed
 
-        # Fill the scheduled date
-        scheduled_date_input = self.driver.find_element(By.ID, 'scheduled_date')
-        scheduled_date_input.send_keys('20-03-2024')
+#         # Fill the scheduled date
+#         scheduled_date_input = self.driver.find_element(By.ID, 'scheduled_date')
+#         scheduled_date_input.send_keys('20-03-2024')
 
-        # Fill the scheduled time
-        scheduled_time_input = self.driver.find_element(By.ID, 'scheduled_time')
-        scheduled_time_input.send_keys('10:00')
+#         # Fill the scheduled time
+#         scheduled_time_input = self.driver.find_element(By.ID, 'scheduled_time')
+#         scheduled_time_input.send_keys('10:00')
 
-        # Click the "Schedule Service" button within the form
-        schedule_service_button_in_form = self.driver.find_element(By.XPATH, "//form//button[contains(text(), 'Schedule Service')]")
-        schedule_service_button_in_form.click()
+#         # Click the "Schedule Service" button within the form
+#         schedule_service_button_in_form = self.driver.find_element(By.XPATH, "//form//button[contains(text(), 'Schedule Service')]")
+#         schedule_service_button_in_form.click()
 
-        time.sleep(2)  # Adjust the time as needed
+#         time.sleep(2)  # Adjust the time as needed
 
-    def tearDown(self):
-        self.driver.quit()
+#     def tearDown(self):
+#         self.driver.quit()
 
-if __name__ == "__main__":
-    unittest.main()
+# if __name__ == "__main__":
+#     unittest.main()
 
 #2
+    
+# import time
+# import unittest
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.common.keys import Keys
+
+# class LoginTest(unittest.TestCase):
+
+#     def setUp(self):
+#         self.driver = webdriver.Chrome()
+
+#     def test_successful_login(self):
+#         self.driver.get('http://127.0.0.1:8000/login')
+#         username_input = self.driver.find_element(By.ID, 'username')
+#         password_input = self.driver.find_element(By.ID, 'password')
+
+#         # Replace 'valid_username' and 'valid_password' with actual credentials
+#         username_input.send_keys('admin')
+#         password_input.send_keys('admin')
+
+#         login_button = self.driver.find_element(By.ID, 'login')
+#         login_button.click()
+
+#         time.sleep(2)  # Adjust the time as needed
+
+#         # Check if redirected to the ownerpage
+#         self.assertIn('http://127.0.0.1:8000/adminhome', self.driver.current_url.lower())
+#            # Click on "Properties" link from the sidebar
+#         properties_link = self.driver.find_element(By.XPATH, '//div[@class="sidebar"]//a[contains(text(), "Properties")]')
+#         properties_link.click()
+#         time.sleep(2)  # Adjust the time as needed
+#         self.assertIn('http://127.0.0.1:8000/admprop', self.driver.current_url.lower())
+
+#          # Click on the "Verify" button for the first property under "Sale Property Details"
+#         verify_button = self.driver.find_element(By.XPATH, '//h2[text()="Sale Property Details"]/following-sibling::div[@class="property-card"][1]//button[@class="btn btn-success btn-verify"]')
+#         verify_button.click()
+
+#     time.sleep(2) 
+
+
+#     def tearDown(self):
+#         self.driver.quit()
+
+# if __name__ == "__main__":
+#     unittest.main()
+
+
+
+#3
+    
+# import time
+# import unittest
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.common.keys import Keys
+
+# class LoginTest(unittest.TestCase):
+
+#     def setUp(self):
+#         self.driver = webdriver.Chrome()
+
+#     def test_successful_login(self):
+#         self.driver.get('http://127.0.0.1:8000/login')
+#         username_input = self.driver.find_element(By.ID, 'username')
+#         password_input = self.driver.find_element(By.ID, 'password')
+
+#         # Replace 'valid_username' and 'valid_password' with actual credentials
+#         username_input.send_keys('george')
+#         password_input.send_keys('gG@12345')
+
+#         login_button = self.driver.find_element(By.ID, 'login')
+#         login_button.click()
+
+#         time.sleep(2)  # Adjust the time as needed
+
+#         # Check if redirected to the ownerpage
+#         self.assertIn('http://127.0.0.1:8000/serproviderpage', self.driver.current_url.lower())
+
+#4
+
+
+# import time
+# import unittest
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+
+# class LoginTest(unittest.TestCase):
+
+#     def setUp(self):
+#         self.driver = webdriver.Chrome()
+
+#     def test_successful_login(self):
+#         self.driver.get('http://127.0.0.1:8000/login')
+#         username_input = self.driver.find_element(By.ID, 'username')
+#         password_input = self.driver.find_element(By.ID, 'password')
+
+#         # Replace 'valid_username' and 'valid_password' with actual credentials
+#         username_input.send_keys('jubil')
+#         password_input.send_keys('jJ@12345')
+
+#         login_button = self.driver.find_element(By.ID, 'login')
+#         login_button.click()
+
+#         time.sleep(2)  # Adjust the time as needed
+
+
+#         # Check if redirected to the tenantpage
+#         self.assertIn('http://127.0.0.1:8000/tenantpage', self.driver.current_url.lower())
+#         dashboard_link = self.driver.find_element(By.LINK_TEXT, 'Dashboard')
+#         dashboard_link.click()
+
+#         time.sleep(2)  # Adjust the time as needed
+
+#         self.assertIn('http://127.0.0.1:8000/tenantpg', self.driver.current_url.lower())
+#         time.sleep(2) 
+#         chat_link = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Chat')
+#         chat_link.click()
+
+#         time.sleep(2)  # Adjust the time as needed
+#         self.assertIn('http://127.0.0.1:8000/compose/', self.driver.current_url.lower())
+
+#         # Writing and sending a message
+#         recipient_input = self.driver.find_element(By.ID, 'recipient')
+#         subject_input = self.driver.find_element(By.ID, 'subject')
+#         body_input = self.driver.find_element(By.ID, 'body')
+
+#         recipient_input.send_keys('rijulrojio')  # Replace with the recipient's username
+#         subject_input.send_keys('Test Message')
+#         body_input.send_keys('This is a test message sent via Selenium.')
+
+#         send_button = self.driver.find_element(By.CSS_SELECTOR, '.submit-btn')
+#         send_button.click()
+
+#         time.sleep(2)
+
+
+#5
+
+
+      
+
+      
+
+  

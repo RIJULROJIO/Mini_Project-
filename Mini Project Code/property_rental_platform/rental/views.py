@@ -1790,6 +1790,12 @@ def ad_click(request):
     # Log the click or perform any other necessary action
     return redirect(unquote(url))
 
+from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from rental.models import Propertysell, LoanApplication
+
+from django.contrib import messages
 def finance(request):
     if request.method == 'POST':
         # Get form data
@@ -1806,18 +1812,21 @@ def finance(request):
         nearest_bank = request.POST.get('nearest_bank')
         net_monthly_income = request.POST.get('net_monthly_income')
 
-        # Get the Property instance based on the selected property address
+        # Validate if all required fields are provided
+        if not (applicant_name and address and state and district and telephone and email and age and occupation and loan_amount and property_address and nearest_bank and net_monthly_income):
+            messages.error(request, 'Please fill out all required fields')
+            return redirect('finance')  # Redirect back to the finance page with the error message
+
         try:
-            selected_property = Propertysell.objects.get(address=address)
+            # Attempt to get the selected property
+            selected_property = Propertysell.objects.get(address=property_address)
         except Propertysell.DoesNotExist:
             # Handle the case where the property does not exist
-            # You might want to redirect the user to an error page or display an error message
-            return render(request, 'error.html', {'error_message': 'Selected property does not exist'})
+            messages.error(request, 'Selected property does not exist')
+            return redirect('financecentre')  # Redirect back to the finance page with the error message
 
-        # Create a Profile instance with the user's details and the selected property
-        
         # Create a LoanApplication instance with the form data and associated property
-        loan_application = LoanApplication.objects.create(
+        LoanApplication.objects.create(
             user=request.user,
             applicant_name=applicant_name,
             address=address,
@@ -1831,17 +1840,18 @@ def finance(request):
             property_address=property_address,
             nearest_bank=nearest_bank,
             net_monthly_income=net_monthly_income,
-            property=selected_property  # Associate the selected property with the loan application
+            property_sell=selected_property  # Associate the selected property with the loan application
         )
 
-        # Do other processing or redirect the user as needed
-        return redirect('tenantpg')  # Redirect to a success page or another view
+        # Redirect to a success page or another view
+        return redirect('tenantpg')
 
     # If it's a GET request, render the finance page with the property data
     properties = Propertysell.objects.all()
     user_loan_application = LoanApplication.objects.filter(user=request.user).first()
 
     return render(request, 'financecentre.html', {'properties': properties, 'user_loan_application': user_loan_application})
+
 
 
 from .models import Propertysell
@@ -1909,6 +1919,8 @@ def view_properties(request):
 def view_property(request):
     # Retrieve all properties
     properties = Propertysell.objects.all()
+    scheduled_visits = Schedule.objects.filter(tenant=request.user)
+
 
     # Filter properties based on user preferences if any
     if request.method == 'GET':
@@ -1936,8 +1948,11 @@ def view_property(request):
 
         if verification_status:
             properties = properties.filter(verification_status=verification_status)
+        
+    for prop in properties:
+        prop.has_scheduled_visits = scheduled_visits.filter(property=prop).exists()
 
-    return render(request, 'buyprop.html', {'properties': properties})
+    return render(request, 'buyprop.html', {'properties': properties, 'scheduled_visits': scheduled_visits})
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required

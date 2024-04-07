@@ -69,8 +69,9 @@
         <div class="message">
             <p class="sender">{{ message.sender }}</p>
             <p class="timestamp">{{ message.timestamp }}</p>
-            <p class="body">{{ message.body }}</p>
             <p class="subject">Subject: {{ message.subject }}</p>
+
+            <p class="body">{{ message.body }}</p>
             <div class="actions">
                 {% if not message.is_read %}
                     <a href="{% url 'mark_as_read' message.id %}" class="mark-read">Mark as Read</a>

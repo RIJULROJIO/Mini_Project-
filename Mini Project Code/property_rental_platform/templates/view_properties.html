@@ -60,19 +60,32 @@
     .schedule-visit-btn {
             position: absolute;
             bottom: 20px;
-            left: 50%;
+            left: 70%;
             transform: translateX(-50%);
             background-color: #007bff;
             color: #fff;
             padding: 8px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 15px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
         .schedule-visit-btn:hover {
             background-color: #0056b3;
         }
+        .send-documents-btn {
+    background-color: #28a745; /* Green color */
+    color: #fff; /* White text color */
+    padding: 8px 20px; /* Padding */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+.send-documents-btn:hover {
+    background-color: #218838; /* Darker shade of green on hover */
+}
 
     </style>
             <link rel="shortcut icon" href="{% static "images/Key.png" %}" type="">
@@ -107,6 +120,10 @@
                             <i class="fas fa-exclamation-circle"></i> Property verification Pending
                         </div>
                         {% endif %}
+
+                        {% if property.verification_status == 'verified' %}
+                        <button class="send-documents-btn" data-toggle="modal" data-target="#sendDocumentsModal">Send Documents</button>
+                    {% endif %}
 
                         <!-- Add more property details as needed -->
                     </div>
@@ -162,6 +179,49 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary" id="scheduleVisitBtn">Schedule</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sendDocumentsModal" tabindex="-1" role="dialog" aria-labelledby="sendDocumentsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sendDocumentsModalLabel">Send Documents</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="sendDocumentsForm" method="POST"  enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="tenant">Select Person:</label>
+                            <select class="form-control" id="tenant" name="tenant">
+                                {% for tenant in available_tenants %}
+                                <option value="{{ tenant.id }}">{{ tenant.username }}</option>
+                                {% endfor %}                    
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="property">Select Property:</label>
+                            <select class="form-control" id="property" name="property">
+                                {% for property in properties %}
+                                <option value="{{ property.id }}">{{ property.address }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="documents">Upload Documents:</label>
+                            <input type="file" class="form-control" id="documents" name="documents" multiple accept=".pdf,.doc,.docx,.jpg,.png">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Send</button>
                     </div>
                 </form>
             </div>
