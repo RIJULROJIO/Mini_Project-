@@ -103,8 +103,6 @@ urlpatterns = [
     
 
 
-        path('upload-profile-picture/', views.upload_profile_picture, name='upload_profile_picture'),
-            path('check-face-detection/', views.check_face_detection, name='check_face_detection'),
 
 
         path('ad_click/', views.ad_click, name='ad_click'),
