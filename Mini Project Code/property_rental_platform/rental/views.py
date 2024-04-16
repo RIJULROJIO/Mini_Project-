@@ -28,28 +28,28 @@ from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView
 from .utils import TokenGenerator,generate_token
 from django.urls import reverse_lazy
 
-from social_django.models import UserSocialAuth
+# from social_django.models import UserSocialAuth
 
 
-def google_authenticate(request):
-    # Handle the Google OAuth2 authentication process
-    # ...
+# def google_authenticate(request):
+#     # Handle the Google OAuth2 authentication process
+#     # ...
 
-    # After successful authentication, create or get the user
-    try:
-        user_social = UserSocialAuth.objects.get(provider='google-oauth2', user=request.user)
-        user = user_social.user
-    except UserSocialAuth.DoesNotExist:
-        user = request.user
+#     # After successful authentication, create or get the user
+#     try:
+#         user_social = UserSocialAuth.objects.get(provider='google-oauth2', user=request.user)
+#         user = user_social.user
+#     except UserSocialAuth.DoesNotExist:
+#         user = request.user
 
-    # Set a default role for users signing in with Google (e.g., "Patient")
-    user.role = 'tenant'
-    user.save()
-    print(f"User role set to: {user.role}")
+#     # Set a default role for users signing in with Google (e.g., "Patient")
+#     user.role = 'tenant'
+#     user.save()
+#     print(f"User role set to: {user.role}")
 
-    # Redirect to the desired page (phome.html for Patient role)
-    if user.role == 'tenant':
-        return redirect('tenantpage')  # Make sure you have a URL named 'phome'
+#     # Redirect to the desired page (phome.html for Patient role)
+#     if user.role == 'tenant':
+#         return redirect('tenantpage')  # Make sure you have a URL named 'phome'
 
 
 
